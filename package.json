@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "author": "duganlx <840797783@qq.com>",
+  "scripts": {
+    "dev": "umi dev",
+    "build": "umi build",
+    "postinstall": "umi setup",
+    "setup": "umi setup",
+    "start": "npm run dev",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@ant-design/use-emotion-css": "^1.0.4",
+    "antd": "^5.12.7",
+    "dayjs": "^1.11.10",
+    "umi": "^4.0.90"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.33",
+    "@types/react-dom": "^18.0.11",
+    "typescript": "^5.0.3"
+  }
+}
