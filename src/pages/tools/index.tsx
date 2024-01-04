@@ -1,10 +1,12 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TimestampConversionView from "./components/timestampConversion";
+import MemorandumView from "./components/memorandum";
+import { debounce } from "lodash";
 
 interface CardViewProps {
   title: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const CardView: React.FC<CardViewProps> = (props) => {
@@ -12,9 +14,11 @@ const CardView: React.FC<CardViewProps> = (props) => {
   const clsname = useEmotionCss(() => {
     return {
       ".view": {
+        margin: "10px 5px",
         padding: "10px 3px 3px 10px",
         backgroundColor: "rgba(246, 255, 237, 0.5)",
         borderRadius: "5px",
+        border: "1px solid #b7eb8f",
 
         ".title": {
           display: "flex",
@@ -24,7 +28,7 @@ const CardView: React.FC<CardViewProps> = (props) => {
 
           ".titlebar": {
             width: "4px",
-            height: "16px",
+            height: "20px",
             backgroundColor: "#389e0d",
             marginRight: "5px",
           },
@@ -51,10 +55,27 @@ const CardView: React.FC<CardViewProps> = (props) => {
 };
 
 const ToolsView: React.FC = () => {
+  const [layoutsize, setLayoutsize] = useState<[number, number]>([0, 0]);
+
+  useEffect(() => {
+    const debounceRender = debounce(function (height: number, width: number) {
+      setLayoutsize([height, width]);
+    }, 300);
+
+    window.addEventListener("resize", () => {
+      debounceRender(window.innerHeight - 40, window.innerWidth);
+    });
+
+    setLayoutsize([window.innerHeight - 40, window.innerWidth]);
+  }, []);
+
   return (
     <>
       <CardView title="Timestamp conversion">
         <TimestampConversionView />
+      </CardView>
+      <CardView title="Memorandum">
+        <MemorandumView layoutsize={layoutsize} />
       </CardView>
     </>
   );
