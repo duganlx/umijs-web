@@ -11,7 +11,12 @@ const MemorandumView: React.FC<MemorandumViewProps> = (props) => {
   const [content, setContent] = useState<string>("1");
 
   return (
-    <>
+    <div>
+      <div style={{ display: 'flex' }}>
+        <div>oper:</div>
+        <div>download</div>
+        <div>upload</div>
+      </div>
       <MonacoEditor
         width={`${wwins - 35}px`}
         height="300px"
@@ -21,7 +26,7 @@ const MemorandumView: React.FC<MemorandumViewProps> = (props) => {
           setContent(newcontent);
         }}
       />
-    </>
+    </div>
   );
 };
 

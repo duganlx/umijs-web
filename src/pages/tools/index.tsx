@@ -71,11 +71,17 @@ const ToolsView: React.FC = () => {
 
   return (
     <>
-      <CardView title="Timestamp conversion">
+      <CardView title="Timestamp Conversion">
         <TimestampConversionView />
       </CardView>
       <CardView title="Memorandum">
         <MemorandumView layoutsize={layoutsize} />
+      </CardView>
+      <CardView title="AI Assistant">
+        todo
+      </CardView>
+      <CardView title="Jottings">
+        todo
       </CardView>
     </>
   );
