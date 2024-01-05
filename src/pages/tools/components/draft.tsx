@@ -2,7 +2,7 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { Modal, Popconfirm, Tooltip, message } from "antd";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MonacoEditor from "react-monaco-editor";
 
 function downloadTxt(content: string, filename: string) {
@@ -41,7 +41,7 @@ interface MemorandumViewProps {
   layoutsize: [number, number];
 }
 
-const MemorandumView: React.FC<MemorandumViewProps> = (props) => {
+const DraftView: React.FC<MemorandumViewProps> = (props) => {
   const { layoutsize } = props;
   const [hwins, wwins] = layoutsize;
 
@@ -50,6 +50,7 @@ const MemorandumView: React.FC<MemorandumViewProps> = (props) => {
   const [preActivewin, setPreActivewin] = useState<string>();
   const [actviewin, setActivewin] = useState<string>("win1");
   const [fullscreen, setFullscreen] = useState<boolean>(false);
+  const modalref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (preActivewin === undefined) {
@@ -105,6 +106,11 @@ const MemorandumView: React.FC<MemorandumViewProps> = (props) => {
       top: "5vh",
       margin: "0px 6vw",
 
+      ".modalcontent": {
+        width: "100%",
+        height: "100%",
+      },
+
       ".ant-modal-content": {
         width: "86vw",
         height: "90vh",
@@ -126,6 +132,11 @@ const MemorandumView: React.FC<MemorandumViewProps> = (props) => {
       },
     };
   });
+
+  const mcheight =
+    modalref.current == null ? "100%" : modalref.current.offsetHeight + "px";
+  const mcwidth =
+    modalref.current == null ? "100%" : modalref.current.offsetWidth + "px";
 
   return (
     <>
@@ -288,18 +299,20 @@ const MemorandumView: React.FC<MemorandumViewProps> = (props) => {
         }}
         footer={null}
       >
-        <MonacoEditor
-          width="100%"
-          height="100%"
-          theme="vs"
-          value={actvieContent}
-          onChange={(newcontent: any) => {
-            setActiveContent(newcontent);
-          }}
-        />
+        <div className="modalcontent" ref={modalref}>
+          <MonacoEditor
+            width={mcwidth}
+            height={mcheight}
+            theme="vs"
+            value={actvieContent}
+            onChange={(newcontent: any) => {
+              setActiveContent(newcontent);
+            }}
+          />
+        </div>
       </Modal>
     </>
   );
 };
 
-export default MemorandumView;
+export default DraftView;

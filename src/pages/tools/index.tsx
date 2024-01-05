@@ -1,7 +1,7 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import React, { useEffect, useState } from "react";
 import TimestampConversionView from "./components/timestampConversion";
-import MemorandumView from "./components/memorandum";
+import DraftView from "./components/draft";
 import { debounce } from "lodash";
 
 interface CardViewProps {
@@ -60,13 +60,18 @@ const ToolsView: React.FC = () => {
   useEffect(() => {
     const debounceRender = debounce(function (height: number, width: number) {
       setLayoutsize([height, width]);
-    }, 300);
+    }, 10);
 
-    window.addEventListener("resize", () => {
-      debounceRender(window.innerHeight - 40, window.innerWidth);
-    });
+    const resize = () => {
+      debounceRender(window.innerHeight - 40, window.innerWidth - 10);
+    };
 
-    setLayoutsize([window.innerHeight - 40, window.innerWidth]);
+    window.addEventListener("resize", resize);
+    setLayoutsize([window.innerHeight - 40, window.innerWidth - 10]);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+    };
   }, []);
 
   return (
@@ -75,7 +80,7 @@ const ToolsView: React.FC = () => {
         <TimestampConversionView />
       </CardView>
       <CardView title="Draft">
-        <MemorandumView layoutsize={layoutsize} />
+        <DraftView layoutsize={layoutsize} />
       </CardView>
       <CardView title="AI Assistant">todo</CardView>
       <CardView title="Jottings">todo</CardView>
