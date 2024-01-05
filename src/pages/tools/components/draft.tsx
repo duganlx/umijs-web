@@ -298,6 +298,7 @@ const DraftView: React.FC<MemorandumViewProps> = (props) => {
           setFullscreen(false);
         }}
         footer={null}
+        destroyOnClose={true}
       >
         <div className="modalcontent" ref={modalref}>
           <MonacoEditor
