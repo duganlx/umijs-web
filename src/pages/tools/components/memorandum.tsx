@@ -1,5 +1,6 @@
+import { InfoCircleOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
-import { Popconfirm, message } from "antd";
+import { Popconfirm, Tooltip, message } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import MonacoEditor from "react-monaco-editor";
@@ -11,6 +12,23 @@ function downloadTxt(content: string, filename: string) {
   ele.download = `${filename}.txt`;
   document.body.appendChild(ele);
   ele.click();
+}
+
+function winsColor(
+  selfid: string,
+  activeid: string,
+  wcmap: Record<string, string>
+) {
+  if (selfid === activeid) {
+    return "#f759ab";
+  }
+
+  const content = wcmap[selfid];
+  if (content.length > 0) {
+    return "#b37feb";
+  }
+
+  return "black";
 }
 
 const DEFAULT_CONTENT = {
@@ -52,12 +70,16 @@ const MemorandumView: React.FC<MemorandumViewProps> = (props) => {
 
         ".title": {
           marginRight: "5px",
+
+          ".help": {
+            marginLeft: "2px",
+          },
         },
 
         ".opfile": {
           cursor: "pointer",
           userSelect: "none",
-          marginRight: "5px",
+          marginRight: "8px",
         },
 
         ".opfile:hover": {
@@ -80,7 +102,7 @@ const MemorandumView: React.FC<MemorandumViewProps> = (props) => {
   return (
     <div className={clsname}>
       <div className="operbar">
-        <div className="title">oper:</div>
+        <div className="title">opers:</div>
         <div
           className="opfile"
           onClick={() => {
@@ -132,11 +154,56 @@ const MemorandumView: React.FC<MemorandumViewProps> = (props) => {
           clear
         </Popconfirm>
         <div className="title" style={{ marginLeft: "25px" }}>
-          wins:
+          wins
+          <Tooltip
+            className="help"
+            title={
+              <div style={{ color: "black" }}>
+                <p>Color Description</p>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div
+                    style={{
+                      width: "20px",
+                      height: "18px",
+                      backgroundColor: "black",
+                      marginRight: "5px",
+                    }}
+                  />
+                  Unused
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div
+                    style={{
+                      width: "20px",
+                      height: "18px",
+                      backgroundColor: "#f759ab",
+                      marginRight: "5px",
+                    }}
+                  />
+                  Displaying
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div
+                    style={{
+                      width: "20px",
+                      height: "18px",
+                      backgroundColor: "#b37feb",
+                      marginRight: "5px",
+                    }}
+                  />
+                  In use
+                </div>
+              </div>
+            }
+            color="white"
+          >
+            <InfoCircleOutlined />
+          </Tooltip>
+          :
         </div>
         <div
           className="winszone"
-          style={{ color: actviewin == "win1" ? "#f759ab" : "black" }}
+          style={{ color: winsColor("win1", actviewin, wcmap) }}
           onClick={() => {
             setPreActivewin(actviewin);
             setActivewin("win1");
@@ -146,7 +213,7 @@ const MemorandumView: React.FC<MemorandumViewProps> = (props) => {
         </div>
         <div
           className="winszone"
-          style={{ color: actviewin == "win2" ? "#f759ab" : "black" }}
+          style={{ color: winsColor("win2", actviewin, wcmap) }}
           onClick={() => {
             setPreActivewin(actviewin);
             setActivewin("win2");
@@ -156,7 +223,7 @@ const MemorandumView: React.FC<MemorandumViewProps> = (props) => {
         </div>
         <div
           className="winszone"
-          style={{ color: actviewin == "win3" ? "#f759ab" : "black" }}
+          style={{ color: winsColor("win3", actviewin, wcmap) }}
           onClick={() => {
             setPreActivewin(actviewin);
             setActivewin("win3");
