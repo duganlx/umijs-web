@@ -1,0 +1,191 @@
+@media (min-width: 768px) {
+  .meview {
+    width: 100vw;
+    height: calc(100vh - 40px);
+    overflow: auto;
+    background-color: #f0f0f0;
+
+    &::-webkit-scrollbar {
+      width: 5px;
+      background-color: white;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #d9d9d9;
+      border-radius: 5px;
+    }
+
+    :global {
+      .scrollview {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        margin-right: 15vw;
+        margin-left: 15vw;
+        background-color: white;
+      }
+
+      .authordsc {
+        width: 230px;
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+
+        .fixed {
+          position: sticky;
+          top: 15px;
+          width: 230px;
+          padding: 10px 15px 5px;
+        }
+      }
+
+      .right {
+        width: calc(100% - 230px);
+        padding: 15px 5px 3px 10px;
+      }
+
+      .avatar {
+        width: 160px;
+        height: 160px;
+        background-repeat: no-repeat;
+        background-position: 60% 0;
+        background-size: cover;
+        border-radius: 50%;
+      }
+
+      .author-name {
+        margin-top: 10px;
+        font-weight: 700;
+        font-size: 1.4em;
+        line-height: 1.2;
+      }
+
+      .author-bio {
+        margin-top: 10px;
+        font-size: 15px;
+        line-height: 24px;
+      }
+
+      .author-url {
+        ul {
+          display: block;
+          margin-top: 15px;
+          padding-left: 5px;
+
+          li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 14px;
+            font-size: 15px;
+            vertical-align: middle;
+
+            .desc {
+              margin-left: 5px;
+            }
+          }
+        }
+
+        li.link:hover {
+          text-decoration: underline;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
+// phone
+// @media (max-width: 767px) {
+//   .meview {
+//     :global {
+//       .scrollview {
+//         flex-direction: column;
+//         margin-right: 5vw;
+//         margin-left: 5vw;
+//       }
+
+//       .left {
+//         width: 100%;
+//       }
+
+//       .right {
+//         width: 100%;
+//       }
+
+//       .fixed {
+//         width: 100%;
+//       }
+//     }
+//   }
+
+//   .authordsc {
+//     display: flex;
+//     flex-direction: column;
+//     align-items: start;
+//     width: 100%;
+
+//     :global {
+//       .avatar {
+//         width: 100px;
+//         min-width: 100px; // 仅仅设置 width 会被挤压
+//         height: 100px;
+//         min-height: 100px;
+//         background-repeat: no-repeat;
+//         background-position: 60% 0;
+//         background-size: cover;
+//         border-radius: 50%;
+//       }
+
+//       .sm-row {
+//         display: flex;
+//         flex-direction: row;
+//         margin-top: 15px;
+//       }
+
+//       .sm-col {
+//         display: flex;
+//         // flex: 1 1 auto;
+//         flex-direction: column;
+//         margin-left: 30px;
+//       }
+
+//       .author-name {
+//         margin-top: 10px;
+//         font-weight: 700;
+//         font-size: 1.4em;
+//         line-height: 1.2;
+//       }
+
+//       .author-bio {
+//         margin-top: 10px;
+//         font-size: 15px;
+//         line-height: 24px;
+//       }
+
+//       .author-url {
+//         ul {
+//           display: flex;
+//           flex-wrap: wrap;
+//           padding-left: 8px;
+
+//           li {
+//             display: flex;
+//             align-items: center;
+//             margin-right: 10px;
+//             font-size: 15px;
+//             vertical-align: middle;
+
+//             .desc {
+//               margin-left: 5px;
+//             }
+//           }
+
+//           li.link {
+//             text-decoration: underline;
+//             cursor: pointer;
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
