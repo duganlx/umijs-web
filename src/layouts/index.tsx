@@ -1,7 +1,7 @@
 import { Link, Outlet } from "umi";
-import styles from "./index.less";
+// import styles from "./index.less";
+// import classNames from "classnames";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
-import classNames from "classnames";
 
 export default function Layout() {
   const clsname = useEmotionCss(() => {
@@ -34,17 +34,34 @@ export default function Layout() {
         ".item": {
           marginRight: "20px",
         },
+
+        ul: {
+          display: "flex",
+          height: "30px",
+          padding: 0,
+          listStyle: "none",
+
+          li: {
+            margin: "auto 15px",
+            marginRight: "1em",
+            fontWeight: 700,
+
+            a: {
+              textDecoration: "none",
+            },
+          },
+        },
       },
 
       ".page-content-zone": {
         backgroundColor: "#f0f0f0",
-        padding: "5px 20px",
+        // padding: "5px 20px",
       },
     };
   });
 
   return (
-    <div className={classNames(styles.navs, clsname)}>
+    <div className={clsname}>
       <div className="page-nav-zone">
         <div className="homepage">
           <Link to="/">Homepage</Link>
