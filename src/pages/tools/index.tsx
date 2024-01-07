@@ -16,8 +16,9 @@ const CardView: React.FC<CardViewProps> = (props) => {
       ".view": {
         margin: "10px 5px",
         padding: "10px 3px 3px 10px",
-        backgroundColor: "rgba(246, 255, 237, 0.5)",
         borderRadius: "5px",
+        backgroundColor: "white",
+        // backgroundColor: "rgba(246, 255, 237, 0.5)",
         border: "1px solid #b7eb8f",
 
         ".title": {
@@ -75,7 +76,13 @@ const ToolsView: React.FC = () => {
   }, []);
 
   return (
-    <>
+    <div
+      style={{
+        backgroundColor: "#f0f0f0",
+        padding: "3px 2px",
+        minWidth: "600px",
+      }}
+    >
       <CardView title="Timestamp Conversion">
         <TimestampConversionView />
       </CardView>
@@ -84,7 +91,7 @@ const ToolsView: React.FC = () => {
       </CardView>
       <CardView title="AI Assistant">todo</CardView>
       <CardView title="Jottings">todo</CardView>
-    </>
+    </div>
   );
 };
 

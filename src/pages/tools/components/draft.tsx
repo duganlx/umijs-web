@@ -281,7 +281,7 @@ const DraftView: React.FC<MemorandumViewProps> = (props) => {
           </div>
         </div>
         <MonacoEditor
-          width={`${wwins - 35}px`}
+          width={`${wwins - 40}px`}
           height="300px"
           theme="vs"
           value={actvieContent}
