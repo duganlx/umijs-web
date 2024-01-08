@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import TimestampConversionView from "./components/timestampConversion";
 import DraftView from "./components/draft";
 import { debounce } from "lodash";
+import AiAssistantView from "./components/aiassistant";
 
 interface CardViewProps {
   title: string;
@@ -89,7 +90,9 @@ const ToolsView: React.FC = () => {
       <CardView title="Draft">
         <DraftView layoutsize={layoutsize} />
       </CardView>
-      <CardView title="AI Assistant">todo</CardView>
+      <CardView title="AI Assistant">
+        <AiAssistantView layoutsize={layoutsize} />
+      </CardView>
       <CardView title="Jottings">todo</CardView>
     </div>
   );
