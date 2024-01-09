@@ -2,6 +2,7 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  /* font-family: "Trebuchet MS", Helvetica, sans-serif; */
+  font-family: "Consolas", "Microsoft YaHei", "Courier New", monospace;
   text-decoration: none;
 }
