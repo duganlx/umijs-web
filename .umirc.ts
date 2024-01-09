@@ -16,4 +16,11 @@ export default defineConfig({
       },
     ]);
   },
+  proxy: {
+    "/api": {
+      target: "http://eqw-fat.eam.com",
+      changeOrigin: true,
+      pathRewrite: { "^": "" },
+    },
+  },
 });

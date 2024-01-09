@@ -13,10 +13,19 @@
     "@ant-design/use-emotion-css": "^1.0.4",
     "antd": "^5.12.7",
     "dayjs": "^1.11.10",
+    "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "monaco-editor": "0.45.0",
+    "react-markdown": "^9.0.1",
     "react-monaco-editor": "^0.55.0",
-    "umi": "^4.0.90"
+    "react-syntax-highlighter": "^15.5.0",
+    "rehype-katex": "^7.0.0",
+    "rehype-raw": "^7.0.0",
+    "remark-emoji": "^4.0.1",
+    "remark-gfm": "^4.0.0",
+    "remark-math": "^6.0.0",
+    "umi": "^4.0.90",
+    "umi-request": "^1.4.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.33",
