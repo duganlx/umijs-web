@@ -17,7 +17,7 @@ request.use(
     };
     const access_token = getAccessToken();
     const decoded: { exp: number } = jwtDecode(access_token || "");
-    console.log("exp", decoded.exp);
+    // console.log("exp", decoded.exp);
 
     if (access_token && access_token.length > 0) {
       headers = {

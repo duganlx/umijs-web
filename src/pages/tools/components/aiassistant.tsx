@@ -9,12 +9,13 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 import { atomOneLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import {
   ArrowUpOutlined,
+  PauseCircleOutlined,
   RobotOutlined,
   SmileOutlined,
 } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { Select, Input, message } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const { TextArea } = Input;
 
@@ -28,7 +29,7 @@ const DialogMessage: React.FC<DialogMessageProps> = (props) => {
   const { question, answer, loading } = props;
 
   const [dots, setDots] = useState<string>(".");
-  const [rendAnswer, setRendAnswer] = useState<string>(answer);
+  const [rendAnswer, setRendAnswer] = useState<string>(answer[0]);
 
   useEffect(() => {
     if (!loading) {
@@ -45,30 +46,30 @@ const DialogMessage: React.FC<DialogMessageProps> = (props) => {
     };
   }, [loading]);
 
-  // useEffect(() => {
-  //   if (loading) {
-  //     return;
-  //   }
-  //   if (rendAnswer.length === answer.length) {
-  //     return;
-  //   }
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+    if (rendAnswer.length === answer.length) {
+      return;
+    }
 
-  //   const interval = setInterval(() => {
-  //     setRendAnswer((prevContent) => {
-  //       const nextchar = answer[prevContent.length];
+    const interval = setInterval(() => {
+      setRendAnswer((prevContent) => {
+        const nextchar = answer[prevContent.length];
 
-  //       if (nextchar !== undefined) {
-  //         return prevContent + nextchar;
-  //       }
+        if (nextchar !== undefined) {
+          return prevContent + nextchar;
+        }
 
-  //       return prevContent;
-  //     });
-  //   }, 90);
+        return prevContent;
+      });
+    }, 90);
 
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, [answer]);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [answer]);
 
   const clsname = useEmotionCss(() => {
     return {
@@ -181,6 +182,9 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
   const [model, setModel] = useState<string>("gpt3.5");
   const [text, setText] = useState<string>("");
   const [QAlist, setQAlist] = useState<[string, string][]>([]);
+  const [scrollbottomSign, setScrollbottomSign] = useState<boolean>(false);
+  const [progressing, setProgressing] = useState<boolean>(false);
+  const dialogzoneRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     ListChat({
@@ -197,17 +201,21 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
         })
         .reverse();
 
-      setQAlist(qal);
+      // setQAlist(qal);
+      setScrollbottomSign(!scrollbottomSign);
     });
-
-    // SendChatMsg({
-    //   msg: "你好",
-    //   agentId: "1559730848930992128_1699580365106",
-    //   model: "gpt-4-1106-preview",
-    // }).then((res: any) => {
-    //   console.log(res);
-    // });
   }, []);
+
+  useEffect(() => {
+    if (!dialogzoneRef.current) {
+      return;
+    }
+
+    dialogzoneRef.current.scroll({
+      top: dialogzoneRef.current.scrollHeight,
+      behavior: "instant",
+    });
+  }, [scrollbottomSign]);
 
   const clsname = useEmotionCss(() => {
     return {
@@ -217,8 +225,8 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
 
       ".operbar": {
         display: "flex",
-        justifyItems: "center",
         marginBottom: "5px",
+        alignItems: "center",
 
         ".title": {
           marginRight: "5px",
@@ -227,6 +235,16 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
         ".ant-select": {
           width: "125px",
           marginRight: "20px",
+        },
+
+        ".opitem": {
+          cursor: "pointer",
+          userSelect: "none",
+          marginRight: "8px",
+        },
+
+        ".opitem:hover": {
+          textDecoration: "underline",
         },
       },
       ".chat-zone": {
@@ -285,8 +303,8 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
               width: "30px",
               height: "30px",
               borderRadius: "6px",
-              color: "white",
-              backgroundColor: "black",
+              color: progressing ? "black" : "white",
+              backgroundColor: progressing ? "white" : "black",
               fontSize: "18px",
               display: "flex",
               alignItems: "center",
@@ -294,7 +312,19 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
             },
 
             ".btn:hover": {
-              cursor: "pointer",
+              cursor: progressing ? "not-allowed" : "pointer",
+            },
+
+            ".progressingbtn": {
+              width: "30px",
+              height: "30px",
+              borderRadius: "6px",
+              color: "white",
+              backgroundColor: "black",
+              fontSize: "18px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             },
           },
         },
@@ -303,8 +333,36 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
   });
 
   const handleSubmit = () => {
-    console.log("submit", text);
+    if (progressing) {
+      return;
+    }
+
+    const askquestion = text;
+
+    const latestQAlist = [...QAlist, [text, ""]] as [string, string][];
+    setQAlist(latestQAlist);
     setText("");
+    setScrollbottomSign(!scrollbottomSign);
+    setProgressing(true);
+
+    SendChatMsg({
+      msg: askquestion,
+      agentId: "1559730848930992128_1699580365106",
+      model: "gpt-4-1106-preview",
+    })
+      .then((res: any) => {
+        if (res.code !== 0) {
+          latestQAlist[latestQAlist.length - 1][1] = "<p></p>";
+          setQAlist([...latestQAlist]);
+          return;
+        }
+
+        latestQAlist[latestQAlist.length - 1][1] = res.data.msg;
+        setQAlist([...latestQAlist]);
+      })
+      .finally(() => {
+        setProgressing(false);
+      });
   };
 
   return (
@@ -313,6 +371,7 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
         <div className="title">mode:</div>
         <Select
           size="small"
+          style={{ width: "160px" }}
           onChange={(value: string) => {
             setMode(value);
           }}
@@ -327,6 +386,7 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
         <div className="title">model:</div>
         <Select
           size="small"
+          style={{ width: "100px" }}
           onChange={(value: string) => {
             setModel(value);
           }}
@@ -336,13 +396,22 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
           ]}
           value={model}
         />
+        <div className="title">opers:</div>
+        <div
+          className="opitem"
+          onClick={() => {
+            console.log("--1");
+          }}
+        >
+          full-screen
+        </div>
       </div>
       <div className="chat-zone">
-        <div className="dialog-zone">
+        <div ref={dialogzoneRef} className="dialog-zone">
           {QAlist.map((item) => {
             return (
               <DialogMessage
-                key={item[0]}
+                key={item[0] + item[1]}
                 question={item[0]}
                 answer={item[1]}
                 loading={item[1].length == 0}
@@ -369,6 +438,7 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
                 }
               }
             }}
+            disabled={progressing}
           />
           <div className="btn-zone">
             <div
@@ -377,7 +447,7 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
                 handleSubmit();
               }}
             >
-              <ArrowUpOutlined />
+              {progressing ? <PauseCircleOutlined /> : <ArrowUpOutlined />}
             </div>
           </div>
         </div>

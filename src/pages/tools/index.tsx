@@ -76,7 +76,6 @@ const ToolsView: React.FC = () => {
     };
   }, []);
 
-  console.log(layoutsize);
   return (
     <div
       style={{
