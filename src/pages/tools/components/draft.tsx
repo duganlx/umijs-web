@@ -37,20 +37,17 @@ const DEFAULT_CONTENT = {
   win3: "",
 };
 
-interface MemorandumViewProps {
-  layoutsize: [number, number];
-}
+interface MemorandumViewProps {}
 
 const DraftView: React.FC<MemorandumViewProps> = (props) => {
-  const { layoutsize } = props;
-  const [hwins, wwins] = layoutsize;
-
   const [wcmap, setWcmap] = useState<Record<string, string>>(DEFAULT_CONTENT);
   const [actvieContent, setActiveContent] = useState<string>("");
   const [preActivewin, setPreActivewin] = useState<string>();
   const [actviewin, setActivewin] = useState<string>("win1");
   const [fullscreen, setFullscreen] = useState<boolean>(false);
+
   const modalref = useRef<HTMLDivElement>(null);
+  const divref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (preActivewin === undefined) {
@@ -140,7 +137,7 @@ const DraftView: React.FC<MemorandumViewProps> = (props) => {
 
   return (
     <>
-      <div className={clsname}>
+      <div className={clsname} ref={divref}>
         <div className="operbar">
           <div className="title">opers:</div>
           <div
@@ -281,7 +278,7 @@ const DraftView: React.FC<MemorandumViewProps> = (props) => {
           </div>
         </div>
         <MonacoEditor
-          width={`${wwins - 40}px`}
+          width={!divref.current ? "100%" : `${divref.current.offsetWidth}px`}
           height="300px"
           theme="vs"
           value={actvieContent}

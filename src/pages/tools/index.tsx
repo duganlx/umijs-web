@@ -15,7 +15,7 @@ const CardView: React.FC<CardViewProps> = (props) => {
   const clsname = useEmotionCss(() => {
     return {
       ".view": {
-        margin: "10px 5px",
+        margin: "10px 8vw",
         padding: "10px 3px 3px 10px",
         borderRadius: "5px",
         backgroundColor: "white",
@@ -76,6 +76,7 @@ const ToolsView: React.FC = () => {
     };
   }, []);
 
+  console.log(layoutsize);
   return (
     <div
       style={{
@@ -88,7 +89,7 @@ const ToolsView: React.FC = () => {
         <TimestampConversionView />
       </CardView>
       <CardView title="Draft">
-        <DraftView layoutsize={layoutsize} />
+        <DraftView />
       </CardView>
       <CardView title="AI Assistant">
         <AiAssistantView layoutsize={layoutsize} />

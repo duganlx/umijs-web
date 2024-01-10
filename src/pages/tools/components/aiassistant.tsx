@@ -238,6 +238,15 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
           padding: "5px 13px",
           overflow: "auto",
           marginBottom: "5px",
+
+          "&::-webkit-scrollbar": {
+            width: "5px",
+            backgroundColor: "white",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#d9d9d9",
+            borderRadius: "5px",
+          },
         },
 
         ".input-zone": {
@@ -333,6 +342,7 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
           {QAlist.map((item) => {
             return (
               <DialogMessage
+                key={item[0]}
                 question={item[0]}
                 answer={item[1]}
                 loading={item[1].length == 0}
