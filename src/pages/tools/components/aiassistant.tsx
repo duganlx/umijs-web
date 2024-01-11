@@ -27,10 +27,11 @@ interface DialogMessageProps {
   history: boolean; // 是否是历史对话
 
   beHistory: () => void;
+  toBottom: () => void;
 }
 
 const DialogMessage: React.FC<DialogMessageProps> = (props) => {
-  const { question, answer, loading, history, beHistory } = props;
+  const { question, answer, loading, history, beHistory, toBottom } = props;
 
   const [dots, setDots] = useState<string>(".");
   const [rendAnswer, setRendAnswer] = useState<string>(
@@ -70,6 +71,7 @@ const DialogMessage: React.FC<DialogMessageProps> = (props) => {
 
         return prevContent;
       });
+      toBottom();
     }, 90);
 
     return () => {
@@ -208,7 +210,7 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
   const [fullscreen, setFullscreen] = useState<boolean>(false);
 
   const dialogzoneRef = useRef<HTMLDivElement>(null);
-  const modalref = useRef<HTMLDivElement>(null);
+  const mdialogzoneRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     ListChat({
@@ -242,6 +244,14 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
     }
 
     dialogzoneRef.current.scroll({
+      top: dialogzoneRef.current.scrollHeight,
+      behavior: "instant",
+    });
+
+    if (!mdialogzoneRef.current) {
+      return;
+    }
+    mdialogzoneRef.current.scroll({
       top: dialogzoneRef.current.scrollHeight,
       behavior: "instant",
     });
@@ -519,6 +529,7 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
           <div
             className="opitem"
             onClick={() => {
+              setScrollbottomSign(!scrollbottomSign);
               setFullscreen(true);
             }}
           >
@@ -539,6 +550,9 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
                     const nQAlist = [...QAlist];
                     nQAlist[i].history = true;
                     setQAlist(nQAlist);
+                  }}
+                  toBottom={() => {
+                    setScrollbottomSign(!scrollbottomSign);
                   }}
                 />
               );
@@ -586,11 +600,10 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
           setFullscreen(false);
         }}
         footer={null}
-        destroyOnClose={true}
       >
-        <div className="modalcontent" ref={modalref}>
+        <div className="modalcontent">
           <div className="chat-zone">
-            <div ref={dialogzoneRef} className="dialog-zone">
+            <div ref={mdialogzoneRef} className="dialog-zone">
               {QAlist.map((item, i) => {
                 return (
                   <DialogMessage
@@ -603,6 +616,9 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
                       const nQAlist = [...QAlist];
                       nQAlist[i].history = true;
                       setQAlist(nQAlist);
+                    }}
+                    toBottom={() => {
+                      setScrollbottomSign(!scrollbottomSign);
                     }}
                   />
                 );
