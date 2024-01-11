@@ -27,11 +27,10 @@ interface DialogMessageProps {
   history: boolean; // 是否是历史对话
 
   beHistory: () => void;
-  toBottom: () => void;
 }
 
 const DialogMessage: React.FC<DialogMessageProps> = (props) => {
-  const { question, answer, loading, history, beHistory, toBottom } = props;
+  const { question, answer, loading, history, beHistory } = props;
 
   const [dots, setDots] = useState<string>(".");
   const [rendAnswer, setRendAnswer] = useState<string>(
@@ -71,8 +70,7 @@ const DialogMessage: React.FC<DialogMessageProps> = (props) => {
 
         return prevContent;
       });
-      toBottom();
-    }, 90);
+    }, 10);
 
     return () => {
       clearInterval(interval);
@@ -129,6 +127,9 @@ const DialogMessage: React.FC<DialogMessageProps> = (props) => {
       "ul.contains-task-list": {
         listStyle: "none",
         paddingInlineStart: "30px",
+      },
+      pre: {
+        margin: "5px 0",
       },
     };
   });
@@ -247,15 +248,18 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
       top: dialogzoneRef.current.scrollHeight,
       behavior: "instant",
     });
+  }, [scrollbottomSign]);
 
+  useEffect(() => {
     if (!mdialogzoneRef.current) {
       return;
     }
+
     mdialogzoneRef.current.scroll({
-      top: dialogzoneRef.current.scrollHeight,
+      top: mdialogzoneRef.current.scrollHeight,
       behavior: "instant",
     });
-  }, [scrollbottomSign]);
+  }, [scrollbottomSign, mdialogzoneRef.current]);
 
   const clsname = useEmotionCss(() => {
     return {
@@ -529,8 +533,8 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
           <div
             className="opitem"
             onClick={() => {
-              setScrollbottomSign(!scrollbottomSign);
               setFullscreen(true);
+              setScrollbottomSign(!scrollbottomSign);
             }}
           >
             full-screen
@@ -550,9 +554,6 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
                     const nQAlist = [...QAlist];
                     nQAlist[i].history = true;
                     setQAlist(nQAlist);
-                  }}
-                  toBottom={() => {
-                    setScrollbottomSign(!scrollbottomSign);
                   }}
                 />
               );
@@ -600,6 +601,7 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
           setFullscreen(false);
         }}
         footer={null}
+        destroyOnClose={true}
       >
         <div className="modalcontent">
           <div className="chat-zone">
@@ -616,9 +618,6 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
                       const nQAlist = [...QAlist];
                       nQAlist[i].history = true;
                       setQAlist(nQAlist);
-                    }}
-                    toBottom={() => {
-                      setScrollbottomSign(!scrollbottomSign);
                     }}
                   />
                 );
