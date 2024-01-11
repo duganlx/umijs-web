@@ -22,14 +22,19 @@ const { TextArea } = Input;
 interface DialogMessageProps {
   question: string;
   answer: string;
-  loading: boolean;
+  loading: boolean; // 是否处于加载状态
+  history: boolean; // 是否是历史对话
+
+  beHistory: () => void;
 }
 
 const DialogMessage: React.FC<DialogMessageProps> = (props) => {
-  const { question, answer, loading } = props;
+  const { question, answer, loading, history, beHistory } = props;
 
   const [dots, setDots] = useState<string>(".");
-  const [rendAnswer, setRendAnswer] = useState<string>(answer[0]);
+  const [rendAnswer, setRendAnswer] = useState<string>(
+    history ? answer : answer[0]
+  );
 
   useEffect(() => {
     if (!loading) {
@@ -70,6 +75,17 @@ const DialogMessage: React.FC<DialogMessageProps> = (props) => {
       clearInterval(interval);
     };
   }, [answer]);
+
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+    if (rendAnswer.length !== answer.length) {
+      return;
+    }
+
+    beHistory();
+  }, [rendAnswer]);
 
   const clsname = useEmotionCss(() => {
     return {
@@ -170,6 +186,12 @@ const DialogMessage: React.FC<DialogMessageProps> = (props) => {
   );
 };
 
+type QAItem = {
+  question: string;
+  answer: string;
+  history: boolean;
+};
+
 interface AiAssistantViewProps {
   layoutsize: [number, number];
 }
@@ -178,10 +200,10 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
   const { layoutsize } = props;
   const [hwins, wwins] = layoutsize;
 
-  const [mode, setMode] = useState<string>("translation");
+  // const [mode, setMode] = useState<string>("translation");
   const [model, setModel] = useState<string>("gpt3.5");
   const [text, setText] = useState<string>("");
-  const [QAlist, setQAlist] = useState<[string, string][]>([]);
+  const [QAlist, setQAlist] = useState<QAItem[]>([]);
   const [scrollbottomSign, setScrollbottomSign] = useState<boolean>(false);
   const [progressing, setProgressing] = useState<boolean>(false);
   const dialogzoneRef = useRef<HTMLDivElement>(null);
@@ -197,11 +219,16 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
       }
       const qal = res.data.result
         .map((item) => {
-          return [item.question, item.answer] as [string, string];
+          const qaitem: QAItem = {
+            question: item.question,
+            answer: item.answer,
+            history: true,
+          };
+          return qaitem;
         })
         .reverse();
 
-      // setQAlist(qal);
+      setQAlist(qal);
       setScrollbottomSign(!scrollbottomSign);
     });
   }, []);
@@ -338,8 +365,8 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
     }
 
     const askquestion = text;
-
-    const latestQAlist = [...QAlist, [text, ""]] as [string, string][];
+    const nqaitem: QAItem = { question: text, answer: "", history: false };
+    const latestQAlist = [...QAlist, nqaitem];
     setQAlist(latestQAlist);
     setText("");
     setScrollbottomSign(!scrollbottomSign);
@@ -352,12 +379,12 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
     })
       .then((res: any) => {
         if (res.code !== 0) {
-          latestQAlist[latestQAlist.length - 1][1] = "<p></p>";
+          latestQAlist[latestQAlist.length - 1].answer = "<p></p>";
           setQAlist([...latestQAlist]);
           return;
         }
 
-        latestQAlist[latestQAlist.length - 1][1] = res.data.msg;
+        latestQAlist[latestQAlist.length - 1].answer = res.data.msg;
         setQAlist([...latestQAlist]);
       })
       .finally(() => {
@@ -368,7 +395,7 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
   return (
     <div className={clsname}>
       <div className="operbar">
-        <div className="title">mode:</div>
+        {/* <div className="title">mode:</div>
         <Select
           size="small"
           style={{ width: "160px" }}
@@ -382,7 +409,7 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
             { value: "DA", label: "Data Analysis" },
           ]}
           value={mode}
-        />
+        /> */}
         <div className="title">model:</div>
         <Select
           size="small"
@@ -408,13 +435,19 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
       </div>
       <div className="chat-zone">
         <div ref={dialogzoneRef} className="dialog-zone">
-          {QAlist.map((item) => {
+          {QAlist.map((item, i) => {
             return (
               <DialogMessage
-                key={item[0] + item[1]}
-                question={item[0]}
-                answer={item[1]}
-                loading={item[1].length == 0}
+                key={item.question + item.answer}
+                question={item.question}
+                answer={item.answer}
+                loading={item.answer.length == 0}
+                history={item.history}
+                beHistory={() => {
+                  const nQAlist = [...QAlist];
+                  nQAlist[i].history = true;
+                  setQAlist(nQAlist);
+                }}
               />
             );
           })}
