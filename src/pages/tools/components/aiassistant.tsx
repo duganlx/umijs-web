@@ -1,3 +1,9 @@
+/**
+ * 需求明确：
+ * 1. 不需要查询历史数据
+ * 2. 支持 "模式切换" "模型切换" 使用机器人对话的方式进行更新
+ * 3. 全屏展示时只需要进行对话功能
+ */
 import { ListChat, SendChatMsg } from "@/services/eam/openai";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -14,23 +20,216 @@ import {
   SmileOutlined,
 } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
-import { Select, Input, message, Modal } from "antd";
+import {
+  Button,
+  Input,
+  message,
+  Modal,
+  Radio,
+  RadioChangeEvent,
+  Space,
+  Tooltip,
+} from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 
 const { TextArea } = Input;
 
 interface DialogMessageProps {
+  who: "bot" | "user"; // 角色
+  mode?: "normal" | "special"; // 模式, special 用于指令模式
+  msg?: string; // 消息
+  isDotMode?: boolean; // "..." 思考状态
+  isTypingMode?: boolean; // 打字状态
+  specialMsg?: JSX.Element; // 在 mode=special 时生效
+
+  onTypingDone?: () => void; // 打字完成时调用
+}
+
+const DialogMessage: React.FC<DialogMessageProps> = (props) => {
+  const {
+    who,
+    mode = "normal",
+    msg = "",
+    isTypingMode = false,
+    isDotMode = false,
+    specialMsg = <></>,
+    onTypingDone,
+  } = props;
+
+  const [dots, setDots] = useState<string>(".");
+  const [rendermsg, setRendermsg] = useState<string>(isTypingMode ? "" : msg);
+
+  useEffect(() => {
+    if (!isDotMode) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setDots((prevDots) => {
+        return prevDots.length < 3 ? prevDots + "." : ".";
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isDotMode]);
+
+  useEffect(() => {
+    if (isDotMode) {
+      return;
+    }
+    if (msg.length === rendermsg.length) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setRendermsg((prevContent) => {
+        const nextchar = msg[prevContent.length];
+
+        if (nextchar !== undefined) {
+          return prevContent + nextchar;
+        }
+
+        return prevContent;
+      });
+    }, 10);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [msg]);
+
+  useEffect(() => {
+    if (isDotMode) {
+      return;
+    }
+    if (rendermsg.length !== msg.length) {
+      return;
+    }
+
+    if (onTypingDone) {
+      onTypingDone();
+    }
+  }, [rendermsg]);
+
+  const clsname = useEmotionCss(() => {
+    return {
+      display: "flex",
+      alignItems: "flex-start",
+      marginBottom: "8px",
+      marginTop: "8px",
+
+      ".avater": {
+        marginTop: "10px",
+        marginRight: "5px",
+        fontSize: "16px",
+        height: "100%",
+      },
+
+      ".dialog-content": {
+        border: "1px solid rgb(204, 204, 204)",
+        borderRadius: "8px",
+        padding: "7px 10px",
+        backgroundColor: "rgb(240, 240, 240)",
+        fontSize: "14px",
+        minHeight: "37px",
+      },
+    };
+  });
+
+  const mdclsname = useEmotionCss(() => {
+    return {
+      lineHeight: 1.5,
+
+      ol: {
+        listStyle: "decimal",
+        marginLeft: "30px",
+      },
+      ul: {
+        listStyle: "disc",
+      },
+      "ul.contains-task-list": {
+        listStyle: "none",
+        paddingInlineStart: "30px",
+      },
+      pre: {
+        margin: "5px 0",
+      },
+    };
+  });
+
+  return (
+    <div className={clsname}>
+      <div className="avater">
+        {who == "bot" ? <RobotOutlined /> : <SmileOutlined />}
+      </div>
+      {mode == "normal" ? (
+        <div className="dialog-content">
+          {isDotMode ? (
+            dots
+          ) : (
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkMath, remarkEmoji]}
+              rehypePlugins={[rehypeRaw, rehypeKatex as any]}
+              className={mdclsname}
+              components={{
+                code({ inline, className, children, ...props1 }) {
+                  const match = /language-(\w+)/.exec(className || "");
+                  return !inline && match ? (
+                    <SyntaxHighlighter
+                      {...props1}
+                      style={atomOneLight}
+                      language={match[1]}
+                      PreTag="div"
+                    >
+                      {String(children).replace(/\n$/, "")}
+                    </SyntaxHighlighter>
+                  ) : (
+                    <code {...props1} className={className}>
+                      {children}
+                    </code>
+                  );
+                },
+                a({ children, href }) {
+                  return (
+                    <a href={href} target="_blank" rel="noopener noreferrer">
+                      {children}
+                    </a>
+                  );
+                },
+              }}
+            >
+              {rendermsg}
+            </ReactMarkdown>
+          )}
+        </div>
+      ) : (
+        <div className="dialog-content">{specialMsg}</div>
+      )}
+    </div>
+  );
+};
+
+interface QADialogMessageProps {
   question: string;
   answer: string;
   loading: boolean; // 是否处于加载状态
   history: boolean; // 是否是历史对话
+  onlyAnswer?: boolean; // 是否只有回复
 
   beHistory: () => void;
 }
-
-const DialogMessage: React.FC<DialogMessageProps> = (props) => {
-  const { question, answer, loading, history, beHistory } = props;
+const QADialogMessage: React.FC<QADialogMessageProps> = (props) => {
+  const {
+    question,
+    answer,
+    loading,
+    history,
+    onlyAnswer = false,
+    beHistory,
+  } = props;
 
   const [dots, setDots] = useState<string>(".");
   const [rendAnswer, setRendAnswer] = useState<string>(
@@ -94,6 +293,7 @@ const DialogMessage: React.FC<DialogMessageProps> = (props) => {
         display: "flex",
         alignItems: "flex-start",
         marginBottom: "8px",
+        marginTop: "8px",
 
         ".avater": {
           marginTop: "10px",
@@ -113,79 +313,46 @@ const DialogMessage: React.FC<DialogMessageProps> = (props) => {
     };
   });
 
-  const mdclsname = useEmotionCss(() => {
-    return {
-      lineHeight: 1.5,
-
-      ol: {
-        listStyle: "decimal",
-        marginLeft: "30px",
-      },
-      ul: {
-        listStyle: "disc",
-      },
-      "ul.contains-task-list": {
-        listStyle: "none",
-        paddingInlineStart: "30px",
-      },
-      pre: {
-        margin: "5px 0",
-      },
-    };
-  });
-
   return (
     <div className={clsname}>
-      <div className="msg">
-        <div className="avater">
-          <SmileOutlined />
-        </div>
-        <div className="dialog-content">{question}</div>
-      </div>
-      <div className="msg">
-        <div className="avater">
-          <RobotOutlined />
-        </div>
-        <div className="dialog-content">
-          {loading ? (
-            dots
-          ) : (
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm, remarkMath, remarkEmoji]}
-              rehypePlugins={[rehypeRaw, rehypeKatex as any]}
-              className={mdclsname}
-              components={{
-                code({ inline, className, children, ...props1 }) {
-                  const match = /language-(\w+)/.exec(className || "");
-                  return !inline && match ? (
-                    <SyntaxHighlighter
-                      {...props1}
-                      style={atomOneLight}
-                      language={match[1]}
-                      PreTag="div"
-                    >
-                      {String(children).replace(/\n$/, "")}
-                    </SyntaxHighlighter>
-                  ) : (
-                    <code {...props1} className={className}>
-                      {children}
-                    </code>
-                  );
-                },
-                a({ children, href }) {
-                  return (
-                    <a href={href} target="_blank" rel="noopener noreferrer">
-                      {children}
-                    </a>
-                  );
-                },
-              }}
-            >
-              {rendAnswer}
-            </ReactMarkdown>
-          )}
-        </div>
-      </div>
+      {onlyAnswer ? null : <DialogMessage who="user" msg={question} />}
+      {question == "show model" ? (
+        <DialogMessage
+          who="bot"
+          mode="special"
+          specialMsg={
+            <>
+              <p>The models that currently exist are as follows:</p>
+              <div style={{ margin: "5px 2px 8px 5px" }}>
+                <Radio.Group
+                  onChange={(e: RadioChangeEvent) => {
+                    console.log(e.target.value);
+                  }}
+                >
+                  <Space direction="vertical">
+                    <Radio value="eam_gpt3.5">EAM GPT-3.5</Radio>
+                    <Radio value="eam_gpt4.0">EAM GPT-4.0</Radio>
+                  </Space>
+                </Radio.Group>
+              </div>
+              <div
+                style={{
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  userSelect: "none",
+                }}
+                onClick={() => {
+                  console.log("--x");
+                }}
+              >
+                Check
+              </div>
+            </>
+          }
+        />
+      ) : (
+        <DialogMessage who="bot" msg={rendAnswer} isTypingMode={false} />
+      )}
     </div>
   );
 };
@@ -194,6 +361,11 @@ type QAItem = {
   question: string;
   answer: string;
   history: boolean;
+  onlyAnswer: boolean;
+};
+
+type QAAItem = {
+  cmd: string;
 };
 
 interface AiAssistantViewProps {
@@ -214,29 +386,22 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
   const mdialogzoneRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    ListChat({
-      startTime: dayjs().startOf("day").unix(),
-      agentId: ["1559730848930992128_1699580365106"],
-      userId: "1559730848930992128",
-    }).then((res) => {
-      if (res.code !== 0) {
-        message.error("listChat failed");
-        return;
-      }
-      const qal = res.data.result
-        .map((item) => {
-          const qaitem: QAItem = {
-            question: item.question,
-            answer: item.answer,
-            history: true,
-          };
-          return qaitem;
-        })
-        .reverse();
+    const greeting: QAItem = {
+      question: "",
+      answer: "Hello, may I help you?",
+      history: false,
+      onlyAnswer: true,
+    };
 
-      setQAlist(qal);
-      setScrollbottomSign(!scrollbottomSign);
-    });
+    const modelopt: QAItem = {
+      question: "show model",
+      answer: "Hello, may I help you?",
+      history: false,
+      onlyAnswer: false,
+    };
+
+    setQAlist([greeting, modelopt]);
+    setScrollbottomSign(!scrollbottomSign);
   }, []);
 
   useEffect(() => {
@@ -271,6 +436,14 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
         display: "flex",
         marginBottom: "5px",
         alignItems: "center",
+
+        ".help": {
+          userSelect: "none",
+          marginRight: "8px",
+          cursor: "pointer",
+          textDecorationLine: "underline",
+          textDecorationStyle: "wavy",
+        },
 
         ".title": {
           marginRight: "5px",
@@ -497,38 +670,67 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
       return;
     }
 
-    const askquestion = text;
-    const nqaitem: QAItem = { question: text, answer: "", history: false };
-    const latestQAlist = [...QAlist, nqaitem];
-    setQAlist(latestQAlist);
+    const askquestion = text.trim();
+    if (askquestion == "show model") {
+      const nqaitem: QAItem = {
+        question: askquestion,
+        answer: "",
+        history: false,
+        onlyAnswer: false,
+      };
+
+      const latestQAlist = [...QAlist, nqaitem];
+      setQAlist(latestQAlist);
+    }
+
+    const nqaitem: QAItem = {
+      question: text,
+      answer: "",
+      history: false,
+      onlyAnswer: false,
+    };
+    console.log(nqaitem);
+    // const latestQAlist = [...QAlist, nqaitem];
+    // setQAlist(latestQAlist);
     setText("");
-    setScrollbottomSign(!scrollbottomSign);
-    setProgressing(true);
+    // setScrollbottomSign(!scrollbottomSign);
+    // setProgressing(true);
 
-    SendChatMsg({
-      msg: askquestion,
-      agentId: "1559730848930992128_1699580365106",
-      model: "gpt-4-1106-preview",
-    })
-      .then((res: any) => {
-        if (res.code !== 0) {
-          latestQAlist[latestQAlist.length - 1].answer = "<p></p>";
-          setQAlist([...latestQAlist]);
-          return;
-        }
+    // SendChatMsg({
+    //   msg: askquestion,
+    //   agentId: "1559730848930992128_1699580365106",
+    //   model: "gpt-4-1106-preview",
+    // })
+    //   .then((res: any) => {
+    //     if (res.code !== 0) {
+    //       latestQAlist[latestQAlist.length - 1].answer = "<p></p>";
+    //       setQAlist([...latestQAlist]);
+    //       return;
+    //     }
 
-        latestQAlist[latestQAlist.length - 1].answer = res.data.msg;
-        setQAlist([...latestQAlist]);
-      })
-      .finally(() => {
-        setProgressing(false);
-      });
+    //     latestQAlist[latestQAlist.length - 1].answer = res.data.msg;
+    //     setQAlist([...latestQAlist]);
+    //   })
+    //   .finally(() => {
+    //     setProgressing(false);
+    //   });
   };
 
   return (
     <>
       <div className={clsname}>
         <div className="operbar">
+          <Tooltip
+            className="help"
+            color="white"
+            title={
+              <div style={{ color: "black" }}>
+                <p>show model: 显示可用的模型</p>
+              </div>
+            }
+          >
+            instruction
+          </Tooltip>
           <div className="title">opers:</div>
           <div
             className="opitem"
@@ -542,14 +744,15 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
         </div>
         <div className="chat-zone">
           <div ref={dialogzoneRef} className="dialog-zone">
-            {QAlist.map((item, i) => {
+            {/* {QAlist.map((item, i) => {
               return (
-                <DialogMessage
+                <QADialogMessage
                   key={item.question + item.answer}
                   question={item.question}
                   answer={item.answer}
                   loading={item.answer.length == 0}
                   history={item.history}
+                  onlyAnswer={item.onlyAnswer}
                   beHistory={() => {
                     const nQAlist = [...QAlist];
                     nQAlist[i].history = true;
@@ -557,7 +760,12 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
                   }}
                 />
               );
-            })}
+            })} */}
+            <DialogMessage
+              who="bot"
+              msg={"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
+              isTypingMode={true}
+            />
           </div>
           <div className="input-zone">
             <TextArea
@@ -606,9 +814,9 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
         <div className="modalcontent">
           <div className="chat-zone">
             <div ref={mdialogzoneRef} className="dialog-zone">
-              {QAlist.map((item, i) => {
+              {/* {QAlist.map((item, i) => {
                 return (
-                  <DialogMessage
+                  <QADialogMessage
                     key={item.question + item.answer}
                     question={item.question}
                     answer={item.answer}
@@ -621,7 +829,16 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = (props) => {
                     }}
                   />
                 );
-              })}
+              })} */}
+              <DialogMessage
+                who={"bot"}
+                msg={"xxx"}
+                isDotMode={false}
+                isTypingMode={false}
+                onTypingDone={() => {
+                  console.log("--1");
+                }}
+              />
             </div>
             <div className="input-zone">
               <TextArea

@@ -72,6 +72,7 @@ const DraftView: React.FC<MemorandumViewProps> = (props) => {
 
           ".help": {
             marginLeft: "2px",
+            cursor: "pointer",
           },
         },
 
