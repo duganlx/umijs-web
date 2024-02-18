@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { MessageProps } from "../components/message";
+import { WrapMessageProps } from "../components/message";
+import { NormalBotMessageProps } from "../components/botMessage";
 
 const msglistSlice = createSlice({
   name: "msglist",
   initialState: () => {
-    const msglist: MessageProps[] = [];
+    const msglist: WrapMessageProps[] = [];
 
     return {
       value: msglist,
@@ -24,18 +25,12 @@ export default msglistSlice.reducer;
 
 const { push } = msglistSlice.actions;
 
-const pushNormalBotMessage = (req: MessageProps) => {
-  const entity: MessageProps = {
+const pushNormalBotMessage = (props: NormalBotMessageProps) => {
+  const entity: WrapMessageProps = {
     mode: "normal",
     normalprops: {
       role: "bot",
-      botprops: {
-        content: "",
-        isThinking: false,
-        isTyping: false,
-
-        onTypingDone: () => {},
-      },
+      botprops: props,
     },
   };
 
@@ -43,7 +38,7 @@ const pushNormalBotMessage = (req: MessageProps) => {
 };
 
 const pushNormalUserMessage = (content: string) => {
-  const entity: MessageProps = {
+  const entity: WrapMessageProps = {
     mode: "normal",
     normalprops: {
       role: "user",

@@ -2,12 +2,12 @@ import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { useEffect, useState } from "react";
 import { Input } from "antd";
 import { PauseCircleOutlined, ArrowUpOutlined } from "@ant-design/icons";
-import NormalBotMessage from "./botMessage";
-import NormalUserMessage from "./userMessage";
-import BotModeCtl from "./modeCtl";
-import BotModelCtl from "./modelCtl";
 import { useSelector, useDispatch } from "react-redux";
-import { pushNormalBotMessage } from "../redux/msglistSlice";
+import {
+  pushNormalBotMessage,
+  pushNormalUserMessage,
+} from "../redux/msglistSlice";
+import WrapMessage, { WrapMessageProps } from "./message";
 
 const { TextArea } = Input;
 
@@ -17,17 +17,17 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const [text, setText] = useState<string>("");
   const [progressing, setProgressing] = useState<boolean>(false);
 
-  const msglist = useSelector((state: any) => state.msglist.value);
+  const msglist = useSelector((state: any) => state.msglist.value) as any[];
   const dispatch = useDispatch();
 
   console.log("chatzone", msglist);
-  useEffect(() => {
-    console.log("--1");
-    dispatch(
-      pushNormalBotMessage({ mode: "normal", normalprops: { role: "bot" } })
-    );
-    dispatch(pushNormalBotMessage({ mode: "special" }));
-  }, []);
+  // useEffect(() => {
+  //   console.log("--1");
+  //   dispatch(
+  //     pushNormalBotMessage({ mode: "normal", normalprops: { role: "bot" } })
+  //   );
+  //   dispatch(pushNormalBotMessage({ mode: "special" }));
+  // }, []);
 
   const clsname = useEmotionCss(() => {
     return {
@@ -114,10 +114,54 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
     };
   });
 
+  const handleSubmit = () => {
+    if (progressing) {
+      return;
+    }
+
+    const askquestion = text.trim();
+
+    // todo 判断是否为特殊指令
+
+    // 普通问题
+    dispatch(pushNormalUserMessage(askquestion));
+
+    setText("");
+    setProgressing(true);
+
+    // todo 访问gpt接口
+
+    // 情况1: 直接显示（历史数据）
+    // const testcontont =
+    //   "知人者智，自知者明。胜人者有力，自胜者强。知足者富，强行者有志，不失其所者久，死而不亡者寿。";
+    // dispatch(
+    //   pushNormalBotMessage({
+    //     content: testcontont,
+    //     isThinking: false,
+    //     isTyping: false,
+    //   })
+    // );
+
+    // 情况2: 思考中
+    // dispatch(
+    //   pushNormalBotMessage({
+    //     content: "",
+    //     isThinking: true,
+    //     isTyping: false,
+    //   })
+    // );
+
+    // 情况3: 打印输出
+
+    setTimeout(() => {
+      setProgressing(false);
+    }, 2000);
+  };
+
   return (
     <div className={clsname}>
       <div className="dialog-zone">
-        <NormalBotMessage
+        {/* <NormalBotMessage
           content="chgmode"
           isThinking={false}
           isTyping={false}
@@ -128,9 +172,11 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
           isThinking={false}
           isTyping={true}
         />
-        <NormalUserMessage content="我是谁？我从哪里来？我要哪儿去？" />
         <BotModeCtl isFinish={false} />
-        <BotModelCtl isFinish={false} />
+        <BotModelCtl isFinish={false} /> */}
+        {msglist.map((msgprops: WrapMessageProps, index: number) => (
+          <WrapMessage key={index} id={index} {...msgprops} />
+        ))}
       </div>
       <div className="input-zone">
         <TextArea
@@ -147,7 +193,7 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
                 setText((prevText) => prevText + "\n");
               } else {
                 eve.preventDefault();
-                // handleSubmit();
+                handleSubmit();
               }
             }
           }}
@@ -157,7 +203,7 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
           <div
             className="btn"
             onClick={() => {
-              // handleSubmit();
+              handleSubmit();
             }}
           >
             {progressing ? <PauseCircleOutlined /> : <ArrowUpOutlined />}

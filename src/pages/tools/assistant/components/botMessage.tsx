@@ -19,8 +19,14 @@ export interface NormalBotMessageProps {
   onTypingDone?: () => void;
 }
 
-const NormalBotMessage: React.FC<NormalBotMessageProps> = (props) => {
-  const { content, isThinking, isTyping, onTypingDone } = props;
+interface innerProps {
+  id: number;
+}
+
+const NormalBotMessage: React.FC<NormalBotMessageProps & innerProps> = (
+  props
+) => {
+  const { id, content, isThinking, isTyping, onTypingDone } = props;
 
   const [dots, setDots] = useState<string>(".");
   const [rendermsg, setRendermsg] = useState<string>(isTyping ? "" : content);
@@ -74,6 +80,7 @@ const NormalBotMessage: React.FC<NormalBotMessageProps> = (props) => {
       return;
     }
 
+    // todo 控制打字参数直接直接设置
     if (onTypingDone) {
       onTypingDone();
     }
