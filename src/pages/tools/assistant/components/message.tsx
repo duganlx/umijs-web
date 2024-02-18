@@ -17,7 +17,7 @@ export interface SpecialMessageProps {
   modelctlprops?: BotModelCtlProps;
 }
 
-interface MessageProps {
+export interface MessageProps {
   mode: "normal" | "special";
 
   normalprops?: NormalMessageProps;

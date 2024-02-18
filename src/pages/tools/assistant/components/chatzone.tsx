@@ -1,11 +1,13 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "antd";
 import { PauseCircleOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import NormalBotMessage from "./botMessage";
 import NormalUserMessage from "./userMessage";
 import BotModeCtl from "./modeCtl";
 import BotModelCtl from "./modelCtl";
+import { useSelector, useDispatch } from "react-redux";
+import { pushNormalBotMessage } from "../redux/msglistSlice";
 
 const { TextArea } = Input;
 
@@ -14,6 +16,18 @@ interface ChatZoneProps {}
 const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const [text, setText] = useState<string>("");
   const [progressing, setProgressing] = useState<boolean>(false);
+
+  const msglist = useSelector((state: any) => state.msglist.value);
+  const dispatch = useDispatch();
+
+  console.log("chatzone", msglist);
+  useEffect(() => {
+    console.log("--1");
+    dispatch(
+      pushNormalBotMessage({ mode: "normal", normalprops: { role: "bot" } })
+    );
+    dispatch(pushNormalBotMessage({ mode: "special" }));
+  }, []);
 
   const clsname = useEmotionCss(() => {
     return {
