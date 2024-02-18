@@ -1,9 +1,10 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import React, { useEffect, useState } from "react";
-import TimestampConversionView from "./components/timestampConversion";
-import DraftView from "./components/draft";
+import DraftView from "./draft";
 import { debounce } from "lodash";
 import AiAssistantView from "./components/aiassistant";
+import TimestampVertView from "./timestampVert";
+import AssistantView from "./assistant";
 
 interface CardViewProps {
   title: string;
@@ -85,12 +86,15 @@ const ToolsView: React.FC = () => {
       }}
     >
       <CardView title="Timestamp Conversion">
-        <TimestampConversionView />
+        <TimestampVertView />
       </CardView>
       <CardView title="Draft">
         <DraftView />
       </CardView>
       <CardView title="AI Assistant">
+        <AssistantView layoutsize={layoutsize} />
+      </CardView>
+      <CardView title="AI Assistant (old)">
         <AiAssistantView layoutsize={layoutsize} />
       </CardView>
       <CardView title="Jottings">todo</CardView>

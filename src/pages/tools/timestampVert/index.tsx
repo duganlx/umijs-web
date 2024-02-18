@@ -22,7 +22,7 @@ function renderCurTimestamp(tstype: "sec" | "ms", current: dayjs.Dayjs) {
   }
 }
 
-const TimestampConversionView: React.FC = () => {
+const TimestampVertView: React.FC = () => {
   // now
   const [current, setCurrent] = useState<dayjs.Dayjs>(dayjs());
   const [currentctl, setCurrentctl] = useState<boolean>(true);
@@ -230,4 +230,4 @@ const TimestampConversionView: React.FC = () => {
   );
 };
 
-export default TimestampConversionView;
+export default TimestampVertView;
