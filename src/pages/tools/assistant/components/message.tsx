@@ -1,4 +1,5 @@
 import NormalBotMessage, { NormalBotMessageProps } from "./botMessage";
+import InvalidMessage from "./invalidMessage";
 import BotModeCtl, { BotModeCtlProps } from "./modeCtl";
 import BotModelCtl, { BotModelCtlProps } from "./modelCtl";
 import NormalUserMessage, { NormalUserMessageProps } from "./userMessage";
@@ -29,52 +30,52 @@ const WrapMessage: React.FC<WrapMessageProps & { id: number }> = (props) => {
 
   if (mode == "normal") {
     if (normalprops === undefined) {
-      return <></>;
+      return <InvalidMessage />;
     }
 
     const { role, botprops, userprops } = normalprops;
     if (role === "bot") {
       if (botprops === undefined) {
-        return <></>;
+        return <InvalidMessage />;
       }
 
       // 普通的机器人消息
       return <NormalBotMessage {...botprops} id={id} />;
     } else if (role === "user") {
       if (userprops === undefined) {
-        return <></>;
+        return <InvalidMessage />;
       }
 
       // 普通的用户消息
       return <NormalUserMessage {...userprops} />;
     } else {
-      return <></>;
+      return <InvalidMessage />;
     }
   } else if (mode == "special") {
     if (specialprops === undefined) {
-      return <></>;
+      return <InvalidMessage />;
     }
 
     const { cmd, modectlprops, modelctlprops } = specialprops;
     if (cmd === "mode") {
       if (modectlprops === undefined) {
-        return <></>;
+        return <InvalidMessage />;
       }
 
       // 模式切换
       return <BotModeCtl {...modectlprops} />;
     } else if (cmd === "model") {
       if (modelctlprops === undefined) {
-        return <></>;
+        return <InvalidMessage />;
       }
 
       // 模型切换
       return <BotModelCtl {...modelctlprops} />;
     } else {
-      return <></>;
+      return <InvalidMessage />;
     }
   } else {
-    return <></>;
+    return <InvalidMessage />;
   }
 };
 

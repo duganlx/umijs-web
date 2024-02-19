@@ -18,12 +18,43 @@ const msglistSlice = createSlice({
     push: (state, action) => {
       state.value = [...state.value, action.payload];
     },
+    typingDone: (state, action) => {
+      const index = action.payload as number;
+      const prev = state.value[index];
+
+      const { normalprops } = prev;
+      if (normalprops === undefined) return;
+      const { botprops } = normalprops;
+      if (botprops === undefined) return;
+
+      const latest = {
+        ...prev,
+        normalprops: {
+          ...normalprops,
+          botprops: {
+            ...botprops,
+            isTyping: false,
+          },
+        },
+      } as WrapMessageProps;
+
+      const latestMsglist: WrapMessageProps[] = [];
+      state.value.forEach((item, i) => {
+        if (i === index) {
+          latestMsglist.push(latest);
+          return;
+        }
+        latestMsglist.push(item);
+      });
+
+      state.value = latestMsglist;
+    },
   },
 });
 
 export default msglistSlice.reducer;
 
-const { push } = msglistSlice.actions;
+const { push, typingDone } = msglistSlice.actions;
 
 const pushNormalBotMessage = (props: NormalBotMessageProps) => {
   const entity: WrapMessageProps = {
@@ -51,4 +82,12 @@ const pushNormalUserMessage = (content: string) => {
   return push(entity);
 };
 
-export { pushNormalBotMessage, pushNormalUserMessage };
+const typingNormalBotMessageDone = (index: number) => {
+  return typingDone(index);
+};
+
+export {
+  pushNormalBotMessage,
+  pushNormalUserMessage,
+  typingNormalBotMessageDone,
+};

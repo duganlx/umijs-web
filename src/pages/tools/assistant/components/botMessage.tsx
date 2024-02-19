@@ -9,6 +9,8 @@ import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { atomOneLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { useDispatch } from "react-redux";
+import { typingNormalBotMessageDone } from "../redux/msglistSlice";
 
 export interface NormalBotMessageProps {
   content: string;
@@ -30,6 +32,7 @@ const NormalBotMessage: React.FC<NormalBotMessageProps & innerProps> = (
 
   const [dots, setDots] = useState<string>(".");
   const [rendermsg, setRendermsg] = useState<string>(isTyping ? "" : content);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!isThinking) {
@@ -80,7 +83,8 @@ const NormalBotMessage: React.FC<NormalBotMessageProps & innerProps> = (
       return;
     }
 
-    // todo 控制打字参数直接直接设置
+    dispatch(typingNormalBotMessageDone(id));
+
     if (onTypingDone) {
       onTypingDone();
     }

@@ -130,10 +130,10 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
     setProgressing(true);
 
     // todo 访问gpt接口
+    const testcontont =
+      "知人者智，自知者明。胜人者有力，自胜者强。知足者富，强行者有志，不失其所者久，死而不亡者寿。";
 
     // 情况1: 直接显示（历史数据）
-    // const testcontont =
-    //   "知人者智，自知者明。胜人者有力，自胜者强。知足者富，强行者有志，不失其所者久，死而不亡者寿。";
     // dispatch(
     //   pushNormalBotMessage({
     //     content: testcontont,
@@ -152,6 +152,13 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
     // );
 
     // 情况3: 打印输出
+    dispatch(
+      pushNormalBotMessage({
+        content: testcontont,
+        isThinking: false,
+        isTyping: true,
+      })
+    );
 
     setTimeout(() => {
       setProgressing(false);
