@@ -65,6 +65,7 @@ const BotModeCtl: React.FC<BotModeCtlProps & InnerProps> = (props) => {
         width: "39px",
         cursor: "pointer",
         userSelect: "none",
+        display: isChoosing ? "block" : "none",
       },
 
       ".checkbtn:hover": {
@@ -89,6 +90,7 @@ const BotModeCtl: React.FC<BotModeCtlProps & InnerProps> = (props) => {
               onChange={(e: RadioChangeEvent) => {
                 setCheckmode(e.target.value);
               }}
+              disabled={!isChoosing}
             >
               <Space direction="vertical">
                 <Radio value="normal">Normal</Radio>

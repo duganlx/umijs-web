@@ -38,6 +38,7 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
     return {
       border: "1px solid #f0f0f0",
       height: "400px",
+      borderRadius: "3px",
 
       ".dialog-zone": {
         height: "calc(400px - 85px)",
@@ -198,8 +199,6 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   return (
     <div className={clsname}>
       <div className="dialog-zone">
-        {/* <BotModeCtl isFinish={false} />
-        <BotModelCtl isFinish={false} /> */}
         {msglist.map((msgprops: WrapMessageProps, index: number) => (
           <WrapMessage key={index} id={index} {...msgprops} />
         ))}
