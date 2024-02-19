@@ -184,7 +184,7 @@ const DraftView: React.FC<MemorandumViewProps> = (props) => {
             className="opfile"
             onConfirm={() => {
               setActiveContent("");
-              message.success("clear content finished");
+              message.success("clear content successfully");
             }}
             okText="yes"
             cancelText="no"

@@ -22,8 +22,8 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const [text, setText] = useState<string>("");
   const [progressing, setProgressing] = useState<boolean>(false);
 
-  const msglist = useSelector((state: any) => state.msglist.value) as any[];
   const dispatch = useDispatch();
+  const msglist = useSelector((state: any) => state.msglist.value) as any[];
 
   console.log("chatzone", msglist);
   // useEffect(() => {

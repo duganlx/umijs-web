@@ -199,8 +199,9 @@ const msglistSlice = createSlice({
 
 export default msglistSlice.reducer;
 
-const { push, typingDone, thinkingDone, choosingDone, cmdBotDone } =
-  msglistSlice.actions;
+const clearMsglist = () => {
+  return msglistSlice.actions.clear();
+};
 
 const pushNormalUserMessage = (props: NormalUserMessageProps) => {
   const entity: WrapMessageProps = {
@@ -211,7 +212,7 @@ const pushNormalUserMessage = (props: NormalUserMessageProps) => {
     },
   };
 
-  return push(entity);
+  return msglistSlice.actions.push(entity);
 };
 
 const pushNormalBotMessage = (props: NormalBotMessageProps) => {
@@ -223,16 +224,16 @@ const pushNormalBotMessage = (props: NormalBotMessageProps) => {
     },
   };
 
-  return push(entity);
+  return msglistSlice.actions.push(entity);
 };
 
 const typingNormalBotMessageDone = (index: number) => {
-  return typingDone(index);
+  return msglistSlice.actions.typingDone(index);
 };
 
 // 前提: 思考的信息有且仅有一个，并且必定是数组中的最后一个元素
 const thinkingNormalBotMessageDone = (content: string) => {
-  return thinkingDone(content);
+  return msglistSlice.actions.thinkingDone(content);
 };
 
 const pushBotModeCtlMessage = (props: BotModeCtlProps) => {
@@ -244,18 +245,18 @@ const pushBotModeCtlMessage = (props: BotModeCtlProps) => {
     },
   };
 
-  return push(entity);
+  return msglistSlice.actions.push(entity);
 };
 
 const choosingBotModeCtlMessageDone = (index: number, choice: string) => {
   const payload = { index, choice, cmd: CMD_BotModeCtl };
 
-  return choosingDone(payload);
+  return msglistSlice.actions.choosingDone(payload);
 };
 
 const typingBotModeCtlMessageDone = (index: number) => {
   const payload = { index, cmd: CMD_BotModeCtl };
-  return cmdBotDone(payload);
+  return msglistSlice.actions.cmdBotDone(payload);
 };
 
 const pushBotModelCtlMessage = (props: BotModelCtlProps) => {
@@ -267,21 +268,22 @@ const pushBotModelCtlMessage = (props: BotModelCtlProps) => {
     },
   };
 
-  return push(entity);
+  return msglistSlice.actions.push(entity);
 };
 
 const choosingBotModelCtlMessageDone = (index: number, choice: string) => {
   const payload = { index, choice, cmd: CMD_BotModelCtl };
 
-  return choosingDone(payload);
+  return msglistSlice.actions.choosingDone(payload);
 };
 
 const typingBotModelCtlMessageDone = (index: number) => {
   const payload = { index, cmd: CMD_BotModelCtl };
-  return cmdBotDone(payload);
+  return msglistSlice.actions.cmdBotDone(payload);
 };
 
 export {
+  clearMsglist,
   // normalUserMessage
   pushNormalUserMessage,
   // normalBotMessage

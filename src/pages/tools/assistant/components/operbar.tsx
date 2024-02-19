@@ -1,10 +1,11 @@
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
-import { Tooltip } from "antd";
+import { Popconfirm, Tooltip, message } from "antd";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CMD_BotModeCtl } from "./modeCtl";
 import { CMD_BotModelCtl } from "./modelCtl";
+import { clearMsglist } from "../redux/msglistSlice";
 
 interface OperbarProps {}
 
@@ -12,6 +13,7 @@ const Operbar: React.FC<OperbarProps> = (props) => {
   const [fullscreen, setFullscreen] = useState<boolean>(false);
   const [scrollbottomSign, setScrollbottomSign] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
   const botmode = useSelector((state: any) => state.botmode.value) as string;
   const botmodel = useSelector((state: any) => state.botmodel.value) as string;
   const isInvalid = botmodel === "none";
@@ -68,6 +70,18 @@ const Operbar: React.FC<OperbarProps> = (props) => {
     <div className={clsname}>
       <div className="title">opers:</div>
 
+      <Popconfirm
+        title={`Is clear chat history?`}
+        className="opitem"
+        onConfirm={() => {
+          dispatch(clearMsglist());
+          message.success("clear chat history successfully");
+        }}
+        okText="yes"
+        cancelText="no"
+      >
+        clear
+      </Popconfirm>
       <div
         className="opitem"
         onClick={() => {
