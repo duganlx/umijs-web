@@ -1,14 +1,39 @@
-import { RobotOutlined, SmileOutlined } from "@ant-design/icons";
+import { RobotOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import NormalUserMessage from "./userMessage";
 import { Radio, RadioChangeEvent, Space } from "antd";
 import NormalBotMessage from "./botMessage";
+import { InnerProps } from "./message";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  choosingBotModeCtlMessageDone,
+  typingBotModeCtlMessageDone,
+} from "../redux/msglistSlice";
+import { updateBotmode } from "../redux/botmodeSlice";
+
+export const CMD_BotModeCtl = "chgmode";
 
 export interface BotModeCtlProps {
-  isFinish: boolean;
+  choice: "" | "normal" | "translator" | "webdeveloper";
+
+  isChoosing: boolean;
+  isDone: boolean;
 }
 
-const BotModeCtl: React.FC<BotModeCtlProps> = (props) => {
+const BotModeCtl: React.FC<BotModeCtlProps & InnerProps> = (props) => {
+  const { id, choice, isChoosing, isDone } = props;
+  const botmode = useSelector((state: any) => state.botmode.value) as string;
+  const dispatch = useDispatch();
+
+  const [checkmode, setCheckmode] = useState<string>(choice);
+
+  useEffect(() => {
+    if (choice == "") {
+      setCheckmode(botmode);
+    }
+  }, [choice]);
+
   const clsname = useEmotionCss(() => {
     return {
       display: "flex",
@@ -50,7 +75,7 @@ const BotModeCtl: React.FC<BotModeCtlProps> = (props) => {
 
   return (
     <>
-      <NormalUserMessage content={"chgmode"} />
+      <NormalUserMessage content={CMD_BotModeCtl} />
 
       <div className={clsname}>
         <div className="avater">
@@ -60,8 +85,9 @@ const BotModeCtl: React.FC<BotModeCtlProps> = (props) => {
           <p>The modes that AI Assistant has are as follows:</p>
           <div className="radio-zone">
             <Radio.Group
+              value={checkmode}
               onChange={(e: RadioChangeEvent) => {
-                console.log(e.target.value);
+                setCheckmode(e.target.value);
               }}
             >
               <Space direction="vertical">
@@ -74,7 +100,8 @@ const BotModeCtl: React.FC<BotModeCtlProps> = (props) => {
           <div
             className="checkbtn"
             onClick={() => {
-              console.log("--x");
+              dispatch(choosingBotModeCtlMessageDone(id, checkmode));
+              dispatch(updateBotmode(checkmode));
             }}
           >
             Check
@@ -82,11 +109,17 @@ const BotModeCtl: React.FC<BotModeCtlProps> = (props) => {
         </div>
       </div>
 
-      <NormalBotMessage
-        content="Ok, The mode switch is successful."
-        isThinking={false}
-        isTyping={true}
-      />
+      {isChoosing ? null : (
+        <NormalBotMessage
+          id={id}
+          content="Ok, The mode switch is successful."
+          isThinking={false}
+          isTyping={!isDone}
+          onTypingDone={() => {
+            dispatch(typingBotModeCtlMessageDone(id));
+          }}
+        />
+      )}
     </>
   );
 };

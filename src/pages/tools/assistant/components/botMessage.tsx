@@ -11,6 +11,7 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 import { atomOneLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { useDispatch } from "react-redux";
 import { typingNormalBotMessageDone } from "../redux/msglistSlice";
+import { InnerProps } from "./message";
 
 export interface NormalBotMessageProps {
   content: string;
@@ -21,11 +22,7 @@ export interface NormalBotMessageProps {
   onTypingDone?: () => void;
 }
 
-interface innerProps {
-  id: number;
-}
-
-const NormalBotMessage: React.FC<NormalBotMessageProps & innerProps> = (
+const NormalBotMessage: React.FC<NormalBotMessageProps & InnerProps> = (
   props
 ) => {
   const { id, content, isThinking, isTyping, onTypingDone } = props;

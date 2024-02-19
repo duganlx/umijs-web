@@ -3,12 +3,37 @@ import NormalUserMessage from "./userMessage";
 import { RobotOutlined } from "@ant-design/icons";
 import { Radio, RadioChangeEvent, Space } from "antd";
 import NormalBotMessage from "./botMessage";
+import { InnerProps } from "./message";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import {
+  choosingBotModelCtlMessageDone,
+  typingBotModelCtlMessageDone,
+} from "../redux/msglistSlice";
+import { updateBotmodel } from "../redux/botmodelSlice";
+
+export const CMD_BotModelCtl = "chgmodel";
 
 export interface BotModelCtlProps {
-  isFinish: boolean;
+  choice: "" | "eamGpt35" | "eamGpt40";
+
+  isChoosing: boolean;
+  isDone: boolean;
 }
 
-const BotModelCtl: React.FC<BotModelCtlProps> = (props) => {
+const BotModelCtl: React.FC<BotModelCtlProps & InnerProps> = (props) => {
+  const { id, choice, isChoosing, isDone } = props;
+  const botmodel = useSelector((state: any) => state.botmodel.value) as string;
+  const dispatch = useDispatch();
+
+  const [checkmodel, setCheckmodel] = useState<string>(choice);
+
+  useEffect(() => {
+    if (choice == "") {
+      setCheckmodel(botmodel);
+    }
+  }, [choice]);
+
   const clsname = useEmotionCss(() => {
     return {
       display: "flex",
@@ -50,7 +75,7 @@ const BotModelCtl: React.FC<BotModelCtlProps> = (props) => {
 
   return (
     <>
-      <NormalUserMessage content={"chgmodel"} />
+      <NormalUserMessage content={CMD_BotModelCtl} />
 
       <div className={clsname}>
         <div className="avater">
@@ -60,20 +85,23 @@ const BotModelCtl: React.FC<BotModelCtlProps> = (props) => {
           <p>The modes that AI Assistant has are as follows:</p>
           <div className="radio-zone">
             <Radio.Group
+              value={checkmodel}
               onChange={(e: RadioChangeEvent) => {
-                console.log(e.target.value);
+                setCheckmodel(e.target.value);
               }}
             >
               <Space direction="vertical">
-                <Radio value="eam_gpt3.5">EAM GPT-3.5</Radio>
-                <Radio value="eam_gpt4.0">EAM GPT-4.0</Radio>
+                <Radio value="none">None</Radio>
+                <Radio value="eamGpt35">EAM GPT-3.5</Radio>
+                <Radio value="eamGpt40">EAM GPT-4.0</Radio>
               </Space>
             </Radio.Group>
           </div>
           <div
             className="checkbtn"
             onClick={() => {
-              console.log("--x");
+              dispatch(choosingBotModelCtlMessageDone(id, checkmodel));
+              dispatch(updateBotmodel(checkmodel));
             }}
           >
             Check
@@ -81,11 +109,17 @@ const BotModelCtl: React.FC<BotModelCtlProps> = (props) => {
         </div>
       </div>
 
-      <NormalBotMessage
-        content="Ok, The model switch is successful."
-        isThinking={false}
-        isTyping={true}
-      />
+      {isChoosing ? null : (
+        <NormalBotMessage
+          id={id}
+          content="Ok, The model switch is successful."
+          isThinking={false}
+          isTyping={!isDone}
+          onTypingDone={() => {
+            dispatch(typingBotModelCtlMessageDone(id));
+          }}
+        />
+      )}
     </>
   );
 };

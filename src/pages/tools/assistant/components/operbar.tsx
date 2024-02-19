@@ -10,15 +10,10 @@ const Operbar: React.FC<OperbarProps> = (props) => {
   const [fullscreen, setFullscreen] = useState<boolean>(false);
   const [scrollbottomSign, setScrollbottomSign] = useState<boolean>(false);
 
-  // const count = useSelector((state) => state.counter.value);
   // const dispatch = useDispatch();
-
-  // console.log("operbar", count);
-
-  const msglist = useSelector((state: any) => state.msglist.value);
+  // const msglist = useSelector((state: any) => state.msglist.value);
   // const dispatch = useDispatch();
-
-  console.log("operbar", msglist);
+  // console.log("operbar", msglist);
 
   const clsname = useEmotionCss(() => {
     return {

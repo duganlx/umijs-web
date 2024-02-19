@@ -25,7 +25,11 @@ export interface WrapMessageProps {
   specialprops?: SpecialMessageProps;
 }
 
-const WrapMessage: React.FC<WrapMessageProps & { id: number }> = (props) => {
+export interface InnerProps {
+  id: number;
+}
+
+const WrapMessage: React.FC<WrapMessageProps & InnerProps> = (props) => {
   const { mode, normalprops, specialprops, id } = props;
 
   if (mode == "normal") {
@@ -63,14 +67,14 @@ const WrapMessage: React.FC<WrapMessageProps & { id: number }> = (props) => {
       }
 
       // 模式切换
-      return <BotModeCtl {...modectlprops} />;
+      return <BotModeCtl {...modectlprops} id={id} />;
     } else if (cmd === "model") {
       if (modelctlprops === undefined) {
         return <InvalidMessage />;
       }
 
       // 模型切换
-      return <BotModelCtl {...modelctlprops} />;
+      return <BotModelCtl {...modelctlprops} id={id} />;
     } else {
       return <InvalidMessage />;
     }

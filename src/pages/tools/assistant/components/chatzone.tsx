@@ -4,10 +4,15 @@ import { Input } from "antd";
 import { PauseCircleOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
 import {
+  pushBotModeCtlMessage,
+  pushBotModelCtlMessage,
   pushNormalBotMessage,
   pushNormalUserMessage,
+  thinkingNormalBotMessageDone,
 } from "../redux/msglistSlice";
 import WrapMessage, { WrapMessageProps } from "./message";
+import { CMD_BotModeCtl } from "./modeCtl";
+import { CMD_BotModelCtl } from "./modelCtl";
 
 const { TextArea } = Input;
 
@@ -120,66 +125,80 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
     }
 
     const askquestion = text.trim();
-
-    // todo 判断是否为特殊指令
-
-    // 普通问题
-    dispatch(pushNormalUserMessage(askquestion));
-
     setText("");
     setProgressing(true);
 
-    // todo 访问gpt接口
-    const testcontont =
-      "知人者智，自知者明。胜人者有力，自胜者强。知足者富，强行者有志，不失其所者久，死而不亡者寿。";
+    if (askquestion === CMD_BotModeCtl) {
+      dispatch(
+        pushBotModeCtlMessage({
+          choice: "",
+          isChoosing: true,
+          isDone: false,
+        })
+      );
 
-    // 情况1: 直接显示（历史数据）
-    // dispatch(
-    //   pushNormalBotMessage({
-    //     content: testcontont,
-    //     isThinking: false,
-    //     isTyping: false,
-    //   })
-    // );
-
-    // 情况2: 思考中
-    // dispatch(
-    //   pushNormalBotMessage({
-    //     content: "",
-    //     isThinking: true,
-    //     isTyping: false,
-    //   })
-    // );
-
-    // 情况3: 打印输出
-    dispatch(
-      pushNormalBotMessage({
-        content: testcontont,
-        isThinking: false,
-        isTyping: true,
-      })
-    );
-
-    setTimeout(() => {
       setProgressing(false);
-    }, 2000);
+    } else if (askquestion === CMD_BotModelCtl) {
+      dispatch(
+        pushBotModelCtlMessage({
+          choice: "",
+          isChoosing: true,
+          isDone: false,
+        })
+      );
+
+      setProgressing(false);
+    } else {
+      // 普通问题
+      dispatch(pushNormalUserMessage({ content: askquestion }));
+
+      // todo 访问gpt接口
+      // const testcontont =
+      //   "知人者智，自知者明。胜人者有力，自胜者强。知足者富，强行者有志，不失其所者久，死而不亡者寿。";
+
+      // 情况1: 直接显示（历史数据）
+      // dispatch(
+      //   pushNormalBotMessage({
+      //     content: testcontont,
+      //     isThinking: false,
+      //     isTyping: false,
+      //   })
+      // );
+
+      // 情况2: 思考中 -> 思考完成
+      // 说明：必须保证思考过程中不允许输入新内容（合理需求）
+      // == begin ==
+      // dispatch(
+      //   pushNormalBotMessage({
+      //     content: "",
+      //     isThinking: true,
+      //     isTyping: false,
+      //   })
+      // );
+      // setTimeout(() => {
+      //   dispatch(thinkingNormalBotMessageDone(testcontont));
+      // }, 1500);
+      // == end ==
+
+      // 情况3: 打印输出
+      // dispatch(
+      //   pushNormalBotMessage({
+      //     content: testcontont,
+      //     isThinking: false,
+      //     isTyping: true,
+      //   })
+      // );
+
+      setTimeout(() => {
+        setProgressing(false);
+      }, 2500);
+    }
   };
 
   return (
     <div className={clsname}>
       <div className="dialog-zone">
-        {/* <NormalBotMessage
-          content="chgmode"
-          isThinking={false}
-          isTyping={false}
-        />
-        <NormalBotMessage content="" isThinking={true} isTyping={false} />
-        <NormalBotMessage
-          content="知人者智，自知者明。胜人者有力，自胜者强。知足者富，强行者有志，不失其所者久，死而不亡者寿。"
-          isThinking={false}
-          isTyping={true}
-        />
-        <BotModeCtl isFinish={false} />
+        {/* <BotModeCtl isFinish={false} />
         <BotModelCtl isFinish={false} /> */}
         {msglist.map((msgprops: WrapMessageProps, index: number) => (
           <WrapMessage key={index} id={index} {...msgprops} />
