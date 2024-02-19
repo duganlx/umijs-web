@@ -13,6 +13,7 @@ import {
 import WrapMessage, { WrapMessageProps } from "./message";
 import { CMD_BotModeCtl } from "./modeCtl";
 import { CMD_BotModelCtl } from "./modelCtl";
+import { generateFixBotAnswer } from "./botMessage";
 
 const { TextArea } = Input;
 
@@ -26,13 +27,19 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const msglist = useSelector((state: any) => state.msglist.value) as any[];
 
   console.log("chatzone", msglist);
-  // useEffect(() => {
-  //   console.log("--1");
-  //   dispatch(
-  //     pushNormalBotMessage({ mode: "normal", normalprops: { role: "bot" } })
-  //   );
-  //   dispatch(pushNormalBotMessage({ mode: "special" }));
-  // }, []);
+  useEffect(() => {
+    // 欢迎信息
+    const welcome = `
+Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
+For now, no matter what you ask, the AI assistant will only recite to you the content of a certain chapter of the Tao Te Ching. Have fun using it. ^_^`;
+    dispatch(
+      pushNormalBotMessage({
+        content: welcome,
+        isThinking: false,
+        isTyping: true,
+      })
+    );
+  }, []);
 
   const clsname = useEmotionCss(() => {
     return {
@@ -154,45 +161,14 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
       dispatch(pushNormalUserMessage({ content: askquestion }));
 
       // todo 访问gpt接口
-      // const testcontont =
-      //   "知人者智，自知者明。胜人者有力，自胜者强。知足者富，强行者有志，不失其所者久，死而不亡者寿。";
-
-      // 情况1: 直接显示（历史数据）
-      // dispatch(
-      //   pushNormalBotMessage({
-      //     content: testcontont,
-      //     isThinking: false,
-      //     isTyping: false,
-      //   })
-      // );
-
-      // 情况2: 思考中 -> 思考完成
-      // 说明：必须保证思考过程中不允许输入新内容（合理需求）
-      // == begin ==
-      // dispatch(
-      //   pushNormalBotMessage({
-      //     content: "",
-      //     isThinking: true,
-      //     isTyping: false,
-      //   })
-      // );
-      // setTimeout(() => {
-      //   dispatch(thinkingNormalBotMessageDone(testcontont));
-      // }, 1500);
-      // == end ==
-
-      // 情况3: 打印输出
-      // dispatch(
-      //   pushNormalBotMessage({
-      //     content: testcontont,
-      //     isThinking: false,
-      //     isTyping: true,
-      //   })
-      // );
+      dispatch(
+        pushNormalBotMessage({ content: "", isThinking: true, isTyping: false })
+      );
 
       setTimeout(() => {
+        dispatch(generateFixBotAnswer());
         setProgressing(false);
-      }, 2500);
+      }, 1500);
     }
   };
 

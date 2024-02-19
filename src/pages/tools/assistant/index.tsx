@@ -4,12 +4,15 @@ import ChatZone from "./components/chatzone";
 import { useSelector, useDispatch } from "react-redux";
 import store from "./store";
 import { Provider } from "react-redux";
+import { useState } from "react";
 
 interface AssistantViewProps {
   layoutsize: [number, number];
 }
 
 const AssistantView: React.FC<AssistantViewProps> = (props) => {
+  const [fullscreen, setFullscreen] = useState<boolean>(false);
+
   const clsname = useEmotionCss(() => {
     return {
       display: "flex",
@@ -21,7 +24,7 @@ const AssistantView: React.FC<AssistantViewProps> = (props) => {
   return (
     <Provider store={store}>
       <div className={clsname}>
-        <Operbar />
+        <Operbar setFullscreen={setFullscreen} />
         <ChatZone />
       </div>
     </Provider>
