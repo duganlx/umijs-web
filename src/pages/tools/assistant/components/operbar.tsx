@@ -8,12 +8,11 @@ import { CMD_BotModelCtl } from "./modelCtl";
 import { clearMsglist } from "../redux/msglistSlice";
 
 interface OperbarProps {
-  setFullscreen: (dta: boolean) => void;
+  setFullscreen?: (dta: boolean) => void;
 }
 
 const Operbar: React.FC<OperbarProps> = (props) => {
   const { setFullscreen } = props;
-  // const [scrollbottomSign, setScrollbottomSign] = useState<boolean>(false);
 
   const dispatch = useDispatch();
   const botmode = useSelector((state: any) => state.botmode.value) as string;
@@ -84,15 +83,16 @@ const Operbar: React.FC<OperbarProps> = (props) => {
       >
         clear
       </Popconfirm>
-      <div
-        className="opitem"
-        onClick={() => {
-          setFullscreen(true);
-          // setScrollbottomSign(!scrollbottomSign);
-        }}
-      >
-        full-screen
-      </div>
+      {setFullscreen === undefined ? null : (
+        <div
+          className="opitem"
+          onClick={() => {
+            setFullscreen(true);
+          }}
+        >
+          full-screen
+        </div>
+      )}
       <div className="status">
         <div className="title">
           status

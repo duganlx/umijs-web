@@ -20,9 +20,13 @@ const welcome = `
 Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
 For now, no matter what you ask, the AI assistant will only recite to you the content of a certain chapter of the Tao Te Ching. Have fun using it. ^_^`;
 
-interface ChatZoneProps {}
+interface ChatZoneProps {
+  isFullscreen: boolean;
+}
 
 const ChatZone: React.FC<ChatZoneProps> = (props) => {
+  const { isFullscreen } = props;
+
   const [text, setText] = useState<string>("");
   const dispatch = useDispatch();
   const msglist = useSelector((state: any) => state.msglist.value) as any[];
@@ -34,6 +38,10 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
 
   console.log("chatzone", msglist);
   useEffect(() => {
+    if (isFullscreen) {
+      return;
+    }
+
     // 欢迎信息
     dispatch(
       pushNormalBotMessage({
@@ -58,11 +66,11 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const clsname = useEmotionCss(() => {
     return {
       border: "1px solid #f0f0f0",
-      height: "400px",
+      height: isFullscreen ? "calc(100% - 25px)" : "400px",
       borderRadius: "3px",
 
       ".dialog-zone": {
-        height: "calc(400px - 85px)",
+        height: isFullscreen ? "calc(100% - 85px)" : "calc(400px - 85px)",
         padding: "5px 13px",
         overflow: "auto",
         marginBottom: "5px",
