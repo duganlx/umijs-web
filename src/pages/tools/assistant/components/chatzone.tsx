@@ -37,9 +37,9 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const dialogzoneRef = useRef<HTMLDivElement>(null);
   const inputzoneRef = useRef<HTMLDivElement>(null);
 
-  console.log("chatzone", msglist);
+  // console.log("chatzone", msglist);
   useEffect(() => {
-    if (isFullscreen) {
+    if (isFullscreen || msglist.length > 0) {
       return;
     }
 
@@ -51,7 +51,9 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
         isTyping: true,
       })
     );
+  }, []);
 
+  useEffect(() => {
     if (!inputzoneRef.current) {
       return;
     }
