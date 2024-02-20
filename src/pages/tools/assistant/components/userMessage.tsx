@@ -1,5 +1,6 @@
 import { SmileOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
+import { useDispatch } from "react-redux";
 
 export interface NormalUserMessageProps {
   content: string;

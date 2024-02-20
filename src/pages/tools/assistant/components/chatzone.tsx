@@ -1,5 +1,5 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "antd";
 import { PauseCircleOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
@@ -8,30 +8,33 @@ import {
   pushBotModelCtlMessage,
   pushNormalBotMessage,
   pushNormalUserMessage,
-  thinkingNormalBotMessageDone,
 } from "../redux/msglistSlice";
 import WrapMessage, { WrapMessageProps } from "./message";
 import { CMD_BotModeCtl } from "./modeCtl";
 import { CMD_BotModelCtl } from "./modelCtl";
 import { generateFixBotAnswer } from "./botMessage";
+import { triggerScrollbottomSign } from "../redux/scrollbottomSlice";
 
 const { TextArea } = Input;
+const welcome = `
+Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
+For now, no matter what you ask, the AI assistant will only recite to you the content of a certain chapter of the Tao Te Ching. Have fun using it. ^_^`;
 
 interface ChatZoneProps {}
 
 const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const [text, setText] = useState<string>("");
-  const [progressing, setProgressing] = useState<boolean>(false);
-
   const dispatch = useDispatch();
   const msglist = useSelector((state: any) => state.msglist.value) as any[];
+  const scrollbottom = useSelector((state: any) => state.scrollbottom.value);
+
+  const [progressing, setProgressing] = useState<boolean>(false);
+
+  const dialogzoneRef = useRef<HTMLDivElement>(null);
 
   console.log("chatzone", msglist);
   useEffect(() => {
     // 欢迎信息
-    const welcome = `
-Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
-For now, no matter what you ask, the AI assistant will only recite to you the content of a certain chapter of the Tao Te Ching. Have fun using it. ^_^`;
     dispatch(
       pushNormalBotMessage({
         content: welcome,
@@ -40,6 +43,17 @@ For now, no matter what you ask, the AI assistant will only recite to you the co
       })
     );
   }, []);
+
+  useEffect(() => {
+    if (!dialogzoneRef.current) {
+      return;
+    }
+
+    dialogzoneRef.current.scroll({
+      top: dialogzoneRef.current.scrollHeight,
+      behavior: "instant",
+    });
+  }, [scrollbottom]);
 
   const clsname = useEmotionCss(() => {
     return {
@@ -170,11 +184,13 @@ For now, no matter what you ask, the AI assistant will only recite to you the co
         setProgressing(false);
       }, 1500);
     }
+
+    dispatch(triggerScrollbottomSign());
   };
 
   return (
     <div className={clsname}>
-      <div className="dialog-zone">
+      <div ref={dialogzoneRef} className="dialog-zone">
         {msglist.map((msgprops: WrapMessageProps, index: number) => (
           <WrapMessage key={index} id={index} {...msgprops} />
         ))}
