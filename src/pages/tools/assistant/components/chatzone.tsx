@@ -33,10 +33,12 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const scrollbottom = useSelector((state: any) => state.scrollbottom.value);
 
   const [progressing, setProgressing] = useState<boolean>(false);
-
+  const [inputzoneHeight, setInputzoneHeight] = useState<number>(36);
   const dialogzoneRef = useRef<HTMLDivElement>(null);
+  const inputzoneRef = useRef<HTMLDivElement>(null);
 
-  console.log("chatzone", msglist);
+  // console.log("chatzone", msglist);
+  console.log(inputzoneHeight);
   useEffect(() => {
     if (isFullscreen) {
       return;
@@ -50,6 +52,24 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
         isTyping: true,
       })
     );
+
+    if (!inputzoneRef.current) {
+      return;
+    }
+
+    // 监听输入框高度变化
+    const resizeObserver = new ResizeObserver(() => {
+      if (!inputzoneRef.current) {
+        return;
+      }
+
+      const curZHeight = inputzoneRef.current.offsetHeight;
+      setInputzoneHeight(curZHeight);
+    });
+    resizeObserver.observe(inputzoneRef.current);
+    return () => {
+      resizeObserver.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -70,7 +90,9 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
       borderRadius: "3px",
 
       ".dialog-zone": {
-        height: isFullscreen ? "calc(100% - 85px)" : "calc(400px - 85px)",
+        height: isFullscreen
+          ? "calc(100% - 85px)"
+          : `calc(400px - 9px - ${inputzoneHeight}px)`,
         padding: "5px 13px",
         overflow: "auto",
         marginBottom: "5px",
@@ -86,6 +108,68 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
       },
 
       ".input-zone": {
+        display: "flex",
+        flexDirection: "row",
+        position: "relative",
+        border: "1px solid #d9d9d9",
+        borderRadius: "6px",
+        padding: "2px 0 2px",
+        margin: "0 5px",
+
+        textarea: {
+          "&::-webkit-scrollbar": {
+            width: "5px",
+            backgroundColor: "white",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#d9d9d9",
+            borderRadius: "5px",
+          },
+        },
+
+        "textarea:focus": {
+          boxShadow: "none",
+        },
+
+        ".btn-zone": {
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          marginLeft: "6px",
+          marginRight: "2px",
+
+          ".btn": {
+            width: "30px",
+            height: "30px",
+            borderRadius: "6px",
+            color: progressing ? "black" : "white",
+            backgroundColor: progressing ? "white" : "black",
+            fontSize: "18px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          },
+
+          ".btn:hover": {
+            cursor: progressing ? "not-allowed" : "pointer",
+          },
+
+          ".progressingbtn": {
+            width: "30px",
+            height: "30px",
+            borderRadius: "6px",
+            color: "white",
+            backgroundColor: "black",
+            fontSize: "18px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          },
+        },
+      },
+
+      ".input-zone-fullscreen": {
         display: "flex",
         flexDirection: "row",
         position: "relative",
@@ -115,7 +199,7 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
           justifyContent: "flex-end",
           marginLeft: "6px",
           marginRight: "5px",
-          marginBottom: "5px",
+          marginBottom: "1px",
 
           ".btn": {
             width: "30px",
@@ -203,38 +287,73 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
           <WrapMessage key={index} id={index} {...msgprops} />
         ))}
       </div>
-      <div className="input-zone">
-        <TextArea
-          rows={3}
-          value={text}
-          style={{
-            border: 0,
-            resize: "none",
-          }}
-          onChange={(eve) => setText(eve.target.value)}
-          onKeyDown={(eve) => {
-            if (eve.key === "Enter") {
-              if (eve.ctrlKey) {
-                setText((prevText) => prevText + "\n");
-              } else {
-                eve.preventDefault();
-                handleSubmit();
-              }
-            }
-          }}
-          disabled={progressing}
-        />
-        <div className="btn-zone">
-          <div
-            className="btn"
-            onClick={() => {
-              handleSubmit();
+      {isFullscreen ? (
+        <div className="input-zone-fullscreen">
+          <TextArea
+            rows={3}
+            value={text}
+            style={{
+              border: 0,
+              resize: "none",
             }}
-          >
-            {progressing ? <PauseCircleOutlined /> : <ArrowUpOutlined />}
+            onChange={(eve) => setText(eve.target.value)}
+            onKeyDown={(eve) => {
+              if (eve.key === "Enter") {
+                if (eve.ctrlKey) {
+                  setText((prevText) => prevText + "\n");
+                } else {
+                  eve.preventDefault();
+                  handleSubmit();
+                }
+              }
+            }}
+            disabled={progressing}
+          />
+          <div className="btn-zone">
+            <div
+              className="btn"
+              onClick={() => {
+                handleSubmit();
+              }}
+            >
+              {progressing ? <PauseCircleOutlined /> : <ArrowUpOutlined />}
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="input-zone" ref={inputzoneRef}>
+          <TextArea
+            autoSize={{ minRows: 1, maxRows: 3 }}
+            value={text}
+            style={{
+              border: 0,
+              resize: "none",
+            }}
+            onChange={(eve) => setText(eve.target.value)}
+            onKeyDown={(eve) => {
+              if (eve.key === "Enter") {
+                if (eve.ctrlKey) {
+                  setText((prevText) => prevText + "\n");
+                } else {
+                  eve.preventDefault();
+                  handleSubmit();
+                }
+              }
+            }}
+            disabled={progressing}
+          />
+          <div className="btn-zone">
+            <div
+              className="btn"
+              onClick={() => {
+                handleSubmit();
+              }}
+            >
+              {progressing ? <PauseCircleOutlined /> : <ArrowUpOutlined />}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
