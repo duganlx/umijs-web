@@ -37,8 +37,7 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const dialogzoneRef = useRef<HTMLDivElement>(null);
   const inputzoneRef = useRef<HTMLDivElement>(null);
 
-  // console.log("chatzone", msglist);
-  console.log(inputzoneHeight);
+  console.log("chatzone", msglist);
   useEffect(() => {
     if (isFullscreen) {
       return;

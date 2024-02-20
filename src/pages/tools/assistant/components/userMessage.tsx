@@ -40,7 +40,9 @@ const NormalUserMessage: React.FC<NormalUserMessageProps> = (props) => {
       <div className="avater">
         <SmileOutlined />
       </div>
-      <div className="dialog-content">{content}</div>
+      <div className="dialog-content">
+        <pre>{content}</pre>
+      </div>
     </div>
   );
 };
