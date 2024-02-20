@@ -13,9 +13,10 @@ import {
 import { updateBotmodel } from "../redux/botmodelSlice";
 
 export const CMD_BotModelCtl = "chgmodel";
+export const OPT_EAMGPT = "eamGpt";
 
 export interface BotModelCtlProps {
-  choice: "" | "eamGpt35" | "eamGpt40";
+  choice: "" | "eamGpt";
 
   isChoosing: boolean;
   isDone: boolean;
@@ -94,8 +95,7 @@ const BotModelCtl: React.FC<BotModelCtlProps & InnerProps> = (props) => {
             >
               <Space direction="vertical">
                 <Radio value="none">None</Radio>
-                <Radio value="eamGpt35">EAM GPT-3.5</Radio>
-                <Radio value="eamGpt40">EAM GPT-4.0</Radio>
+                <Radio value="eamGpt">EAM GPT</Radio>
               </Space>
             </Radio.Group>
           </div>

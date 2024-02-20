@@ -1,38 +1,23 @@
 import request from "./request";
 import { CMDReply } from "./utils";
 
-export function ListChat(
-  params?: ListChatRequest
-): Promise<CMDReply<ListChatReply>> {
-  return request(`/api/openai/v1/chat/msgs`, {
-    method: "POST",
-    data: params || {},
-  });
-}
+export async function AskGPT(question: string) {
+  const params: AskGPTRequest = {
+    msg: question,
+    agentId: "AskGPT",
+    model: "gpt-4-1106-preview",
+  };
 
-export function SendChatMsg(
-  params: SendChatRequest
-): Promise<CMDReply<SendChatReply>> {
-  return request(`/api/openai/v1/chat/send`, {
+  const reply = await request(`/eam/api/openai/v1/chat/send`, {
     method: "POST",
     data: params,
   });
-}
 
-export interface ChatMsg {
-  id: number;
-  userId: number | string;
-  msg: string;
-  model: string;
-  prev: number;
-  reply: string;
-  promptToken: number;
-  completionToken: number;
-  totalToken: number;
-  createdAt: string;
-  updatedAt: string;
-  answer: string;
-  question: string;
+  if (reply.code !== 0 || reply.data.msg.len) {
+    return "Sorry, GPT exception";
+  }
+
+  return reply.data.msg;
 }
 
 export interface HistoryMessage {
@@ -40,7 +25,7 @@ export interface HistoryMessage {
   answer: string; // 回答
 }
 
-export interface SendChatRequest {
+export interface AskGPTRequest {
   msg: string; //请求消息
   agentId: string;
   model?: string; //openai 的模型 可选
@@ -55,26 +40,10 @@ export interface SendChatRequest {
   n?: number;
 }
 
-export interface SendChatReply {
+export interface AskGPTReply {
   msg: string; //回复消息
   promptTokens: number;
   completionTokens: number;
   totalTokens: number;
   finishReason: string;
-}
-
-export interface ListChatRequest {
-  pageSize?: number;
-  pageNum?: number;
-  startTime?: number; // 开始时间戳
-  endTime?: number; // 结束时间戳
-  userId?: number | string;
-  agentId: string[];
-}
-
-export interface ListChatReply {
-  pageSize?: number;
-  pageNum?: number;
-  result: ChatMsg[];
-  total: number;
 }

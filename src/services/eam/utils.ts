@@ -4,7 +4,10 @@ export interface CMDReply<DataType> {
   data: DataType;
 }
 
+export const setAccessToken = (token: string) => {
+  localStorage.setItem("access_token", token);
+};
+
 export const getAccessToken = () => {
-  // return localStorage.getItem("access_token");
-  return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJqaGxfcXVhbnR3ZWIiLCJleHAiOjE3MDUzMDI0NTcsInN1YiI6IjE1NTk3MzA4NDg5MzA5OTIxMjgifQ.mtqZpKd_D5dIsAfvaGSDfQleJ3JP4B6WP_2BtQmsHow";
+  return localStorage.getItem("access_token");
 };

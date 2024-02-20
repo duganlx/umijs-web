@@ -8,12 +8,14 @@ import {
   pushBotModelCtlMessage,
   pushNormalBotMessage,
   pushNormalUserMessage,
+  thinkingNormalBotMessageDone,
 } from "../redux/msglistSlice";
 import WrapMessage, { WrapMessageProps } from "./message";
 import { CMD_BotModeCtl } from "./modeCtl";
-import { CMD_BotModelCtl } from "./modelCtl";
+import { CMD_BotModelCtl, OPT_EAMGPT } from "./modelCtl";
 import { generateFixBotAnswer } from "./botMessage";
 import { triggerScrollbottomSign } from "../redux/scrollbottomSlice";
+import { AskGPT } from "@/services/eam/openai";
 
 const { TextArea } = Input;
 const welcome = `
@@ -27,11 +29,12 @@ interface ChatZoneProps {
 const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const { isFullscreen } = props;
 
-  const [text, setText] = useState<string>("");
   const dispatch = useDispatch();
   const msglist = useSelector((state: any) => state.msglist.value) as any[];
+  const botmodel = useSelector((state: any) => state.botmodel.value);
   const scrollbottom = useSelector((state: any) => state.scrollbottom.value);
 
+  const [text, setText] = useState<string>("");
   const [progressing, setProgressing] = useState<boolean>(false);
   const [inputzoneHeight, setInputzoneHeight] = useState<number>(36);
   const dialogzoneRef = useRef<HTMLDivElement>(null);
@@ -266,16 +269,30 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
     } else {
       // 普通问题
       dispatch(pushNormalUserMessage({ content: askquestion }));
-
-      // todo 访问gpt接口
       dispatch(
-        pushNormalBotMessage({ content: "", isThinking: true, isTyping: false })
+        pushNormalBotMessage({
+          content: "",
+          isThinking: true,
+          isTyping: false,
+        })
       );
+      // todo 访问gpt接口
+      if (botmodel === OPT_EAMGPT) {
+        AskGPT(askquestion)
+          .then((answer) => {
+            dispatch(thinkingNormalBotMessageDone(answer));
+          })
+          .finally(() => {
+            setProgressing(false);
+          });
+      } else {
+        // 默认
 
-      setTimeout(() => {
-        dispatch(generateFixBotAnswer());
-        setProgressing(false);
-      }, 1500);
+        setTimeout(() => {
+          dispatch(generateFixBotAnswer());
+          setProgressing(false);
+        }, 1500);
+      }
     }
 
     dispatch(triggerScrollbottomSign());

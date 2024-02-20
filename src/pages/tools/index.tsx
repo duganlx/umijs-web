@@ -5,6 +5,10 @@ import { debounce } from "lodash";
 import AiAssistantView from "./components/aiassistant";
 import TimestampVertView from "./timestampVert";
 import AssistantView from "./assistant";
+import { PingEam } from "@/services/eam/uc";
+import { Provider, useDispatch } from "react-redux";
+import store, { updatePingEam } from "./store";
+import { AskGPT } from "@/services/eam/openai";
 
 interface CardViewProps {
   title: string;
@@ -57,6 +61,23 @@ const CardView: React.FC<CardViewProps> = (props) => {
   );
 };
 
+const ContextLayer: React.FC<{ children: React.ReactNode }> = (props) => {
+  const { children } = props;
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    PingEam()
+      .then((pong) => {
+        dispatch(updatePingEam(pong));
+      })
+      .catch(() => {
+        dispatch(updatePingEam(false));
+      });
+  }, []);
+
+  return <>{children}</>;
+};
+
 const ToolsView: React.FC = () => {
   const [layoutsize, setLayoutsize] = useState<[number, number]>([0, 0]);
 
@@ -78,27 +99,31 @@ const ToolsView: React.FC = () => {
   }, []);
 
   return (
-    <div
-      style={{
-        backgroundColor: "#f0f0f0",
-        padding: "3px 2px",
-        minWidth: "600px",
-      }}
-    >
-      <CardView title="Timestamp Conversion">
-        <TimestampVertView />
-      </CardView>
-      <CardView title="Draft">
-        <DraftView />
-      </CardView>
-      <CardView title="AI Assistant">
-        <AssistantView layoutsize={layoutsize} />
-      </CardView>
-      <CardView title="AI Assistant (old)">
-        <AiAssistantView layoutsize={layoutsize} />
-      </CardView>
-      <CardView title="Jottings">todo</CardView>
-    </div>
+    <Provider store={store}>
+      <ContextLayer>
+        <div
+          style={{
+            backgroundColor: "#f0f0f0",
+            padding: "3px 2px",
+            minWidth: "600px",
+          }}
+        >
+          <CardView title="Timestamp Conversion">
+            <TimestampVertView />
+          </CardView>
+          <CardView title="Draft">
+            <DraftView />
+          </CardView>
+          <CardView title="AI Assistant">
+            <AssistantView layoutsize={layoutsize} />
+          </CardView>
+          <CardView title="AI Assistant (old)">
+            <AiAssistantView layoutsize={layoutsize} />
+          </CardView>
+          <CardView title="Jottings">todo</CardView>
+        </div>
+      </ContextLayer>
+    </Provider>
   );
 };
 

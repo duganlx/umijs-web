@@ -221,6 +221,7 @@ const NormalBotMessage: React.FC<NormalBotMessageProps & InnerProps> = (
       },
       ul: {
         listStyle: "disc",
+        marginLeft: "30px",
       },
       "ul.contains-task-list": {
         listStyle: "none",
