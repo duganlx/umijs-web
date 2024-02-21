@@ -1,4 +1,4 @@
-import { RobotOutlined } from "@ant-design/icons";
+import { CopyOutlined, RobotOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -16,6 +16,8 @@ import {
 } from "../redux/msglistSlice";
 import { InnerProps } from "./message";
 import { triggerScrollbottomSign } from "../redux/scrollbottomSlice";
+import copy from "copy-to-clipboard";
+import { message } from "antd";
 
 export function generateFixBotAnswer() {
   // https://www.daodejing.org/
@@ -207,6 +209,29 @@ const NormalBotMessage: React.FC<NormalBotMessageProps & InnerProps> = (
         backgroundColor: "rgb(240, 240, 240)",
         fontSize: "14px",
         minHeight: "37px",
+
+        ".func-layer": {
+          position: "relative",
+
+          ".dialog-opbar": {
+            display: "none",
+          },
+        },
+      },
+
+      ".dialog-content:hover": {
+        ".dialog-opbar": {
+          display: "block",
+          position: "absolute",
+          left: "-5px",
+          top: "-15px",
+          fontSize: "14px",
+
+          ".dialog-copy:hover": {
+            cursor: "pointer",
+            color: "#4096ff",
+          },
+        },
       },
     };
   });
@@ -242,39 +267,55 @@ const NormalBotMessage: React.FC<NormalBotMessageProps & InnerProps> = (
         {isThinking ? (
           dots
         ) : (
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkMath, remarkEmoji]}
-            rehypePlugins={[rehypeRaw, rehypeKatex as any]}
-            className={mdclsname}
-            components={{
-              code({ inline, className, children, ...props1 }) {
-                const match = /language-(\w+)/.exec(className || "");
-                return !inline && match ? (
-                  <SyntaxHighlighter
-                    {...props1}
-                    style={atomOneLight}
-                    language={match[1]}
-                    PreTag="div"
-                  >
-                    {String(children).replace(/\n$/, "")}
-                  </SyntaxHighlighter>
-                ) : (
-                  <code {...props1} className={className}>
-                    {children}
-                  </code>
-                );
-              },
-              a({ children, href }) {
-                return (
-                  <a href={href} target="_blank" rel="noopener noreferrer">
-                    {children}
-                  </a>
-                );
-              },
-            }}
-          >
-            {rendermsg}
-          </ReactMarkdown>
+          <div className="func-layer">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkMath, remarkEmoji]}
+              rehypePlugins={[rehypeRaw, rehypeKatex as any]}
+              className={mdclsname}
+              components={{
+                code({ inline, className, children, ...props1 }) {
+                  const match = /language-(\w+)/.exec(className || "");
+                  return !inline && match ? (
+                    <SyntaxHighlighter
+                      {...props1}
+                      style={atomOneLight}
+                      language={match[1]}
+                      PreTag="div"
+                    >
+                      {String(children).replace(/\n$/, "")}
+                    </SyntaxHighlighter>
+                  ) : (
+                    <code {...props1} className={className}>
+                      {children}
+                    </code>
+                  );
+                },
+                a({ children, href }) {
+                  return (
+                    <a href={href} target="_blank" rel="noopener noreferrer">
+                      {children}
+                    </a>
+                  );
+                },
+              }}
+            >
+              {rendermsg}
+            </ReactMarkdown>
+            <div className="dialog-opbar">
+              <div
+                className="dialog-copy"
+                onClick={() => {
+                  if (copy(content)) {
+                    message.info("copy successful");
+                  } else {
+                    message.error("copy failed");
+                  }
+                }}
+              >
+                <CopyOutlined />
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

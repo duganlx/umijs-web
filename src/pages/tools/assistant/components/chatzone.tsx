@@ -18,8 +18,7 @@ import { triggerScrollbottomSign } from "../redux/scrollbottomSlice";
 import { AskGPT } from "@/services/eam/openai";
 
 const { TextArea } = Input;
-const welcome = `
-Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
+const welcome = `Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
 For now, no matter what you ask, the AI assistant will only recite to you the content of a certain chapter of the Tao Te Ching. Have fun using it. ^_^`;
 
 interface ChatZoneProps {
