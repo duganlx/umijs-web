@@ -1,14 +1,6 @@
 import { CopyOutlined, RobotOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
-import remarkEmoji from "remark-emoji";
-import rehypeKatex from "rehype-katex";
-import rehypeRaw from "rehype-raw";
-import SyntaxHighlighter from "react-syntax-highlighter";
-import { atomOneLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { useDispatch } from "react-redux";
 import {
   thinkingNormalBotMessageDone,
@@ -18,6 +10,7 @@ import { InnerProps } from "./message";
 import { triggerScrollbottomSign } from "../redux/scrollbottomSlice";
 import copy from "copy-to-clipboard";
 import { message } from "antd";
+import MdZone from "./mdzone";
 
 export function generateFixBotAnswer() {
   // https://www.daodejing.org/
@@ -108,6 +101,22 @@ export function generateFixBotAnswer() {
   const randindex = Math.floor(Math.random() * theTaoteChing.length);
 
   return thinkingNormalBotMessageDone(theTaoteChing[randindex]);
+}
+
+export function generateMdBoxAnswer() {
+  const content = `Markdown test
+\`\`\`go
+package main
+
+import "fmt"
+
+func main() {
+  fmt.Println("Hello World.")
+}
+\`\`\`
+`;
+
+  return thinkingNormalBotMessageDone(content);
 }
 
 export interface NormalBotMessageProps {
@@ -236,28 +245,6 @@ const NormalBotMessage: React.FC<NormalBotMessageProps & InnerProps> = (
     };
   });
 
-  const mdclsname = useEmotionCss(() => {
-    return {
-      lineHeight: 1.5,
-
-      ol: {
-        listStyle: "decimal",
-        marginLeft: "30px",
-      },
-      ul: {
-        listStyle: "disc",
-        marginLeft: "30px",
-      },
-      "ul.contains-task-list": {
-        listStyle: "none",
-        paddingInlineStart: "30px",
-      },
-      pre: {
-        margin: "5px 0",
-      },
-    };
-  });
-
   return (
     <div className={clsname}>
       <div className="avater">
@@ -268,39 +255,7 @@ const NormalBotMessage: React.FC<NormalBotMessageProps & InnerProps> = (
           dots
         ) : (
           <div className="func-layer">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm, remarkMath, remarkEmoji]}
-              rehypePlugins={[rehypeRaw, rehypeKatex as any]}
-              className={mdclsname}
-              components={{
-                code({ inline, className, children, ...props1 }) {
-                  const match = /language-(\w+)/.exec(className || "");
-                  return !inline && match ? (
-                    <SyntaxHighlighter
-                      {...props1}
-                      style={atomOneLight}
-                      language={match[1]}
-                      PreTag="div"
-                    >
-                      {String(children).replace(/\n$/, "")}
-                    </SyntaxHighlighter>
-                  ) : (
-                    <code {...props1} className={className}>
-                      {children}
-                    </code>
-                  );
-                },
-                a({ children, href }) {
-                  return (
-                    <a href={href} target="_blank" rel="noopener noreferrer">
-                      {children}
-                    </a>
-                  );
-                },
-              }}
-            >
-              {rendermsg}
-            </ReactMarkdown>
+            <MdZone content={rendermsg} />
             <div className="dialog-opbar">
               <div
                 className="dialog-copy"

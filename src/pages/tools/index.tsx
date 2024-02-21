@@ -2,13 +2,11 @@ import { useEmotionCss } from "@ant-design/use-emotion-css";
 import React, { useEffect, useState } from "react";
 import DraftView from "./draft";
 import { debounce } from "lodash";
-import AiAssistantView from "./components/aiassistant";
 import TimestampVertView from "./timestampVert";
 import AssistantView from "./assistant";
 import { PingEam } from "@/services/eam/uc";
 import { Provider, useDispatch } from "react-redux";
 import store, { updatePingEam } from "./store";
-import { AskGPT } from "@/services/eam/openai";
 
 interface CardViewProps {
   title: string;
@@ -116,9 +114,6 @@ const ToolsView: React.FC = () => {
           </CardView>
           <CardView title="AI Assistant">
             <AssistantView layoutsize={layoutsize} />
-          </CardView>
-          <CardView title="AI Assistant (old)">
-            <AiAssistantView layoutsize={layoutsize} />
           </CardView>
           <CardView title="Jottings">todo</CardView>
         </div>

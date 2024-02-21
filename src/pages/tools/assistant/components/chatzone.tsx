@@ -13,7 +13,7 @@ import {
 import WrapMessage, { WrapMessageProps } from "./message";
 import { CMD_BotModeCtl } from "./modeCtl";
 import { CMD_BotModelCtl, OPT_EAMGPT } from "./modelCtl";
-import { generateFixBotAnswer } from "./botMessage";
+import { generateFixBotAnswer, generateMdBoxAnswer } from "./botMessage";
 import { triggerScrollbottomSign } from "../redux/scrollbottomSlice";
 import { AskGPT } from "@/services/eam/openai";
 
@@ -275,7 +275,7 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
           isTyping: false,
         })
       );
-      // todo 访问gpt接口
+
       if (botmodel === OPT_EAMGPT) {
         AskGPT(askquestion)
           .then((answer) => {
@@ -285,12 +285,18 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
             setProgressing(false);
           });
       } else {
-        // 默认
-
-        setTimeout(() => {
-          dispatch(generateFixBotAnswer());
-          setProgressing(false);
-        }, 1500);
+        if (askquestion === "md") {
+          setTimeout(() => {
+            dispatch(generateMdBoxAnswer());
+            setProgressing(false);
+          }, 1500);
+        } else {
+          // 默认: 输出道德经
+          setTimeout(() => {
+            dispatch(generateFixBotAnswer());
+            setProgressing(false);
+          }, 1500);
+        }
       }
     }
 
