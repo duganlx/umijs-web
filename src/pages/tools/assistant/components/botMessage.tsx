@@ -2,15 +2,15 @@ import { CopyOutlined, RobotOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  thinkingNormalBotMessageDone,
-  typingNormalBotMessageDone,
-} from "../redux/msglistSlice";
 import { InnerProps } from "./message";
-import { triggerScrollbottomSign } from "../redux/scrollbottomSlice";
 import copy from "copy-to-clipboard";
 import { message } from "antd";
 import MdZone from "./mdzone";
+import {
+  thinkingNormalBotMessageDone,
+  typingNormalBotMessageDone,
+} from "../../stores-redux/assistant/msglistSlice";
+import { triggerScrollbottomSign } from "../../stores-redux/assistant/scrollbottomSlice";
 
 export function generateFixBotAnswer() {
   // https://www.daodejing.org/

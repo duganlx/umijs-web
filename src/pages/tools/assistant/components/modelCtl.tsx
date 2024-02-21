@@ -6,11 +6,11 @@ import NormalBotMessage from "./botMessage";
 import { InnerProps } from "./message";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import { updateBotmodel } from "../../stores-redux/assistant/botmodelSlice";
 import {
   choosingBotModelCtlMessageDone,
   typingBotModelCtlMessageDone,
-} from "../redux/msglistSlice";
-import { updateBotmodel } from "../redux/botmodelSlice";
+} from "../../stores-redux/assistant/msglistSlice";
 
 export const CMD_BotModelCtl = "chgmodel";
 export const OPT_EAMGPT = "eamGpt";
@@ -24,7 +24,9 @@ export interface BotModelCtlProps {
 
 const BotModelCtl: React.FC<BotModelCtlProps & InnerProps> = (props) => {
   const { id, choice, isChoosing, isDone } = props;
-  const botmodel = useSelector((state: any) => state.botmodel.value) as string;
+  const botmodel = useSelector(
+    (state: any) => state.aibotmodel.value
+  ) as string;
   const dispatch = useDispatch();
 
   const [checkmodel, setCheckmodel] = useState<string>(choice);

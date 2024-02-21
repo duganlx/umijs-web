@@ -64,12 +64,18 @@ const ContextLayer: React.FC<{ children: React.ReactNode }> = (props) => {
 
   const dispatch = useDispatch();
   useEffect(() => {
+    // 测试用
+    // clearSecretPair();
+    // const appid = "";
+    // const appsecret = "";
+    // setSecretPair(appid, appsecret);
+
     PingEam()
       .then((pong) => {
         dispatch(updatePingEam(pong));
       })
       .catch(() => {
-        dispatch(updatePingEam(false));
+        dispatch(updatePingEam(-1));
       });
   }, []);
 

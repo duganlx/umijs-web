@@ -1,9 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { WrapMessageProps } from "../components/message";
-import { NormalBotMessageProps } from "../components/botMessage";
-import { BotModeCtlProps, CMD_BotModeCtl } from "../components/modeCtl";
-import { NormalUserMessageProps } from "../components/userMessage";
-import { BotModelCtlProps, CMD_BotModelCtl } from "../components/modelCtl";
+import { WrapMessageProps } from "../../assistant/components/message";
+import {
+  BotModeCtlProps,
+  CMD_BotModeCtl,
+} from "../../assistant/components/modeCtl";
+import { NormalBotMessageProps } from "../../assistant/components/botMessage";
+import {
+  CMD_BotModelCtl,
+  BotModelCtlProps,
+} from "../../assistant/components/modelCtl";
+import { NormalUserMessageProps } from "../../assistant/components/userMessage";
 
 const msglistSlice = createSlice({
   name: "msglist",

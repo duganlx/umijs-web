@@ -1,29 +1,41 @@
-import { jwtDecode } from "jwt-decode";
+// import { jwtDecode } from "jwt-decode";
 import request from "./request";
 import {
   CMDReply,
   clearAccessToken,
-  getAccessToken,
+  getSecretPair,
   setAccessToken,
 } from "./utils";
-import dayjs from "dayjs";
+import { message } from "antd";
 
 export async function PingEam() {
-  const localtoken = getAccessToken();
-  if (localtoken != null) {
-    const decoded: { exp: number } = jwtDecode(localtoken || "");
-    const nowunix = dayjs().unix();
-
-    if (nowunix < decoded.exp) {
-      return true;
+  clearAccessToken();
+  const secretpair = getSecretPair();
+  if (secretpair == null) {
+    // ping eam server
+    const reply = await Login({
+      accountType: "authcode",
+      appId: "",
+      appSecret: "",
+    });
+    if (reply.code !== 500) {
+      return -1;
     }
 
-    clearAccessToken();
+    return -2;
   }
 
-  // todo 需要做成配置
-  const appid = "gogsfbackend";
-  const appsecret = "FczxZ7VJMFJRrioil3ghdRQv06dPPHnnRFSTOWuYD5PxmpivYt";
+  const { appid, appsecret } = secretpair;
+
+  // const localtoken = getAccessToken();
+  // if (localtoken != null) {
+  //   const decoded: { exp: number } = jwtDecode(localtoken || "");
+  //   const nowunix = dayjs().unix();
+  //   if (nowunix < decoded.exp) {
+  //     return 0;
+  //   }
+  //   clearAccessToken();
+  // }
 
   const data: LoginRequest = {
     accountType: "authcode",
@@ -33,12 +45,13 @@ export async function PingEam() {
 
   const reply = await Login(data);
   if (reply.code !== 0) {
-    return false;
+    message.warning(`generate eam jwt token failed: ${reply.msg}`);
+    return -3;
   }
 
   const token = reply.data.accessToken;
   setAccessToken(token);
-  return true;
+  return 0;
 }
 
 async function Login(data: LoginRequest): Promise<CMDReply<LoginReply>> {

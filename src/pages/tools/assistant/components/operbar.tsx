@@ -1,11 +1,10 @@
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { Popconfirm, Tooltip, message } from "antd";
-import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CMD_BotModeCtl } from "./modeCtl";
 import { CMD_BotModelCtl } from "./modelCtl";
-import { clearMsglist } from "../redux/msglistSlice";
+import { clearMsglist } from "../../stores-redux/assistant/msglistSlice";
 
 interface OperbarProps {
   setFullscreen?: (dta: boolean) => void;
@@ -15,8 +14,10 @@ const Operbar: React.FC<OperbarProps> = (props) => {
   const { setFullscreen } = props;
 
   const dispatch = useDispatch();
-  const botmode = useSelector((state: any) => state.botmode.value) as string;
-  const botmodel = useSelector((state: any) => state.botmodel.value) as string;
+  const botmode = useSelector((state: any) => state.aibotmode.value) as string;
+  const botmodel = useSelector(
+    (state: any) => state.aibotmodel.value
+  ) as string;
   const isInvalid = botmodel === "none";
 
   const clsname = useEmotionCss(() => {

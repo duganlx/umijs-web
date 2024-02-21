@@ -1,5 +1,5 @@
 import request from "./request";
-import { CMDReply } from "./utils";
+// import { CMDReply } from "./utils";
 
 export async function AskGPT(question: string) {
   const params: AskGPTRequest = {

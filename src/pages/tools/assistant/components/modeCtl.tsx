@@ -6,11 +6,11 @@ import NormalBotMessage from "./botMessage";
 import { InnerProps } from "./message";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { updateBotmode } from "../../stores-redux/assistant/botmodeSlice";
 import {
   choosingBotModeCtlMessageDone,
   typingBotModeCtlMessageDone,
-} from "../redux/msglistSlice";
-import { updateBotmode } from "../redux/botmodeSlice";
+} from "../../stores-redux/assistant/msglistSlice";
 
 export const CMD_BotModeCtl = "chgmode";
 
@@ -23,7 +23,7 @@ export interface BotModeCtlProps {
 
 const BotModeCtl: React.FC<BotModeCtlProps & InnerProps> = (props) => {
   const { id, choice, isChoosing, isDone } = props;
-  const botmode = useSelector((state: any) => state.botmode.value) as string;
+  const botmode = useSelector((state: any) => state.aibotmode.value) as string;
   const dispatch = useDispatch();
 
   const [checkmode, setCheckmode] = useState<string>(choice);

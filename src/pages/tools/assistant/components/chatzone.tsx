@@ -3,19 +3,20 @@ import { useEffect, useRef, useState } from "react";
 import { Input } from "antd";
 import { PauseCircleOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  pushBotModeCtlMessage,
-  pushBotModelCtlMessage,
-  pushNormalBotMessage,
-  pushNormalUserMessage,
-  thinkingNormalBotMessageDone,
-} from "../redux/msglistSlice";
+
 import WrapMessage, { WrapMessageProps } from "./message";
 import { CMD_BotModeCtl } from "./modeCtl";
 import { CMD_BotModelCtl, OPT_EAMGPT } from "./modelCtl";
 import { generateFixBotAnswer, generateMdBoxAnswer } from "./botMessage";
-import { triggerScrollbottomSign } from "../redux/scrollbottomSlice";
 import { AskGPT } from "@/services/eam/openai";
+import {
+  pushNormalBotMessage,
+  pushBotModeCtlMessage,
+  pushBotModelCtlMessage,
+  pushNormalUserMessage,
+  thinkingNormalBotMessageDone,
+} from "../../stores-redux/assistant/msglistSlice";
+import { triggerScrollbottomSign } from "../../stores-redux/assistant/scrollbottomSlice";
 
 const { TextArea } = Input;
 const welcome = `Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
@@ -29,9 +30,9 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const { isFullscreen } = props;
 
   const dispatch = useDispatch();
-  const msglist = useSelector((state: any) => state.msglist.value) as any[];
-  const botmodel = useSelector((state: any) => state.botmodel.value);
-  const scrollbottom = useSelector((state: any) => state.scrollbottom.value);
+  const msglist = useSelector((state: any) => state.aimsglist.value) as any[];
+  const botmodel = useSelector((state: any) => state.aibotmodel.value);
+  const scrollbottom = useSelector((state: any) => state.aiscrollbottom.value);
 
   const [text, setText] = useState<string>("");
   const [progressing, setProgressing] = useState<boolean>(false);
