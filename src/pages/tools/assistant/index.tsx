@@ -23,26 +23,36 @@ const AssistantView: React.FC<AssistantViewProps> = (props) => {
 
   const fsclsname = useEmotionCss(() => {
     return {
-      top: "5vh",
+      top: "1vh",
       margin: "0px 6vw",
+      height: "99vh",
+
+      ".ant-modal-mask": {
+        height: "100vh",
+      },
 
       ".ant-modal-content": {
         width: "86vw",
-        height: "90vh",
+        height: "98vh",
 
         padding: "8px 10px",
 
-        ".ant-modal-header > .ant-modal-title": {
-          fontSize: "18px",
+        ".ant-modal-header": {
+          marginBottom: "0px",
+
+          ".ant-modal-title": {
+            fontSize: "16px",
+            fontWeight: "normal",
+          },
         },
 
         ".ant-modal-close": {
-          top: "10px",
+          top: "8px",
         },
       },
 
       ".ant-modal-body": {
-        height: "calc(100% - 40px)",
+        height: "calc(100% - 24px)",
         // border: "1px solid #f0f0f0",
       },
     };
@@ -56,14 +66,13 @@ const AssistantView: React.FC<AssistantViewProps> = (props) => {
       </div>
       <Modal
         className={fsclsname}
-        title={"AI Assistant"}
+        title={<Operbar />}
         open={fullscreen}
         onCancel={() => {
           setFullscreen(false);
         }}
         footer={null}
       >
-        <Operbar />
         <ChatZone isFullscreen={true} />
       </Modal>
     </Provider>

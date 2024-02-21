@@ -4,10 +4,16 @@ export interface CMDReply<DataType> {
   data: DataType;
 }
 
+export const KEY_AccessToken = "access_token";
+
 export const setAccessToken = (token: string) => {
-  localStorage.setItem("access_token", token);
+  localStorage.setItem(KEY_AccessToken, token);
 };
 
 export const getAccessToken = () => {
-  return localStorage.getItem("access_token");
+  return localStorage.getItem(KEY_AccessToken);
+};
+
+export const clearAccessToken = () => {
+  return localStorage.removeItem(KEY_AccessToken);
 };

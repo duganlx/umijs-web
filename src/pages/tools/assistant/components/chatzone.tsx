@@ -90,12 +90,12 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const clsname = useEmotionCss(() => {
     return {
       border: "1px solid #f0f0f0",
-      height: isFullscreen ? "calc(100% - 25px)" : "400px",
+      height: isFullscreen ? "calc(100% - 10px)" : "400px",
       borderRadius: "3px",
 
       ".dialog-zone": {
         height: isFullscreen
-          ? "calc(100% - 85px)"
+          ? `calc(100% - 9px - ${inputzoneHeight}px)`
           : `calc(400px - 9px - ${inputzoneHeight}px)`,
         padding: "5px 13px",
         overflow: "auto",
@@ -305,73 +305,38 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
           <WrapMessage key={index} id={index} {...msgprops} />
         ))}
       </div>
-      {isFullscreen ? (
-        <div className="input-zone-fullscreen">
-          <TextArea
-            rows={3}
-            value={text}
-            style={{
-              border: 0,
-              resize: "none",
-            }}
-            onChange={(eve) => setText(eve.target.value)}
-            onKeyDown={(eve) => {
-              if (eve.key === "Enter") {
-                if (eve.ctrlKey) {
-                  setText((prevText) => prevText + "\n");
-                } else {
-                  eve.preventDefault();
-                  handleSubmit();
-                }
-              }
-            }}
-            disabled={progressing}
-          />
-          <div className="btn-zone">
-            <div
-              className="btn"
-              onClick={() => {
+      <div className="input-zone" ref={inputzoneRef}>
+        <TextArea
+          autoSize={{ minRows: 1, maxRows: 3 }}
+          value={text}
+          style={{
+            border: 0,
+            resize: "none",
+          }}
+          onChange={(eve) => setText(eve.target.value)}
+          onKeyDown={(eve) => {
+            if (eve.key === "Enter") {
+              if (eve.ctrlKey) {
+                setText((prevText) => prevText + "\n");
+              } else {
+                eve.preventDefault();
                 handleSubmit();
-              }}
-            >
-              {progressing ? <PauseCircleOutlined /> : <ArrowUpOutlined />}
-            </div>
+              }
+            }
+          }}
+          disabled={progressing}
+        />
+        <div className="btn-zone">
+          <div
+            className="btn"
+            onClick={() => {
+              handleSubmit();
+            }}
+          >
+            {progressing ? <PauseCircleOutlined /> : <ArrowUpOutlined />}
           </div>
         </div>
-      ) : (
-        <div className="input-zone" ref={inputzoneRef}>
-          <TextArea
-            autoSize={{ minRows: 1, maxRows: 3 }}
-            value={text}
-            style={{
-              border: 0,
-              resize: "none",
-            }}
-            onChange={(eve) => setText(eve.target.value)}
-            onKeyDown={(eve) => {
-              if (eve.key === "Enter") {
-                if (eve.ctrlKey) {
-                  setText((prevText) => prevText + "\n");
-                } else {
-                  eve.preventDefault();
-                  handleSubmit();
-                }
-              }
-            }}
-            disabled={progressing}
-          />
-          <div className="btn-zone">
-            <div
-              className="btn"
-              onClick={() => {
-                handleSubmit();
-              }}
-            >
-              {progressing ? <PauseCircleOutlined /> : <ArrowUpOutlined />}
-            </div>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 };

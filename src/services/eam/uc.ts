@@ -1,6 +1,11 @@
 import { jwtDecode } from "jwt-decode";
 import request from "./request";
-import { CMDReply, getAccessToken, setAccessToken } from "./utils";
+import {
+  CMDReply,
+  clearAccessToken,
+  getAccessToken,
+  setAccessToken,
+} from "./utils";
 import dayjs from "dayjs";
 
 export async function PingEam() {
@@ -12,8 +17,11 @@ export async function PingEam() {
     if (nowunix < decoded.exp) {
       return true;
     }
+
+    clearAccessToken();
   }
 
+  // todo 需要做成配置
   const appid = "gogsfbackend";
   const appsecret = "FczxZ7VJMFJRrioil3ghdRQv06dPPHnnRFSTOWuYD5PxmpivYt";
 
