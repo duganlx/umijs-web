@@ -8,6 +8,11 @@ import {
 } from "./utils";
 import { message } from "antd";
 
+export const PINGEAM_NORMAL = 0;
+export const PINGEAM_EXCEPTION = -1;
+export const PINGEAM_NOAUTH = -2;
+export const PINGEAM_NOJWT = -3;
+
 export async function PingEam() {
   clearAccessToken();
   const secretpair = getSecretPair();
@@ -15,10 +20,10 @@ export async function PingEam() {
     // ping eam server
     const reply = await Login("", "");
     if (reply.code !== 500) {
-      return -1;
+      return PINGEAM_EXCEPTION;
     }
 
-    return -2;
+    return PINGEAM_NOAUTH;
   }
 
   const { appid, appsecret } = secretpair;
@@ -36,12 +41,12 @@ export async function PingEam() {
   const reply = await Login(appid, appsecret);
   if (reply.code !== 0) {
     message.warning(`generate eam jwt token failed: ${reply.msg}`);
-    return -3;
+    return PINGEAM_NOJWT;
   }
 
   const token = reply.data.accessToken;
   setAccessToken(token);
-  return 0;
+  return PINGEAM_NORMAL;
 }
 
 export async function Login(

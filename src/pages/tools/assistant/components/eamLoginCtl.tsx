@@ -5,7 +5,7 @@ import NormalBotMessage from "./botMessage";
 import { InnerProps } from "./message";
 import { Input } from "antd";
 import { useEffect, useState } from "react";
-import { Login } from "@/services/eam/uc";
+import { Login, PINGEAM_NORMAL } from "@/services/eam/uc";
 import { useDispatch } from "react-redux";
 import {
   cancelEamLogin,
@@ -13,8 +13,8 @@ import {
   submitEamLoginInvalidAuth,
   submitEamLoginValidAuth,
 } from "../../stores-redux/assistant/msglistSlice";
-import dayjs from "dayjs";
-import { setSecretPair } from "@/services/eam/utils";
+import { setAccessToken, setSecretPair } from "@/services/eam/utils";
+import { updatePingEam } from "../../stores-redux/pingEamSlice";
 
 const { TextArea } = Input;
 
@@ -175,7 +175,9 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
                     dispatch(
                       submitEamLoginValidAuth(id, renderAppid, renderAppsecret)
                     );
+                    dispatch(updatePingEam(PINGEAM_NORMAL));
                     setSecretPair(renderAppid, renderAppsecret);
+                    setAccessToken(reply.data.accessToken);
                   })
                   .catch(() => {
                     dispatch(

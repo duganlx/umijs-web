@@ -11,6 +11,7 @@ import {
   choosingBotModelCtlMessageDone,
   typingBotModelCtlMessageDone,
 } from "../../stores-redux/assistant/msglistSlice";
+import { PINGEAM_EXCEPTION } from "@/services/eam/uc";
 
 export const CMD_BotModelCtl = "chgmodel";
 export const OPT_EAMGPT = "eamGpt";
@@ -27,6 +28,7 @@ const BotModelCtl: React.FC<BotModelCtlProps & InnerProps> = (props) => {
   const botmodel = useSelector(
     (state: any) => state.aibotmodel.value
   ) as string;
+  const pingEam = useSelector((state: any) => state.pingEam.value);
   const dispatch = useDispatch();
 
   const [checkmodel, setCheckmodel] = useState<string>(choice);
@@ -97,7 +99,9 @@ const BotModelCtl: React.FC<BotModelCtlProps & InnerProps> = (props) => {
             >
               <Space direction="vertical">
                 <Radio value="none">None</Radio>
-                <Radio value="eamGpt">EAM GPT</Radio>
+                <Radio value="eamGpt" disabled={pingEam === PINGEAM_EXCEPTION}>
+                  EAM GPT
+                </Radio>
               </Space>
             </Radio.Group>
           </div>

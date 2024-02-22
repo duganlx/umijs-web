@@ -19,6 +19,7 @@ import {
 } from "../../stores-redux/assistant/msglistSlice";
 import { triggerScrollbottomSign } from "../../stores-redux/assistant/scrollbottomSlice";
 import { CMD_EamLoginCtl } from "./eamLoginCtl";
+import { PINGEAM_NOAUTH, PINGEAM_NOJWT } from "@/services/eam/uc";
 
 const { TextArea } = Input;
 const welcome = `Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
@@ -35,6 +36,7 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const msglist = useSelector((state: any) => state.aimsglist.value) as any[];
   const botmodel = useSelector((state: any) => state.aibotmodel.value);
   const scrollbottom = useSelector((state: any) => state.aiscrollbottom.value);
+  const pingEam = useSelector((state: any) => state.pingEam.value);
 
   const [text, setText] = useState<string>("");
   const [progressing, setProgressing] = useState<boolean>(false);
@@ -42,7 +44,7 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const dialogzoneRef = useRef<HTMLDivElement>(null);
   const inputzoneRef = useRef<HTMLDivElement>(null);
 
-  console.log("chatzone", msglist);
+  // console.log("chatzone", msglist);
 
   useEffect(() => {
     if (isFullscreen || msglist.length > 0) {
@@ -294,13 +296,19 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
       );
 
       if (botmodel === OPT_EAMGPT) {
-        AskGPT(askquestion)
-          .then((answer) => {
-            dispatch(thinkingNormalBotMessageDone(answer));
-          })
-          .finally(() => {
-            setProgressing(false);
-          });
+        if (pingEam === PINGEAM_NOAUTH) {
+          const content = `Sorry, you are not able to use the model because you are not logged in to EAM yet, please enter the command "${CMD_EamLoginCtl}" to log in.`;
+          dispatch(thinkingNormalBotMessageDone(content));
+          setProgressing(false);
+        } else {
+          AskGPT(askquestion)
+            .then((answer) => {
+              dispatch(thinkingNormalBotMessageDone(answer));
+            })
+            .finally(() => {
+              setProgressing(false);
+            });
+        }
       } else {
         if (askquestion === "md") {
           setTimeout(() => {

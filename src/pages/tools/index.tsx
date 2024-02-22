@@ -4,9 +4,11 @@ import DraftView from "./draft";
 import { debounce } from "lodash";
 import TimestampVertView from "./timestampVert";
 import AssistantView from "./assistant";
-import { PingEam } from "@/services/eam/uc";
+import { PINGEAM_EXCEPTION, PingEam } from "@/services/eam/uc";
 import { Provider, useDispatch } from "react-redux";
-import store, { updatePingEam } from "./store";
+import store from "./store";
+import { clearSecretPair } from "@/services/eam/utils";
+import { updatePingEam } from "./stores-redux/pingEamSlice";
 
 interface CardViewProps {
   title: string;
@@ -65,7 +67,7 @@ const ContextLayer: React.FC<{ children: React.ReactNode }> = (props) => {
   const dispatch = useDispatch();
   useEffect(() => {
     // 测试用
-    // clearSecretPair();
+    clearSecretPair();
     // const appid = "";
     // const appsecret = "";
     // setSecretPair(appid, appsecret);
@@ -75,7 +77,7 @@ const ContextLayer: React.FC<{ children: React.ReactNode }> = (props) => {
         dispatch(updatePingEam(pong));
       })
       .catch(() => {
-        dispatch(updatePingEam(-1));
+        dispatch(updatePingEam(PINGEAM_EXCEPTION));
       });
   }, []);
 
