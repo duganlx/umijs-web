@@ -13,7 +13,11 @@ import {
   submitEamLoginInvalidAuth,
   submitEamLoginValidAuth,
 } from "../../stores-redux/assistant/msglistSlice";
-import { setAccessToken, setSecretPair } from "@/services/eam/utils";
+import {
+  getSecretPair,
+  setAccessToken,
+  setSecretPair,
+} from "@/services/eam/utils";
 import { updatePingEam } from "../../stores-redux/pingEamSlice";
 
 const { TextArea } = Input;
@@ -50,6 +54,20 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
   const [renderAppid, setRenderAppid] = useState<string>(appid);
   const [renderAppsecret, setRenderAppsecret] = useState<string>(appsecret);
   const [isInput, setIsInput] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (appid !== "" || appsecret !== "") {
+      return;
+    }
+
+    const appPair = getSecretPair();
+    if (appPair === null) {
+      return;
+    }
+
+    setRenderAppid(appPair.appid);
+    setRenderAppsecret(appPair.appsecret);
+  }, [appid, appsecret]);
 
   useEffect(() => {
     if (!isDone) {

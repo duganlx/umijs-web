@@ -67,7 +67,7 @@ const ContextLayer: React.FC<{ children: React.ReactNode }> = (props) => {
   const dispatch = useDispatch();
   useEffect(() => {
     // 测试用
-    clearSecretPair();
+    // clearSecretPair();
     // const appid = "";
     // const appsecret = "";
     // setSecretPair(appid, appsecret);
