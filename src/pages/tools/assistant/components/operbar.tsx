@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CMD_BotModeCtl } from "./modeCtl";
 import { CMD_BotModelCtl } from "./modelCtl";
 import { clearMsglist } from "../../stores-redux/assistant/msglistSlice";
+import { CMD_EamLoginCtl } from "./eamLoginCtl";
 
 interface OperbarProps {
   setFullscreen?: (dta: boolean) => void;
@@ -117,6 +118,12 @@ const Operbar: React.FC<OperbarProps> = (props) => {
                 <p>
                   <code style={{ fontWeight: "bold" }}>{CMD_BotModeCtl}</code>:
                   Switching modes
+                </p>
+                <hr />
+                <p>In addition, there are the following commands for EAM:</p>
+                <p>
+                  <code style={{ fontWeight: "bold" }}>{CMD_EamLoginCtl}</code>:
+                  Input EAM login credentials
                 </p>
               </div>
             }

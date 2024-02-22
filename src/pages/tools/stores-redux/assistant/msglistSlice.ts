@@ -10,6 +10,10 @@ import {
   BotModelCtlProps,
 } from "../../assistant/components/modelCtl";
 import { NormalUserMessageProps } from "../../assistant/components/userMessage";
+import {
+  CMD_EamLoginCtl,
+  EamLoginCtlProps,
+} from "../../assistant/components/eamLoginCtl";
 
 const msglistSlice = createSlice({
   name: "msglist",
@@ -29,6 +33,10 @@ const msglistSlice = createSlice({
     },
     typingDone: (state, action) => {
       const index = action.payload as number;
+      if (index >= state.value.length) {
+        return;
+      }
+
       const prev = state.value[index];
 
       const { normalprops } = prev;
@@ -185,9 +193,64 @@ const msglistSlice = createSlice({
             },
           },
         };
+      } else if (cmd === CMD_EamLoginCtl) {
+        const { logineamprops } = specialprops;
+        if (logineamprops === undefined) return;
+
+        latest = {
+          ...prev,
+          specialprops: {
+            ...specialprops,
+            logineamprops: {
+              ...logineamprops,
+              isDone: true,
+            },
+          },
+        };
       } else {
         return;
       }
+
+      const latestMsglist: WrapMessageProps[] = [];
+      state.value.forEach((item, i) => {
+        if (i === index) {
+          latestMsglist.push(latest);
+          return;
+        }
+        latestMsglist.push(item);
+      });
+
+      state.value = latestMsglist;
+    },
+    eamLoginAuth: (state, action) => {
+      const {
+        index,
+        appid,
+        appsecret,
+        isValid,
+        isCancel,
+        isFirst = false,
+      } = action.payload;
+      const prev = state.value[index];
+      const { specialprops } = prev;
+      if (specialprops === undefined) return;
+      const { logineamprops } = specialprops;
+      if (logineamprops === undefined) return;
+
+      const latest: WrapMessageProps = {
+        ...prev,
+        specialprops: {
+          ...specialprops,
+          logineamprops: {
+            ...logineamprops,
+            isFirst: isFirst,
+            isValid: isValid,
+            isCancel: isCancel,
+            appid: appid,
+            appsecret: appsecret,
+          },
+        },
+      };
 
       const latestMsglist: WrapMessageProps[] = [];
       state.value.forEach((item, i) => {
@@ -288,6 +351,53 @@ const typingBotModelCtlMessageDone = (index: number) => {
   return msglistSlice.actions.cmdBotDone(payload);
 };
 
+const pushEamLoginCtlMessage = (props: EamLoginCtlProps) => {
+  const entity: WrapMessageProps = {
+    mode: "special",
+    specialprops: {
+      cmd: "logineam",
+      logineamprops: props,
+    },
+  };
+
+  return msglistSlice.actions.push(entity);
+};
+
+const submitEamLoginValidAuth = (
+  index: number,
+  appid: string,
+  appsecret: string
+) => {
+  const payload = { index, appid, appsecret, isValid: true, isCancel: false };
+  return msglistSlice.actions.eamLoginAuth(payload);
+};
+
+const submitEamLoginInvalidAuth = (
+  index: number,
+  appid: string,
+  appsecret: string
+) => {
+  const payload = { index, appid, appsecret, isValid: false, isCancel: false };
+  return msglistSlice.actions.eamLoginAuth(payload);
+};
+
+const cancelEamLogin = (index: number, isFirst: boolean) => {
+  const payload = {
+    index,
+    appid: "",
+    appsecret: "",
+    isFirst: isFirst,
+    isValid: false,
+    isCancel: true,
+  };
+  return msglistSlice.actions.eamLoginAuth(payload);
+};
+
+const eamLoginCtlDone = (index: number) => {
+  const payload = { index, cmd: CMD_EamLoginCtl };
+  return msglistSlice.actions.cmdBotDone(payload);
+};
+
 export {
   clearMsglist,
   // normalUserMessage
@@ -304,4 +414,10 @@ export {
   pushBotModelCtlMessage,
   choosingBotModelCtlMessageDone,
   typingBotModelCtlMessageDone,
+  // eamLoginCtl
+  pushEamLoginCtlMessage,
+  submitEamLoginValidAuth,
+  submitEamLoginInvalidAuth,
+  cancelEamLogin,
+  eamLoginCtlDone,
 };

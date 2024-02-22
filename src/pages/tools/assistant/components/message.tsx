@@ -1,4 +1,5 @@
 import NormalBotMessage, { NormalBotMessageProps } from "./botMessage";
+import EamLoginCtl, { EamLoginCtlProps } from "./eamLoginCtl";
 import InvalidMessage from "./invalidMessage";
 import BotModeCtl, { BotModeCtlProps } from "./modeCtl";
 import BotModelCtl, { BotModelCtlProps } from "./modelCtl";
@@ -12,10 +13,11 @@ interface NormalMessageProps {
 }
 
 export interface SpecialMessageProps {
-  cmd: "mode" | "model";
+  cmd: "mode" | "model" | "logineam";
 
   modectlprops?: BotModeCtlProps;
   modelctlprops?: BotModelCtlProps;
+  logineamprops?: EamLoginCtlProps;
 }
 
 export interface WrapMessageProps {
@@ -60,7 +62,7 @@ const WrapMessage: React.FC<WrapMessageProps & InnerProps> = (props) => {
       return <InvalidMessage />;
     }
 
-    const { cmd, modectlprops, modelctlprops } = specialprops;
+    const { cmd, modectlprops, modelctlprops, logineamprops } = specialprops;
     if (cmd === "mode") {
       if (modectlprops === undefined) {
         return <InvalidMessage />;
@@ -75,6 +77,12 @@ const WrapMessage: React.FC<WrapMessageProps & InnerProps> = (props) => {
 
       // 模型切换
       return <BotModelCtl {...modelctlprops} id={id} />;
+    } else if (cmd === "logineam") {
+      if (logineamprops === undefined) {
+        return <InvalidMessage />;
+      }
+
+      return <EamLoginCtl {...logineamprops} id={id} />;
     } else {
       return <InvalidMessage />;
     }

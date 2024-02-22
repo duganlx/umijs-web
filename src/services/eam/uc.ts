@@ -13,11 +13,7 @@ export async function PingEam() {
   const secretpair = getSecretPair();
   if (secretpair == null) {
     // ping eam server
-    const reply = await Login({
-      accountType: "authcode",
-      appId: "",
-      appSecret: "",
-    });
+    const reply = await Login("", "");
     if (reply.code !== 500) {
       return -1;
     }
@@ -37,13 +33,7 @@ export async function PingEam() {
   //   clearAccessToken();
   // }
 
-  const data: LoginRequest = {
-    accountType: "authcode",
-    appId: appid,
-    appSecret: appsecret,
-  };
-
-  const reply = await Login(data);
+  const reply = await Login(appid, appsecret);
   if (reply.code !== 0) {
     message.warning(`generate eam jwt token failed: ${reply.msg}`);
     return -3;
@@ -54,7 +44,16 @@ export async function PingEam() {
   return 0;
 }
 
-async function Login(data: LoginRequest): Promise<CMDReply<LoginReply>> {
+export async function Login(
+  appid: string,
+  appsecret: string
+): Promise<CMDReply<LoginReply>> {
+  const data: LoginRequest = {
+    accountType: "authcode",
+    appId: appid,
+    appSecret: appsecret,
+  };
+
   return request(`/eam/api/uc/v1/login`, {
     method: "POST",
     data: data || {},

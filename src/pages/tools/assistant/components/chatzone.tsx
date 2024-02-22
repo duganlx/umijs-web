@@ -15,8 +15,10 @@ import {
   pushBotModelCtlMessage,
   pushNormalUserMessage,
   thinkingNormalBotMessageDone,
+  pushEamLoginCtlMessage,
 } from "../../stores-redux/assistant/msglistSlice";
 import { triggerScrollbottomSign } from "../../stores-redux/assistant/scrollbottomSlice";
+import { CMD_EamLoginCtl } from "./eamLoginCtl";
 
 const { TextArea } = Input;
 const welcome = `Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
@@ -40,7 +42,8 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   const dialogzoneRef = useRef<HTMLDivElement>(null);
   const inputzoneRef = useRef<HTMLDivElement>(null);
 
-  // console.log("chatzone", msglist);
+  console.log("chatzone", msglist);
+
   useEffect(() => {
     if (isFullscreen || msglist.length > 0) {
       return;
@@ -265,6 +268,19 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
         })
       );
 
+      setProgressing(false);
+    } else if (askquestion === CMD_EamLoginCtl) {
+      dispatch(
+        pushEamLoginCtlMessage({
+          appid: "",
+          appsecret: "",
+          isBot: false,
+          isFirst: true,
+          isValid: false,
+          isCancel: false,
+          isDone: false,
+        })
+      );
       setProgressing(false);
     } else {
       // 普通问题

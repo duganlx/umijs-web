@@ -1,7 +1,6 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import Operbar from "./components/operbar";
 import ChatZone from "./components/chatzone";
-import { useSelector } from "react-redux";
 import { useState } from "react";
 import { Modal } from "antd";
 
@@ -11,8 +10,6 @@ interface AssistantViewProps {
 
 const AssistantView: React.FC<AssistantViewProps> = (props) => {
   const [fullscreen, setFullscreen] = useState<boolean>(false);
-
-  const pingEam = useSelector((state: any) => state.pingEam.value) as number;
 
   const clsname = useEmotionCss(() => {
     return {
