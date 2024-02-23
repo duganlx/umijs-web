@@ -7,7 +7,6 @@ import AssistantView from "./assistant";
 import { PINGEAM_EXCEPTION, PingEam } from "@/services/eam/uc";
 import { Provider, useDispatch } from "react-redux";
 import store from "./store";
-import { clearSecretPair } from "@/services/eam/utils";
 import { updatePingEam } from "./stores-redux/pingEamSlice";
 
 interface CardViewProps {

@@ -14,6 +14,7 @@ import {
 import { PINGEAM_EXCEPTION } from "@/services/eam/uc";
 
 export const CMD_BotModelCtl = "chgmodel";
+export const OPT_NONE = "none";
 export const OPT_EAMGPT = "eamGpt";
 
 export interface BotModelCtlProps {
