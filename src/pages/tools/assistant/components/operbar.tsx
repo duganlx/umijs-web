@@ -12,6 +12,7 @@ import {
   PINGEAM_NOJWT,
   PINGEAM_NORMAL,
 } from "@/services/eam/uc";
+import { triggerScrollbottomSign } from "../../stores-redux/assistant/scrollbottomSlice";
 
 const STATUS_COLOR_NORMAL = "green";
 const STATUS_COLOR_EXCEPTION = "red";
@@ -122,6 +123,7 @@ const Operbar: React.FC<OperbarProps> = (props) => {
         <div
           className="opitem"
           onClick={() => {
+            dispatch(triggerScrollbottomSign());
             setFullscreen(true);
           }}
         >

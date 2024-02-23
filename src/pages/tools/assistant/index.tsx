@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { PINGEAM_EXCEPTION } from "@/services/eam/uc";
 import { updateBotmodel } from "../stores-redux/assistant/botmodelSlice";
 import { OPT_EAMGPT } from "./components/modelCtl";
+import { triggerScrollbottomSign } from "../stores-redux/assistant/scrollbottomSlice";
 
 interface AssistantViewProps {
   layoutsize: [number, number];
@@ -77,6 +78,7 @@ const AssistantView: React.FC<AssistantViewProps> = (props) => {
         title={<Operbar />}
         open={fullscreen}
         onCancel={() => {
+          dispatch(triggerScrollbottomSign());
           setFullscreen(false);
         }}
         footer={null}
