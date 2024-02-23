@@ -261,7 +261,7 @@ const NormalBotMessage: React.FC<NormalBotMessageProps & InnerProps> = (
                 className="dialog-copy"
                 onClick={() => {
                   if (copy(content)) {
-                    message.info("copy successful");
+                    message.success("copy successful");
                   } else {
                     message.error("copy failed");
                   }

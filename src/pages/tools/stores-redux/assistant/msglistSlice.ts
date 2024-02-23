@@ -14,11 +14,13 @@ import {
   CMD_EamLoginCtl,
   EamLoginCtlProps,
 } from "../../assistant/components/eamLoginCtl";
+import { clearAiChatLogs, getAiChatLogs, setAiChatLogs } from "../../utils";
 
 const msglistSlice = createSlice({
   name: "msglist",
   initialState: () => {
-    const msglist: WrapMessageProps[] = [];
+    const historyChatLogs = getAiChatLogs();
+    const msglist: WrapMessageProps[] = historyChatLogs;
 
     return {
       value: msglist,
@@ -26,10 +28,13 @@ const msglistSlice = createSlice({
   },
   reducers: {
     clear: (state) => {
+      clearAiChatLogs();
       state.value = [];
     },
     push: (state, action) => {
-      state.value = [...state.value, action.payload];
+      const latestMsglist = [...state.value, action.payload];
+      setAiChatLogs(latestMsglist);
+      state.value = latestMsglist;
     },
     typingDone: (state, action) => {
       const index = action.payload as number;
@@ -64,6 +69,7 @@ const msglistSlice = createSlice({
         latestMsglist.push(item);
       });
 
+      setAiChatLogs(latestMsglist);
       state.value = latestMsglist;
     },
     thinkingDone: (state, action) => {
@@ -98,6 +104,7 @@ const msglistSlice = createSlice({
         latestMsglist.push(item);
       });
 
+      setAiChatLogs(latestMsglist);
       state.value = latestMsglist;
     },
     choosingDone: (state, action) => {
@@ -153,6 +160,7 @@ const msglistSlice = createSlice({
         latestMsglist.push(item);
       });
 
+      setAiChatLogs(latestMsglist);
       state.value = latestMsglist;
     },
     cmdBotDone: (state, action) => {
@@ -220,6 +228,7 @@ const msglistSlice = createSlice({
         latestMsglist.push(item);
       });
 
+      setAiChatLogs(latestMsglist);
       state.value = latestMsglist;
     },
     eamLoginAuth: (state, action) => {
@@ -261,6 +270,7 @@ const msglistSlice = createSlice({
         latestMsglist.push(item);
       });
 
+      setAiChatLogs(latestMsglist);
       state.value = latestMsglist;
     },
   },

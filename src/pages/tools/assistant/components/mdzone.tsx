@@ -48,6 +48,10 @@ const MdZone: React.FC<MdZoneProps> = (props) => {
     return {
       lineHeight: 1.5,
 
+      "h1, h2, h3, h4, h5": {
+        marginTop: "8px",
+      },
+
       ol: {
         listStyle: "decimal",
         marginLeft: "30px",
@@ -89,7 +93,7 @@ const MdZone: React.FC<MdZoneProps> = (props) => {
                   className="dialog-copy"
                   onClick={() => {
                     if (copy(String(children).replace(/\n$/, ""))) {
-                      message.info("copy successful");
+                      message.success("copy successful");
                     } else {
                       message.error("copy failed");
                     }
