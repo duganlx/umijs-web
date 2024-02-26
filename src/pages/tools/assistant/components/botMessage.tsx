@@ -2,15 +2,15 @@ import { CopyOutlined, RobotOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { InnerProps } from "./message";
 import copy from "copy-to-clipboard";
 import { message } from "antd";
 import MdZone from "./mdzone";
-import {
-  thinkingNormalBotMessageDone,
-  typingNormalBotMessageDone,
-} from "../../stores-redux/assistant/msglistSlice";
+import { pushNormalBotMessage } from "../../stores-redux/assistant/msglistSlice";
 import { triggerScrollbottomSign } from "../../stores-redux/assistant/scrollbottomSlice";
+import {
+  botThinkingDone,
+  botTypingDone,
+} from "../../stores-redux/assistant/latestmsgSlice";
 
 export function generateFixBotAnswer() {
   // https://www.daodejing.org/
@@ -100,7 +100,8 @@ export function generateFixBotAnswer() {
 
   const randindex = Math.floor(Math.random() * theTaoteChing.length);
 
-  return thinkingNormalBotMessageDone(theTaoteChing[randindex]);
+  // return thinkingNormalBotMessageDone(theTaoteChing[randindex]);
+  return botThinkingDone(theTaoteChing[randindex]);
 }
 
 export function generateMdBoxAnswer() {
@@ -116,7 +117,8 @@ func main() {
 \`\`\`
 `;
 
-  return thinkingNormalBotMessageDone(content);
+  // return thinkingNormalBotMessageDone(content);
+  return botThinkingDone(content);
 }
 
 export interface NormalBotMessageProps {
@@ -128,10 +130,8 @@ export interface NormalBotMessageProps {
   onTypingDone?: () => void;
 }
 
-const NormalBotMessage: React.FC<NormalBotMessageProps & InnerProps> = (
-  props
-) => {
-  const { id, content, isThinking, isTyping, onTypingDone } = props;
+const NormalBotMessage: React.FC<NormalBotMessageProps> = (props) => {
+  const { content, isThinking, isTyping, onTypingDone } = props;
 
   const [dots, setDots] = useState<string>(".");
   const [rendermsg, setRendermsg] = useState<string>(isTyping ? "" : content);
@@ -186,7 +186,16 @@ const NormalBotMessage: React.FC<NormalBotMessageProps & InnerProps> = (
       return;
     }
 
-    dispatch(typingNormalBotMessageDone(id));
+    // dispatch(typingNormalBotMessageDone(id));
+
+    dispatch(
+      pushNormalBotMessage({
+        content: content,
+        isThinking: false,
+        isTyping: false,
+      })
+    );
+    dispatch(botTypingDone());
 
     if (onTypingDone) {
       onTypingDone();

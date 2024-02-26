@@ -46,7 +46,7 @@ const WrapMessage: React.FC<WrapMessageProps & InnerProps> = (props) => {
       }
 
       // 普通的机器人消息
-      return <NormalBotMessage {...botprops} id={id} />;
+      return <NormalBotMessage {...botprops} />;
     } else if (role === "user") {
       if (userprops === undefined) {
         return <InvalidMessage />;

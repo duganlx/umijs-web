@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import {
   cancelEamLogin,
   eamLoginCtlDone,
+  pushEamLoginCtlMessage,
   submitEamLoginInvalidAuth,
   submitEamLoginValidAuth,
 } from "../../stores-redux/assistant/msglistSlice";
@@ -19,6 +20,10 @@ import {
   setSecretPair,
 } from "@/services/eam/utils";
 import { updatePingEam } from "../../stores-redux/pingEamSlice";
+import {
+  botCmdEamLoginDoing,
+  botCmdEamLoginDone,
+} from "../../stores-redux/assistant/latestmsgSlice";
 
 const { TextArea } = Input;
 
@@ -179,31 +184,64 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
                 Login(renderAppid, renderAppsecret)
                   .then((reply) => {
                     if (reply.code !== 0) {
+                      // dispatch(
+                      //   submitEamLoginInvalidAuth(
+                      //     id,
+                      //     renderAppid,
+                      //     renderAppsecret
+                      //   )
+                      // );
                       dispatch(
-                        submitEamLoginInvalidAuth(
-                          id,
-                          renderAppid,
-                          renderAppsecret
-                        )
+                        botCmdEamLoginDoing({
+                          appid: renderAppid,
+                          appsecret: renderAppsecret,
+                          isValid: false,
+                          isCancel: false,
+                          isBot: isBot,
+                          isFirst: isFirst,
+                          isDone: isDone,
+                        })
                       );
                       return;
                     }
 
                     // success
+                    // dispatch(
+                    //   submitEamLoginValidAuth(id, renderAppid, renderAppsecret)
+                    // );
                     dispatch(
-                      submitEamLoginValidAuth(id, renderAppid, renderAppsecret)
+                      botCmdEamLoginDoing({
+                        appid: renderAppid,
+                        appsecret: renderAppsecret,
+                        isValid: true,
+                        isCancel: false,
+                        isBot: isBot,
+                        isFirst: isFirst,
+                        isDone: isDone,
+                      })
                     );
                     dispatch(updatePingEam(PINGEAM_NORMAL));
                     setSecretPair(renderAppid, renderAppsecret);
                     setAccessToken(reply.data.accessToken);
                   })
                   .catch(() => {
+                    // dispatch(
+                    //   submitEamLoginInvalidAuth(
+                    //     id,
+                    //     renderAppid,
+                    //     renderAppsecret
+                    //   )
+                    // );
                     dispatch(
-                      submitEamLoginInvalidAuth(
-                        id,
-                        renderAppid,
-                        renderAppsecret
-                      )
+                      botCmdEamLoginDoing({
+                        appid: renderAppid,
+                        appsecret: renderAppsecret,
+                        isValid: false,
+                        isCancel: false,
+                        isBot: isBot,
+                        isFirst: isFirst,
+                        isDone: isDone,
+                      })
                     );
                   });
               }}
@@ -225,7 +263,6 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
 
       {isFirst || isInput ? null : (
         <NormalBotMessage
-          id={id}
           content={
             isValid
               ? "Ok, login credentials verified successfully"
@@ -235,20 +272,32 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
           isTyping={!isDone}
           onTypingDone={() => {
             if (isValid || isCancel) {
-              dispatch(eamLoginCtlDone(id));
+              // dispatch(eamLoginCtlDone(id));
+              dispatch(botCmdEamLoginDone());
             }
           }}
         />
       )}
       {isCancel ? (
         <NormalBotMessage
-          id={id}
           content="Okay, the login credentials entry operation has been canceled"
           isThinking={false}
           isTyping={!isDone}
           onTypingDone={() => {
             if (isValid || isCancel) {
-              dispatch(eamLoginCtlDone(id));
+              // dispatch(eamLoginCtlDone(id));
+              dispatch(botCmdEamLoginDone());
+              dispatch(
+                pushEamLoginCtlMessage({
+                  appid: renderAppid,
+                  appsecret: renderAppsecret,
+                  isBot: isBot,
+                  isFirst: isFirst,
+                  isValid: isValid,
+                  isCancel: isCancel,
+                  isDone: isDone,
+                })
+              );
             }
           }}
         />

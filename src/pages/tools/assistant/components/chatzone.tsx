@@ -1,27 +1,11 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { useEffect, useRef, useState } from "react";
-import { Input } from "antd";
-import { PauseCircleOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
+import { CMD_BotModelCtl } from "./modelCtl";
+import { pushNormalBotMessage } from "../../stores-redux/assistant/msglistSlice";
+import InputZone from "./inputzone";
+import DialogZone from "./dialogzone";
 
-import WrapMessage, { WrapMessageProps } from "./message";
-import { CMD_BotModeCtl } from "./modeCtl";
-import { CMD_BotModelCtl, OPT_EAMGPT } from "./modelCtl";
-import { generateFixBotAnswer, generateMdBoxAnswer } from "./botMessage";
-import { AskGPT } from "@/services/eam/openai";
-import {
-  pushNormalBotMessage,
-  pushBotModeCtlMessage,
-  pushBotModelCtlMessage,
-  pushNormalUserMessage,
-  thinkingNormalBotMessageDone,
-  pushEamLoginCtlMessage,
-} from "../../stores-redux/assistant/msglistSlice";
-import { triggerScrollbottomSign } from "../../stores-redux/assistant/scrollbottomSlice";
-import { CMD_EamLoginCtl } from "./eamLoginCtl";
-import { PINGEAM_NOAUTH, PINGEAM_NOJWT } from "@/services/eam/uc";
-
-const { TextArea } = Input;
 const welcome = `Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
 For now, no matter what you ask, the AI assistant will only recite to you the content of a certain chapter of the Tao Te Ching. Have fun using it. ^_^`;
 
@@ -34,17 +18,11 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
 
   const dispatch = useDispatch();
   const msglist = useSelector((state: any) => state.aimsglist.value) as any[];
-  const botmodel = useSelector((state: any) => state.aibotmodel.value);
   const scrollbottom = useSelector((state: any) => state.aiscrollbottom.value);
-  const pingEam = useSelector((state: any) => state.pingEam.value);
 
-  const [text, setText] = useState<string>("");
-  const [progressing, setProgressing] = useState<boolean>(false);
   const [inputzoneHeight, setInputzoneHeight] = useState<number>(36);
   const dialogzoneRef = useRef<HTMLDivElement>(null);
   const inputzoneRef = useRef<HTMLDivElement>(null);
-
-  // console.log("chatzone", msglist);
 
   useEffect(() => {
     if (isFullscreen || msglist.length > 0) {
@@ -115,257 +93,16 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
           borderRadius: "5px",
         },
       },
-
-      ".input-zone": {
-        display: "flex",
-        flexDirection: "row",
-        position: "relative",
-        border: "1px solid #d9d9d9",
-        borderRadius: "6px",
-        padding: "2px 0 2px",
-        margin: "0 5px",
-
-        textarea: {
-          "&::-webkit-scrollbar": {
-            width: "5px",
-            backgroundColor: "white",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#d9d9d9",
-            borderRadius: "5px",
-          },
-        },
-
-        "textarea:focus": {
-          boxShadow: "none",
-        },
-
-        ".btn-zone": {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "flex-end",
-          marginLeft: "6px",
-          marginRight: "2px",
-
-          ".btn": {
-            width: "30px",
-            height: "30px",
-            borderRadius: "6px",
-            color: progressing ? "black" : "white",
-            backgroundColor: progressing ? "white" : "black",
-            fontSize: "18px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          },
-
-          ".btn:hover": {
-            cursor: progressing ? "not-allowed" : "pointer",
-          },
-
-          ".progressingbtn": {
-            width: "30px",
-            height: "30px",
-            borderRadius: "6px",
-            color: "white",
-            backgroundColor: "black",
-            fontSize: "18px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          },
-        },
-      },
-
-      ".input-zone-fullscreen": {
-        display: "flex",
-        flexDirection: "row",
-        position: "relative",
-        border: "1px solid #d9d9d9",
-        borderRadius: "6px",
-        margin: "0 5px",
-
-        textarea: {
-          "&::-webkit-scrollbar": {
-            width: "5px",
-            backgroundColor: "white",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#d9d9d9",
-            borderRadius: "5px",
-          },
-        },
-
-        "textarea:focus": {
-          boxShadow: "none",
-        },
-
-        ".btn-zone": {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "flex-end",
-          marginLeft: "6px",
-          marginRight: "5px",
-          marginBottom: "1px",
-
-          ".btn": {
-            width: "30px",
-            height: "30px",
-            borderRadius: "6px",
-            color: progressing ? "black" : "white",
-            backgroundColor: progressing ? "white" : "black",
-            fontSize: "18px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          },
-
-          ".btn:hover": {
-            cursor: progressing ? "not-allowed" : "pointer",
-          },
-
-          ".progressingbtn": {
-            width: "30px",
-            height: "30px",
-            borderRadius: "6px",
-            color: "white",
-            backgroundColor: "black",
-            fontSize: "18px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          },
-        },
-      },
     };
   });
-
-  const handleSubmit = () => {
-    if (progressing) {
-      return;
-    }
-
-    const askquestion = text.trim();
-    setText("");
-    setProgressing(true);
-
-    if (askquestion === CMD_BotModeCtl) {
-      dispatch(
-        pushBotModeCtlMessage({
-          choice: "",
-          isChoosing: true,
-          isDone: false,
-        })
-      );
-
-      setProgressing(false);
-    } else if (askquestion === CMD_BotModelCtl) {
-      dispatch(
-        pushBotModelCtlMessage({
-          choice: "",
-          isChoosing: true,
-          isDone: false,
-        })
-      );
-
-      setProgressing(false);
-    } else if (askquestion === CMD_EamLoginCtl) {
-      dispatch(
-        pushEamLoginCtlMessage({
-          appid: "",
-          appsecret: "",
-          isBot: false,
-          isFirst: true,
-          isValid: false,
-          isCancel: false,
-          isDone: false,
-        })
-      );
-      setProgressing(false);
-    } else {
-      // 普通问题
-      dispatch(pushNormalUserMessage({ content: askquestion }));
-      dispatch(
-        pushNormalBotMessage({
-          content: "",
-          isThinking: true,
-          isTyping: false,
-        })
-      );
-
-      if (botmodel === OPT_EAMGPT) {
-        if (pingEam === PINGEAM_NOAUTH) {
-          const content = `Sorry, you are not able to use the model because you are not logged in to EAM yet, please enter the command "${CMD_EamLoginCtl}" to log in.`;
-          dispatch(thinkingNormalBotMessageDone(content));
-          setProgressing(false);
-        } else {
-          AskGPT(askquestion)
-            .then((answer) => {
-              dispatch(thinkingNormalBotMessageDone(answer));
-            })
-            .finally(() => {
-              setProgressing(false);
-            });
-        }
-      } else {
-        if (askquestion === "md") {
-          setTimeout(() => {
-            dispatch(generateMdBoxAnswer());
-            setProgressing(false);
-          }, 1500);
-        } else {
-          // 默认: 输出道德经
-          setTimeout(() => {
-            dispatch(generateFixBotAnswer());
-            setProgressing(false);
-          }, 1500);
-        }
-      }
-    }
-
-    dispatch(triggerScrollbottomSign());
-  };
 
   return (
     <div className={clsname}>
       <div ref={dialogzoneRef} className="dialog-zone">
-        {msglist.map((msgprops: WrapMessageProps, index: number) => (
-          <WrapMessage key={index} id={index} {...msgprops} />
-        ))}
+        <DialogZone />
       </div>
-      <div className="input-zone" ref={inputzoneRef}>
-        <TextArea
-          autoSize={{ minRows: 1, maxRows: 3 }}
-          value={text}
-          style={{
-            border: 0,
-            resize: "none",
-          }}
-          onChange={(eve) => setText(eve.target.value)}
-          onKeyDown={(eve) => {
-            if (eve.key === "Enter") {
-              if (eve.ctrlKey) {
-                setText((prevText) => prevText + "\n");
-              } else {
-                eve.preventDefault();
-                handleSubmit();
-              }
-            }
-          }}
-          disabled={progressing}
-        />
-        <div className="btn-zone">
-          <div
-            className="btn"
-            onClick={() => {
-              handleSubmit();
-            }}
-          >
-            {progressing ? <PauseCircleOutlined /> : <ArrowUpOutlined />}
-          </div>
-        </div>
+      <div ref={inputzoneRef}>
+        <InputZone />
       </div>
     </div>
   );

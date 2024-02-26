@@ -113,7 +113,6 @@ const BotModeCtl: React.FC<BotModeCtlProps & InnerProps> = (props) => {
 
       {isChoosing ? null : (
         <NormalBotMessage
-          id={id}
           content="Ok, The mode switch is successful."
           isThinking={false}
           isTyping={!isDone}
