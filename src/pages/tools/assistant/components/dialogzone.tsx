@@ -1,8 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import WrapMessage, { WrapMessageProps } from "./message";
-import React, { useEffect } from "react";
+import React, { RefObject, useEffect, useRef } from "react";
 import { v2_botThinkingDone } from "../../stores-redux/assistant/latestmsgSlice";
 import { CMD_BotModelCtl } from "./modelCtl";
+import { useEmotionCss } from "@ant-design/use-emotion-css";
+import { CMD_BotModeCtl } from "./modeCtl";
 
 interface HistoryDialogZoneProps {}
 
@@ -19,7 +21,9 @@ const HistoryDialogZone: React.FC<HistoryDialogZoneProps> = (props) => {
   );
 };
 
-const LatestDialogZone: React.FC = () => {
+interface LatestDialogZoneProps {}
+
+const LatestDialogZone: React.FC<LatestDialogZoneProps> = (props) => {
   const dispatch = useDispatch();
   const latestmsg = useSelector(
     (state: any) => state.latestmsg.value
@@ -31,8 +35,7 @@ const LatestDialogZone: React.FC = () => {
       return;
     }
 
-    const welcome = `Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
-    For now, no matter what you ask, the AI assistant will only recite to you the content of a certain chapter of the Tao Te Ching. Have fun using it. ^_^`;
+    const welcome = `Welcome to the AI Assistant, You can use the command "${CMD_BotModelCtl}" to select a model, or use "${CMD_BotModeCtl}" to select a mode. Have fun using it.`;
 
     dispatch(v2_botThinkingDone(welcome));
   }, []);
@@ -45,13 +48,47 @@ const LatestDialogZone: React.FC = () => {
   return <WrapMessage {...latestmsg} id={msglist.length} />;
 };
 
-const DialogZone: React.FC = () => {
+interface DialogZoneProps {}
+
+const DialogZone: React.FC<DialogZoneProps> = (props) => {
   console.log("2 DialogZone");
+  const scrollbottom = useSelector((state: any) => state.aiscrollbottom.value);
+  const divRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!divRef.current) {
+      return;
+    }
+
+    divRef.current.scroll({
+      top: divRef.current.scrollHeight,
+      behavior: "instant",
+    });
+  }, [scrollbottom]);
+
+  const clsName = useEmotionCss(() => {
+    return {
+      height: "100%",
+      width: "100%",
+      padding: "5px 13px",
+      overflow: "auto",
+
+      "&::-webkit-scrollbar": {
+        width: "5px",
+        backgroundColor: "white",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        backgroundColor: "#d9d9d9",
+        borderRadius: "5px",
+      },
+    };
+  });
+
   return (
-    <>
+    <div className={clsName} ref={divRef}>
       <HistoryDialogZone />
       <LatestDialogZone />
-    </>
+    </div>
   );
 };
 

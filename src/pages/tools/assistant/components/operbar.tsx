@@ -56,9 +56,9 @@ const Operbar: React.FC<OperbarProps> = (props) => {
   const pingEam = useSelector((state: any) => state.pingEam.value) as number;
   const isInvalid = botmodel === "none";
 
-  if (pingEam !== PINGEAM_EXCEPTION) {
-    dispatch(updateBotmodel(OPT_EAMGPT));
-  }
+  // if (pingEam !== PINGEAM_EXCEPTION) {
+  //   dispatch(updateBotmodel(OPT_EAMGPT));
+  // }
 
   const clsname = useEmotionCss(() => {
     return {
