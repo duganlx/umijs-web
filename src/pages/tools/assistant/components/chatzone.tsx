@@ -1,43 +1,18 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { CMD_BotModelCtl } from "./modelCtl";
-import { pushNormalBotMessage } from "../../stores-redux/assistant/msglistSlice";
 import InputZone from "./inputzone";
 import DialogZone from "./dialogzone";
-
-const welcome = `Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
-For now, no matter what you ask, the AI assistant will only recite to you the content of a certain chapter of the Tao Te Ching. Have fun using it. ^_^`;
-
 interface ChatZoneProps {
   isFullscreen: boolean;
 }
 
 const ChatZone: React.FC<ChatZoneProps> = (props) => {
+  console.log("1 ChatZone");
   const { isFullscreen } = props;
-
-  const dispatch = useDispatch();
-  const msglist = useSelector((state: any) => state.aimsglist.value) as any[];
-  const scrollbottom = useSelector((state: any) => state.aiscrollbottom.value);
 
   const [inputzoneHeight, setInputzoneHeight] = useState<number>(36);
   const dialogzoneRef = useRef<HTMLDivElement>(null);
   const inputzoneRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isFullscreen || msglist.length > 0) {
-      return;
-    }
-
-    // 欢迎信息
-    dispatch(
-      pushNormalBotMessage({
-        content: welcome,
-        isThinking: false,
-        isTyping: true,
-      })
-    );
-  }, []);
 
   useEffect(() => {
     if (!inputzoneRef.current) {
@@ -59,16 +34,16 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (!dialogzoneRef.current) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!dialogzoneRef.current) {
+  //     return;
+  //   }
 
-    dialogzoneRef.current.scroll({
-      top: dialogzoneRef.current.scrollHeight,
-      behavior: "instant",
-    });
-  }, [scrollbottom]);
+  //   dialogzoneRef.current.scroll({
+  //     top: dialogzoneRef.current.scrollHeight,
+  //     behavior: "instant",
+  //   });
+  // }, [scrollbottom]);
 
   const clsname = useEmotionCss(() => {
     return {

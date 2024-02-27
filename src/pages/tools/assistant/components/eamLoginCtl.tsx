@@ -9,11 +9,8 @@ import { Login, PINGEAM_NORMAL } from "@/services/eam/uc";
 import { useDispatch } from "react-redux";
 import {
   cancelEamLogin,
-  eamLoginCtlDone,
   pushEamLoginCtlMessage,
-  submitEamLoginInvalidAuth,
-  submitEamLoginValidAuth,
-} from "../../stores-redux/assistant/msglistSlice";
+} from "../../stores-redux/assistant/dialogListSlice";
 import {
   getSecretPair,
   setAccessToken,

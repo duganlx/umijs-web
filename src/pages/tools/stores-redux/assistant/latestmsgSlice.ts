@@ -26,7 +26,7 @@ export default latestMsgSlice.reducer;
 
 const { update, clear } = latestMsgSlice.actions;
 
-const botThinking = () => {
+const v2_botThinking = () => {
   const entity: WrapMessageProps = {
     mode: "normal",
     normalprops: {
@@ -35,6 +35,7 @@ const botThinking = () => {
         content: "",
         isThinking: true,
         isTyping: false,
+        isHistory: false,
       },
     },
   };
@@ -42,7 +43,7 @@ const botThinking = () => {
   return update(entity);
 };
 
-const botThinkingDone = (content: string) => {
+const v2_botThinkingDone = (content: string) => {
   const entity: WrapMessageProps = {
     mode: "normal",
     normalprops: {
@@ -51,6 +52,7 @@ const botThinkingDone = (content: string) => {
         content: content,
         isThinking: false,
         isTyping: true,
+        isHistory: false,
       },
     },
   };
@@ -79,8 +81,8 @@ const botCmdEamLoginDone = () => {
 };
 
 export {
-  botThinking,
-  botThinkingDone,
+  v2_botThinking,
+  v2_botThinkingDone,
   botTypingDone,
   //
   botCmdEamLoginDoing,

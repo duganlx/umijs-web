@@ -1,12 +1,15 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import WrapMessage, { WrapMessageProps } from "./message";
-import React from "react";
+import React, { useEffect } from "react";
+import { v2_botThinkingDone } from "../../stores-redux/assistant/latestmsgSlice";
+import { CMD_BotModelCtl } from "./modelCtl";
 
 interface HistoryDialogZoneProps {}
 
 const HistoryDialogZone: React.FC<HistoryDialogZoneProps> = (props) => {
   const msglist = useSelector((state: any) => state.aimsglist.value) as any[];
 
+  console.log("3 HistoryDialogZone", msglist.length);
   return (
     <>
       {msglist.map((msgprops: WrapMessageProps, index: number) => (
@@ -17,11 +20,24 @@ const HistoryDialogZone: React.FC<HistoryDialogZoneProps> = (props) => {
 };
 
 const LatestDialogZone: React.FC = () => {
+  const dispatch = useDispatch();
   const latestmsg = useSelector(
     (state: any) => state.latestmsg.value
   ) as WrapMessageProps | null;
   const msglist = useSelector((state: any) => state.aimsglist.value) as any[];
 
+  useEffect(() => {
+    if (msglist.length > 0) {
+      return;
+    }
+
+    const welcome = `Welcome to the AI Assistant, no model is currently selected, so it cannot help you yet, please use the following command to select a model: "${CMD_BotModelCtl}".\n
+    For now, no matter what you ask, the AI assistant will only recite to you the content of a certain chapter of the Tao Te Ching. Have fun using it. ^_^`;
+
+    dispatch(v2_botThinkingDone(welcome));
+  }, []);
+
+  console.log("3 LatestDialogZone", latestmsg);
   if (latestmsg === null) {
     return <></>;
   }
@@ -29,10 +45,8 @@ const LatestDialogZone: React.FC = () => {
   return <WrapMessage {...latestmsg} id={msglist.length} />;
 };
 
-/**
- * HistoryDialogZone 显示历史聊天（直接展示），LatestDialogZone 展示带逐字打印动画效果
- */
 const DialogZone: React.FC = () => {
+  console.log("2 DialogZone");
   return (
     <>
       <HistoryDialogZone />

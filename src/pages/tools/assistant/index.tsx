@@ -3,10 +3,7 @@ import Operbar from "./components/operbar";
 import ChatZone from "./components/chatzone";
 import { useState } from "react";
 import { Modal } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { PINGEAM_EXCEPTION } from "@/services/eam/uc";
-import { updateBotmodel } from "../stores-redux/assistant/botmodelSlice";
-import { OPT_EAMGPT } from "./components/modelCtl";
+import { useDispatch } from "react-redux";
 import { triggerScrollbottomSign } from "../stores-redux/assistant/scrollbottomSlice";
 
 interface AssistantViewProps {
@@ -16,11 +13,6 @@ interface AssistantViewProps {
 const AssistantView: React.FC<AssistantViewProps> = (props) => {
   const [fullscreen, setFullscreen] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const pingEam = useSelector((state: any) => state.pingEam.value) as number;
-
-  if (pingEam !== PINGEAM_EXCEPTION) {
-    dispatch(updateBotmodel(OPT_EAMGPT));
-  }
 
   const clsname = useEmotionCss(() => {
     return {
@@ -67,6 +59,7 @@ const AssistantView: React.FC<AssistantViewProps> = (props) => {
     };
   });
 
+  console.log("0 AssistantView");
   return (
     <>
       <div className={clsname}>

@@ -10,7 +10,7 @@ import { updateBotmode } from "../../stores-redux/assistant/botmodeSlice";
 import {
   choosingBotModeCtlMessageDone,
   typingBotModeCtlMessageDone,
-} from "../../stores-redux/assistant/msglistSlice";
+} from "../../stores-redux/assistant/dialogListSlice";
 
 export const CMD_BotModeCtl = "chgmode";
 

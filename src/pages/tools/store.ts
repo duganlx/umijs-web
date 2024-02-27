@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import msglistSlice from "./stores-redux/assistant/msglistSlice";
+import msglistSlice from "./stores-redux/assistant/dialogListSlice";
 import botmodeSlice from "./stores-redux/assistant/botmodeSlice";
 import botmodelSlice from "./stores-redux/assistant/botmodelSlice";
 import scrollbottomSlice from "./stores-redux/assistant/scrollbottomSlice";

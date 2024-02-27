@@ -10,20 +10,21 @@ import {
   pushBotModeCtlMessage,
   pushBotModelCtlMessage,
   pushNormalUserMessage,
-} from "../../stores-redux/assistant/msglistSlice";
+} from "../../stores-redux/assistant/dialogListSlice";
 import { triggerScrollbottomSign } from "../../stores-redux/assistant/scrollbottomSlice";
 import { generateMdBoxAnswer, generateFixBotAnswer } from "./botMessage";
 import { CMD_EamLoginCtl } from "./eamLoginCtl";
 import { CMD_BotModelCtl, OPT_EAMGPT } from "./modelCtl";
 import {
   botCmdEamLoginDoing,
-  botThinking,
-  botThinkingDone,
+  v2_botThinking,
+  v2_botThinkingDone,
 } from "../../stores-redux/assistant/latestmsgSlice";
 
 interface InputZoneProps {}
 
 const InputZone: React.FC<InputZoneProps> = (props) => {
+  console.log("3 InputZone");
   const {} = props;
   const dispatch = useDispatch();
   const botmodel = useSelector((state: any) => state.aibotmodel.value);
@@ -159,19 +160,19 @@ const InputZone: React.FC<InputZoneProps> = (props) => {
       //     isTyping: false,
       //   })
       // );
-      dispatch(botThinking());
+      dispatch(v2_botThinking());
 
       if (botmodel === OPT_EAMGPT) {
         if (pingEam === PINGEAM_NOAUTH) {
           const content = `Sorry, you are not able to use the model because you are not logged in to EAM yet, please enter the command "${CMD_EamLoginCtl}" to log in.`;
           // dispatch(thinkingNormalBotMessageDone(content));
-          dispatch(botThinkingDone(content));
+          dispatch(v2_botThinkingDone(content));
           setProgressing(false);
         } else {
           AskGPT(askquestion)
             .then((answer) => {
               // dispatch(thinkingNormalBotMessageDone(answer));
-              dispatch(botThinkingDone(answer));
+              dispatch(v2_botThinkingDone(answer));
             })
             .finally(() => {
               setProgressing(false);

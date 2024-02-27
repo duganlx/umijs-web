@@ -10,7 +10,7 @@ import { updateBotmodel } from "../../stores-redux/assistant/botmodelSlice";
 import {
   choosingBotModelCtlMessageDone,
   typingBotModelCtlMessageDone,
-} from "../../stores-redux/assistant/msglistSlice";
+} from "../../stores-redux/assistant/dialogListSlice";
 import { PINGEAM_EXCEPTION } from "@/services/eam/uc";
 
 export const CMD_BotModelCtl = "chgmodel";

@@ -4,7 +4,7 @@ import { Popconfirm, Tooltip, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { CMD_BotModeCtl } from "./modeCtl";
 import { CMD_BotModelCtl, OPT_EAMGPT, OPT_NONE } from "./modelCtl";
-import { clearMsglist } from "../../stores-redux/assistant/msglistSlice";
+import { clearMsglist } from "../../stores-redux/assistant/dialogListSlice";
 import { CMD_EamLoginCtl } from "./eamLoginCtl";
 import {
   PINGEAM_EXCEPTION,
@@ -13,6 +13,7 @@ import {
   PINGEAM_NORMAL,
 } from "@/services/eam/uc";
 import { triggerScrollbottomSign } from "../../stores-redux/assistant/scrollbottomSlice";
+import { updateBotmodel } from "../../stores-redux/assistant/botmodelSlice";
 
 const STATUS_COLOR_NORMAL = "green";
 const STATUS_COLOR_EXCEPTION = "red";
@@ -54,6 +55,10 @@ const Operbar: React.FC<OperbarProps> = (props) => {
   ) as string;
   const pingEam = useSelector((state: any) => state.pingEam.value) as number;
   const isInvalid = botmodel === "none";
+
+  if (pingEam !== PINGEAM_EXCEPTION) {
+    dispatch(updateBotmodel(OPT_EAMGPT));
+  }
 
   const clsname = useEmotionCss(() => {
     return {

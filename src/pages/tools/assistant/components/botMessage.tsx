@@ -5,10 +5,10 @@ import { useDispatch } from "react-redux";
 import copy from "copy-to-clipboard";
 import { message } from "antd";
 import MdZone from "./mdzone";
-import { pushNormalBotMessage } from "../../stores-redux/assistant/msglistSlice";
+import { pushNormalBotMessage } from "../../stores-redux/assistant/dialogListSlice";
 import { triggerScrollbottomSign } from "../../stores-redux/assistant/scrollbottomSlice";
 import {
-  botThinkingDone,
+  v2_botThinkingDone,
   botTypingDone,
 } from "../../stores-redux/assistant/latestmsgSlice";
 
@@ -101,7 +101,7 @@ export function generateFixBotAnswer() {
   const randindex = Math.floor(Math.random() * theTaoteChing.length);
 
   // return thinkingNormalBotMessageDone(theTaoteChing[randindex]);
-  return botThinkingDone(theTaoteChing[randindex]);
+  return v2_botThinkingDone(theTaoteChing[randindex]);
 }
 
 export function generateMdBoxAnswer() {
@@ -118,12 +118,13 @@ func main() {
 `;
 
   // return thinkingNormalBotMessageDone(content);
-  return botThinkingDone(content);
+  return v2_botThinkingDone(content);
 }
 
 export interface NormalBotMessageProps {
   content: string;
 
+  isHistory: boolean;
   isThinking: boolean;
   isTyping: boolean;
 
@@ -131,7 +132,12 @@ export interface NormalBotMessageProps {
 }
 
 const NormalBotMessage: React.FC<NormalBotMessageProps> = (props) => {
-  const { content, isThinking, isTyping, onTypingDone } = props;
+  const { content, isThinking, isHistory, isTyping, onTypingDone } = props;
+
+  if (isHistory && (isThinking || isTyping)) {
+    const err = `The combination of parameters is invalid: (${isHistory}, ${isThinking}, ${isTyping})`;
+    throw new Error(err);
+  }
 
   const [dots, setDots] = useState<string>(".");
   const [rendermsg, setRendermsg] = useState<string>(isTyping ? "" : content);
@@ -186,16 +192,18 @@ const NormalBotMessage: React.FC<NormalBotMessageProps> = (props) => {
       return;
     }
 
-    // dispatch(typingNormalBotMessageDone(id));
+    if (!isHistory) {
+      dispatch(
+        pushNormalBotMessage({
+          content: content,
+          isHistory: true,
+          isThinking: false,
+          isTyping: false,
+        })
+      );
 
-    dispatch(
-      pushNormalBotMessage({
-        content: content,
-        isThinking: false,
-        isTyping: false,
-      })
-    );
-    dispatch(botTypingDone());
+      dispatch(botTypingDone());
+    }
 
     if (onTypingDone) {
       onTypingDone();

@@ -4,7 +4,7 @@ const KEY_AiChatLog = "assistant_chatlogs";
 
 export function setAiChatLogs(chatlogs: WrapMessageProps[]) {
   const str = JSON.stringify(chatlogs);
-  localStorage.setItem(KEY_AiChatLog, str);
+  // localStorage.setItem(KEY_AiChatLog, str);
 }
 
 export function getAiChatLogs(): WrapMessageProps[] {
