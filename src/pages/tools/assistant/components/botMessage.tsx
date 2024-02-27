@@ -192,6 +192,8 @@ const NormalBotMessage: React.FC<NormalBotMessageProps> = (props) => {
       return;
     }
 
+    // todo 以下代码是普通机器人消息，若为命令则不应该执行
+    // == begin ==
     if (!isHistory) {
       dispatch(
         pushNormalBotMessage({
@@ -204,6 +206,7 @@ const NormalBotMessage: React.FC<NormalBotMessageProps> = (props) => {
 
       dispatch(botTypingDone());
     }
+    // == end ==
 
     if (onTypingDone) {
       onTypingDone();

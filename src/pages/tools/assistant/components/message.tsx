@@ -36,7 +36,8 @@ const WrapMessage: React.FC<WrapMessageProps & InnerProps> = (props) => {
 
   if (mode == "normal") {
     if (normalprops === undefined) {
-      return <InvalidMessage />;
+      // todo
+      throw new Error("");
     }
 
     const { role, botprops, userprops } = normalprops;
@@ -57,38 +58,36 @@ const WrapMessage: React.FC<WrapMessageProps & InnerProps> = (props) => {
     } else {
       return <InvalidMessage />;
     }
-  }
-  // else if (mode == "special") {
-  //   if (specialprops === undefined) {
-  //     return <InvalidMessage />;
-  //   }
+  } else if (mode == "special") {
+    if (specialprops === undefined) {
+      return <InvalidMessage />;
+    }
 
-  //   const { cmd, modectlprops, modelctlprops, logineamprops } = specialprops;
-  //   if (cmd === "mode") {
-  //     if (modectlprops === undefined) {
-  //       return <InvalidMessage />;
-  //     }
+    const { cmd, modectlprops, modelctlprops, logineamprops } = specialprops;
+    if (cmd === "mode") {
+      if (modectlprops === undefined) {
+        return <InvalidMessage />;
+      }
 
-  //     // 模式切换
-  //     return <BotModeCtl {...modectlprops} id={id} />;
-  //   } else if (cmd === "model") {
-  //     if (modelctlprops === undefined) {
-  //       return <InvalidMessage />;
-  //     }
+      // 模式切换
+      return <BotModeCtl {...modectlprops} id={id} />;
+    } else if (cmd === "model") {
+      if (modelctlprops === undefined) {
+        return <InvalidMessage />;
+      }
 
-  //     // 模型切换
-  //     return <BotModelCtl {...modelctlprops} id={id} />;
-  //   } else if (cmd === "logineam") {
-  //     if (logineamprops === undefined) {
-  //       return <InvalidMessage />;
-  //     }
+      // 模型切换
+      return <BotModelCtl {...modelctlprops} id={id} />;
+    } else if (cmd === "logineam") {
+      if (logineamprops === undefined) {
+        return <InvalidMessage />;
+      }
 
-  //     return <EamLoginCtl {...logineamprops} id={id} />;
-  //   } else {
-  //     return <InvalidMessage />;
-  //   }
-  // }
-  else {
+      return <EamLoginCtl {...logineamprops} id={id} />;
+    } else {
+      return <InvalidMessage />;
+    }
+  } else {
     return <InvalidMessage />;
   }
 };

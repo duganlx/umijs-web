@@ -20,12 +20,13 @@ export const OPT_EAMGPT = "eamGpt";
 export interface BotModelCtlProps {
   choice: "" | "eamGpt";
 
+  isHistory: boolean;
   isChoosing: boolean;
   isDone: boolean;
 }
 
 const BotModelCtl: React.FC<BotModelCtlProps & InnerProps> = (props) => {
-  const { id, choice, isChoosing, isDone } = props;
+  const { id, choice, isHistory, isChoosing, isDone } = props;
   const botmodel = useSelector(
     (state: any) => state.aibotmodel.value
   ) as string;
@@ -121,6 +122,7 @@ const BotModelCtl: React.FC<BotModelCtlProps & InnerProps> = (props) => {
       {isChoosing ? null : (
         <NormalBotMessage
           content="Ok, The model switch is successful."
+          isHistory={isHistory}
           isThinking={false}
           isTyping={!isDone}
           onTypingDone={() => {
