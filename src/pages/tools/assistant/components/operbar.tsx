@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CMD_BotModeCtl } from "./modeCtl";
 import { CMD_BotModelCtl, OPT_EAMGPT, OPT_NONE } from "./modelCtl";
 import { clearMsglist } from "../../stores-redux/assistant/dialogListSlice";
-import { CMD_EamLoginCtl } from "./eamLoginCtl";
+import { v1_CMD_EamLoginCtl } from "./eamLoginCtl";
 import {
   PINGEAM_EXCEPTION,
   PINGEAM_NOAUTH,
@@ -167,8 +167,10 @@ const Operbar: React.FC<OperbarProps> = (props) => {
                 <hr />
                 <p>In addition, there are the following commands for EAM:</p>
                 <p>
-                  <code style={{ fontWeight: "bold" }}>{CMD_EamLoginCtl}</code>:
-                  Input EAM login credentials
+                  <code style={{ fontWeight: "bold" }}>
+                    {v1_CMD_EamLoginCtl}
+                  </code>
+                  : Input EAM login credentials
                 </p>
               </div>
             }

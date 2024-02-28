@@ -11,7 +11,7 @@ import {
 } from "../../assistant/components/modelCtl";
 import { NormalUserMessageProps } from "../../assistant/components/userMessage";
 import {
-  CMD_EamLoginCtl,
+  v1_CMD_EamLoginCtl,
   EamLoginCtlProps,
 } from "../../assistant/components/eamLoginCtl";
 import { clearAiChatLogs, getAiChatLogs, setAiChatLogs } from "../../utils";
@@ -201,7 +201,7 @@ const msglistSlice = createSlice({
             },
           },
         };
-      } else if (cmd === CMD_EamLoginCtl) {
+      } else if (cmd === v1_CMD_EamLoginCtl) {
         const { logineamprops } = specialprops;
         if (logineamprops === undefined) return;
 
@@ -404,7 +404,7 @@ const cancelEamLogin = (index: number, isFirst: boolean) => {
 };
 
 const eamLoginCtlDone = (index: number) => {
-  const payload = { index, cmd: CMD_EamLoginCtl };
+  const payload = { index, cmd: v1_CMD_EamLoginCtl };
   return msglistSlice.actions.cmdBotDone(payload);
 };
 

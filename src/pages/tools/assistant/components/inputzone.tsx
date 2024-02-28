@@ -13,7 +13,7 @@ import {
 } from "../../stores-redux/assistant/dialogListSlice";
 import { triggerScrollbottomSign } from "../../stores-redux/assistant/scrollbottomSlice";
 import { generateMdBoxAnswer, generateFixBotAnswer } from "./botMessage";
-import { CMD_EamLoginCtl } from "./eamLoginCtl";
+import { v1_CMD_EamLoginCtl } from "./eamLoginCtl";
 import { CMD_BotModelCtl, OPT_EAMGPT } from "./modelCtl";
 import {
   botCmdEamLoginDoing,
@@ -126,7 +126,7 @@ const InputZone: React.FC<InputZoneProps> = (props) => {
       );
 
       setProgressing(false);
-    } else if (askquestion === CMD_EamLoginCtl) {
+    } else if (askquestion === v1_CMD_EamLoginCtl) {
       // dispatch(
       //   pushEamLoginCtlMessage({
       //     appid: "",
@@ -164,7 +164,7 @@ const InputZone: React.FC<InputZoneProps> = (props) => {
 
       if (botmodel === OPT_EAMGPT) {
         if (pingEam === PINGEAM_NOAUTH) {
-          const content = `Sorry, you are not able to use the model because you are not logged in to EAM yet, please enter the command "${CMD_EamLoginCtl}" to log in.`;
+          const content = `Sorry, you are not able to use the model because you are not logged in to EAM yet, please enter the command "${v1_CMD_EamLoginCtl}" to log in.`;
           // dispatch(thinkingNormalBotMessageDone(content));
           dispatch(v2_botThinkingDone(content));
           setProgressing(false);

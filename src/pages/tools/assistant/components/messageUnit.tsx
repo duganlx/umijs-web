@@ -8,7 +8,6 @@ import copy from "copy-to-clipboard";
 interface BotUnitMessageProps {
   content: string;
 
-  isHistory: boolean;
   isThinking: boolean;
   isTyping: boolean;
 
@@ -17,19 +16,8 @@ interface BotUnitMessageProps {
 }
 
 const BotUnitMessage: React.FC<BotUnitMessageProps> = (props) => {
-  const {
-    content,
-    isThinking,
-    isHistory,
-    isTyping,
-    onTypingDone,
-    scrollbottomSign,
-  } = props;
-
-  if (isHistory && (isThinking || isTyping)) {
-    const err = `The combination of parameters is invalid: (${isHistory}, ${isThinking}, ${isTyping})`;
-    throw new Error(err);
-  }
+  const { content, isThinking, isTyping } = props;
+  const { onTypingDone, scrollbottomSign } = props;
 
   const [dots, setDots] = useState<string>(".");
   const [rendermsg, setRendermsg] = useState<string>(isTyping ? "" : content);
@@ -84,7 +72,7 @@ const BotUnitMessage: React.FC<BotUnitMessageProps> = (props) => {
       return;
     }
 
-    if (!isHistory && onTypingDone) {
+    if (isTyping && onTypingDone) {
       onTypingDone();
     }
   }, [rendermsg]);
@@ -220,34 +208,4 @@ const UserUnitMessage: React.FC<UserUnitMessageProps> = (props) => {
   );
 };
 
-interface UnitMessageProps {
-  role: "bot" | "user";
-
-  botProps?: BotUnitMessageProps;
-  userProps?: UserUnitMessageProps;
-}
-
-const UnitMessage: React.FC<UnitMessageProps> = (props) => {
-  const { role, botProps, userProps } = props;
-
-  switch (role) {
-    case "bot":
-      if (botProps === undefined) {
-        throw new Error(`The parameter is abnormal: ${role}, ${botProps}`);
-      }
-
-      return <BotUnitMessage {...botProps} />;
-
-    case "user":
-      if (userProps === undefined) {
-        throw new Error(`The parameter is abnormal: ${role}, ${userProps}`);
-      }
-
-      return <UserUnitMessage {...userProps} />;
-
-    default:
-      throw new Error(`The parameter is abnormal: ${role}`);
-  }
-};
-
-export default UnitMessage;
+export { BotUnitMessage, UserUnitMessage };

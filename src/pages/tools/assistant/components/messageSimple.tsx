@@ -1,43 +1,39 @@
 import React from "react";
-import UnitMessage from "./messageUnit";
 import { useDispatch } from "react-redux";
 import { pushNormalBotMessage } from "../../stores-redux/assistant/dialogListSlice";
 import { botTypingDone } from "../../stores-redux/assistant/latestmsgSlice";
 import { SmileOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
+import { BotUnitMessage } from "./messageUnit";
 
 interface BotSimpleMessageProps {
   content: string;
 
-  isHistory: boolean;
   isThinking: boolean;
   isTyping: boolean;
 }
 
 const BotSimpleMessage: React.FC<BotSimpleMessageProps> = (props) => {
-  const { content, isHistory, isThinking, isTyping } = props;
+  const { content, isThinking, isTyping } = props;
   const dispatch = useDispatch();
 
   return (
-    <UnitMessage
-      role="bot"
-      botProps={{
-        content,
-        isHistory,
-        isThinking,
-        isTyping,
-        onTypingDone: () => {
-          dispatch(
-            pushNormalBotMessage({
-              content: content,
-              isHistory: true,
-              isThinking: false,
-              isTyping: false,
-            })
-          );
+    <BotUnitMessage
+      content={content}
+      isThinking={isThinking}
+      isTyping={isTyping}
+      onTypingDone={() => {
+        // todo 需要修改
+        dispatch(
+          pushNormalBotMessage({
+            content: content,
+            isHistory: true,
+            isThinking: false,
+            isTyping: false,
+          })
+        );
 
-          dispatch(botTypingDone());
-        },
+        dispatch(botTypingDone());
       }}
     />
   );

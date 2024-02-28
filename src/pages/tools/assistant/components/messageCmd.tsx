@@ -1,32 +1,28 @@
-import { useEmotionCss } from "@ant-design/use-emotion-css";
-import NormalUserMessage from "./userMessage";
-import { RobotOutlined } from "@ant-design/icons";
-import NormalBotMessage from "./botMessage";
-import { InnerProps } from "./message";
-import { Input } from "antd";
-import { useEffect, useState } from "react";
-import { Login, PINGEAM_NORMAL } from "@/services/eam/uc";
+import React, { useState } from "react";
+import { BotUnitMessage, UserUnitMessage } from "./messageUnit";
 import { useDispatch } from "react-redux";
-import {
-  cancelEamLogin,
-  pushEamLoginCtlMessage,
-} from "../../stores-redux/assistant/dialogListSlice";
-import {
-  getSecretPair,
-  setAccessToken,
-  setSecretPair,
-} from "@/services/eam/utils";
-import { updatePingEam } from "../../stores-redux/pingEamSlice";
-import {
-  botCmdEamLoginDoing,
-  botCmdEamLoginDone,
-} from "../../stores-redux/assistant/latestmsgSlice";
+import { Login, PINGEAM_NORMAL } from "@/services/eam/uc";
+import { setSecretPair, setAccessToken } from "@/services/eam/utils";
+import { RobotOutlined } from "@ant-design/icons";
+import { useEmotionCss } from "@ant-design/use-emotion-css";
+import { Input } from "antd";
+import TextArea from "antd/es/input/TextArea";
 
-const { TextArea } = Input;
+export const CMD_EamLogin = "loginEam";
 
-export const v1_CMD_EamLoginCtl = "logineam";
+interface ModeCmdMessageProps {}
 
-export interface EamLoginCtlProps {
+const ModeCmdMessage: React.FC<ModeCmdMessageProps> = (props) => {
+  return <></>;
+};
+
+interface ModelCmdMessageProps {}
+
+const ModelCmdMessage: React.FC<ModelCmdMessageProps> = (props) => {
+  return <></>;
+};
+
+interface EamLoginCmdMessageProps {
   appid: string;
   appsecret: string;
 
@@ -48,37 +44,15 @@ export interface EamLoginCtlProps {
   isDone: boolean;
 }
 
-const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
-  const { id, appid, appsecret, isBot, isFirst, isValid, isCancel, isDone } =
-    props;
+const EamLoginCmdMessage: React.FC<EamLoginCmdMessageProps> = (props) => {
+  const { appid, appsecret } = props;
+  const { isBot, isFirst, isValid, isCancel, isDone } = props;
+
   const dispatch = useDispatch();
 
   const [renderAppid, setRenderAppid] = useState<string>(appid);
   const [renderAppsecret, setRenderAppsecret] = useState<string>(appsecret);
   const [isInput, setIsInput] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (appid !== "" || appsecret !== "") {
-      return;
-    }
-
-    const appPair = getSecretPair();
-    if (appPair === null) {
-      return;
-    }
-
-    setRenderAppid(appPair.appid);
-    setRenderAppsecret(appPair.appsecret);
-  }, [appid, appsecret]);
-
-  useEffect(() => {
-    if (!isDone) {
-      return;
-    }
-
-    setRenderAppid("******");
-    setRenderAppsecret("******");
-  }, [isDone]);
 
   const clsname = useEmotionCss(() => {
     return {
@@ -133,7 +107,7 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
 
   return (
     <>
-      {isBot ? null : <NormalUserMessage content={v1_CMD_EamLoginCtl} />}
+      {isBot ? null : <UserUnitMessage content={CMD_EamLogin} />}
 
       <div className={clsname}>
         <div className="avater">
@@ -188,17 +162,17 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
                       //     renderAppsecret
                       //   )
                       // );
-                      dispatch(
-                        botCmdEamLoginDoing({
-                          appid: renderAppid,
-                          appsecret: renderAppsecret,
-                          isValid: false,
-                          isCancel: false,
-                          isBot: isBot,
-                          isFirst: isFirst,
-                          isDone: isDone,
-                        })
-                      );
+                      // dispatch(
+                      //   botCmdEamLoginDoing({
+                      //     appid: renderAppid,
+                      //     appsecret: renderAppsecret,
+                      //     isValid: false,
+                      //     isCancel: false,
+                      //     isBot: isBot,
+                      //     isFirst: isFirst,
+                      //     isDone: isDone,
+                      //   })
+                      // );
                       return;
                     }
 
@@ -206,18 +180,18 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
                     // dispatch(
                     //   submitEamLoginValidAuth(id, renderAppid, renderAppsecret)
                     // );
-                    dispatch(
-                      botCmdEamLoginDoing({
-                        appid: renderAppid,
-                        appsecret: renderAppsecret,
-                        isValid: true,
-                        isCancel: false,
-                        isBot: isBot,
-                        isFirst: isFirst,
-                        isDone: isDone,
-                      })
-                    );
-                    dispatch(updatePingEam(PINGEAM_NORMAL));
+                    // dispatch(
+                    //   botCmdEamLoginDoing({
+                    //     appid: renderAppid,
+                    //     appsecret: renderAppsecret,
+                    //     isValid: true,
+                    //     isCancel: false,
+                    //     isBot: isBot,
+                    //     isFirst: isFirst,
+                    //     isDone: isDone,
+                    //   })
+                    // );
+                    // dispatch(updatePingEam(PINGEAM_NORMAL));
                     setSecretPair(renderAppid, renderAppsecret);
                     setAccessToken(reply.data.accessToken);
                   })
@@ -229,17 +203,17 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
                     //     renderAppsecret
                     //   )
                     // );
-                    dispatch(
-                      botCmdEamLoginDoing({
-                        appid: renderAppid,
-                        appsecret: renderAppsecret,
-                        isValid: false,
-                        isCancel: false,
-                        isBot: isBot,
-                        isFirst: isFirst,
-                        isDone: isDone,
-                      })
-                    );
+                    // dispatch(
+                    //   botCmdEamLoginDoing({
+                    //     appid: renderAppid,
+                    //     appsecret: renderAppsecret,
+                    //     isValid: false,
+                    //     isCancel: false,
+                    //     isBot: isBot,
+                    //     isFirst: isFirst,
+                    //     isDone: isDone,
+                    //   })
+                    // );
                   });
               }}
             >
@@ -249,7 +223,7 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
               className="opbar-item"
               onClick={() => {
                 setIsInput(false);
-                dispatch(cancelEamLogin(id, isFirst));
+                // dispatch(cancelEamLogin(id, isFirst));
               }}
             >
               Cancel
@@ -259,7 +233,7 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
       </div>
 
       {isFirst || isInput ? null : (
-        <NormalBotMessage
+        <BotUnitMessage
           content={
             isValid
               ? "Ok, login credentials verified successfully"
@@ -270,32 +244,19 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
           onTypingDone={() => {
             if (isValid || isCancel) {
               // dispatch(eamLoginCtlDone(id));
-              dispatch(botCmdEamLoginDone());
+              // dispatch(botCmdEamLoginDone());
             }
           }}
         />
       )}
+
       {isCancel ? (
-        <NormalBotMessage
+        <BotUnitMessage
           content="Okay, the login credentials entry operation has been canceled"
           isThinking={false}
           isTyping={!isDone}
           onTypingDone={() => {
-            if (isValid || isCancel) {
-              // dispatch(eamLoginCtlDone(id));
-              dispatch(botCmdEamLoginDone());
-              dispatch(
-                pushEamLoginCtlMessage({
-                  appid: renderAppid,
-                  appsecret: renderAppsecret,
-                  isBot: isBot,
-                  isFirst: isFirst,
-                  isValid: isValid,
-                  isCancel: isCancel,
-                  isDone: isDone,
-                })
-              );
-            }
+            // todo
           }}
         />
       ) : null}
@@ -303,4 +264,4 @@ const EamLoginCtl: React.FC<EamLoginCtlProps & InnerProps> = (props) => {
   );
 };
 
-export default EamLoginCtl;
+export { ModeCmdMessage, ModelCmdMessage, EamLoginCmdMessage };
