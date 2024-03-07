@@ -1,13 +1,11 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { useEffect, useRef, useState } from "react";
-import InputZone from "./inputzone";
-import DialogZone from "./dialogzone";
+
 interface ChatZoneProps {
   isFullscreen: boolean;
 }
 
 const ChatZone: React.FC<ChatZoneProps> = (props) => {
-  console.log("1 ChatZone");
   const { isFullscreen } = props;
 
   const [inputzoneHeight, setInputzoneHeight] = useState<number>(36);
@@ -52,11 +50,9 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
   return (
     <div className={clsname}>
       <div ref={dialogzoneRef} className="dialog-zone-wrap">
-        <DialogZone />
+        {/* <DialogZone /> */}
       </div>
-      <div ref={inputzoneRef}>
-        <InputZone />
-      </div>
+      <div ref={inputzoneRef}>{/* <InputZone /> */}</div>
     </div>
   );
 };

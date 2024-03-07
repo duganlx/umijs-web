@@ -1,18 +1,17 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
-import Operbar from "./components/operbar";
-import ChatZone from "./components/chatzone";
 import { useState } from "react";
 import { Modal } from "antd";
 import { useDispatch } from "react-redux";
-import { triggerScrollbottomSign } from "../stores-redux/assistant/scrollbottomSlice";
+import Opbar from "./components/opbar";
+// import { triggerScrollbottomSign } from "../stores-redux/assistant/scrollbottomSlice";
 
-interface AssistantViewProps {
+interface AiViewProps {
   layoutsize: [number, number];
 }
 
-const AssistantView: React.FC<AssistantViewProps> = (props) => {
+const AiView: React.FC<AiViewProps> = (props) => {
   const [fullscreen, setFullscreen] = useState<boolean>(false);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const clsname = useEmotionCss(() => {
     return {
@@ -59,27 +58,29 @@ const AssistantView: React.FC<AssistantViewProps> = (props) => {
     };
   });
 
-  console.log("0 AssistantView");
+  console.log("0 AiView");
   return (
     <>
       <div className={clsname}>
-        <Operbar setFullscreen={setFullscreen} />
-        <ChatZone isFullscreen={false} />
+        <Opbar />
+        {/* <Operbar setFullscreen={setFullscreen} />
+        <ChatZone isFullscreen={false} /> */}
       </div>
       <Modal
         className={fsclsname}
-        title={<Operbar />}
-        open={fullscreen}
+        title={<Opbar />}
+        // open={fullscreen}
+        open={false}
         onCancel={() => {
-          dispatch(triggerScrollbottomSign());
-          setFullscreen(false);
+          // dispatch(triggerScrollbottomSign());
+          // setFullscreen(false);
         }}
         footer={null}
       >
-        <ChatZone isFullscreen={true} />
+        {/* <ChatZone isFullscreen={true} /> */}
       </Modal>
     </>
   );
 };
 
-export default AssistantView;
+export default AiView;

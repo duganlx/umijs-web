@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import DraftView from "./draft";
 import { debounce } from "lodash";
 import TimestampVertView from "./timestampVert";
-import AssistantView from "./assistant";
-import { PINGEAM_EXCEPTION, PingEam } from "@/services/eam/uc";
+import AiView from "./ai";
+// import { PINGEAM_EXCEPTION, PingEam } from "@/services/eam/uc";
 import { Provider, useDispatch } from "react-redux";
 import store from "./store";
-import { updatePingEam } from "./stores-redux/pingEamSlice";
+// import { updatePingEam } from "./stores-redux/pingEamSlice";
 
 interface CardViewProps {
   title: string;
@@ -64,21 +64,21 @@ const ContextLayer: React.FC<{ children: React.ReactNode }> = (props) => {
   const { children } = props;
 
   const dispatch = useDispatch();
-  useEffect(() => {
-    // 测试用
-    // clearSecretPair();
-    // const appid = "";
-    // const appsecret = "";
-    // setSecretPair(appid, appsecret);
+  // useEffect(() => {
+  //   // 测试用
+  //   // clearSecretPair();
+  //   // const appid = "";
+  //   // const appsecret = "";
+  //   // setSecretPair(appid, appsecret);
 
-    PingEam()
-      .then((pong) => {
-        dispatch(updatePingEam(pong));
-      })
-      .catch(() => {
-        dispatch(updatePingEam(PINGEAM_EXCEPTION));
-      });
-  }, []);
+  //   PingEam()
+  //     .then((pong) => {
+  //       dispatch(updatePingEam(pong));
+  //     })
+  //     .catch(() => {
+  //       dispatch(updatePingEam(PINGEAM_EXCEPTION));
+  //     });
+  // }, []);
 
   return <>{children}</>;
 };
@@ -120,7 +120,7 @@ const ToolsView: React.FC = () => {
             <DraftView />
           </CardView>
           <CardView title="AI Assistant">
-            <AssistantView layoutsize={layoutsize} />
+            <AiView layoutsize={layoutsize} />
           </CardView>
           <CardView title="Jottings">todo</CardView>
         </div>
