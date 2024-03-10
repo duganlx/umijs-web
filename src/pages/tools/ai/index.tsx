@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Modal } from "antd";
 import { useDispatch } from "react-redux";
 import Opbar from "./components/opbar";
+import ChatZone from "./components/czone";
 // import { triggerScrollbottomSign } from "../stores-redux/assistant/scrollbottomSlice";
 
 interface AiViewProps {
@@ -62,22 +63,24 @@ const AiView: React.FC<AiViewProps> = (props) => {
   return (
     <>
       <div className={clsname}>
-        <Opbar />
-        {/* <Operbar setFullscreen={setFullscreen} />
-        <ChatZone isFullscreen={false} /> */}
+        <Opbar
+          openFullscreen={() => {
+            setFullscreen(true);
+          }}
+        />
+        <ChatZone isFullscreen={false} />
       </div>
       <Modal
         className={fsclsname}
         title={<Opbar />}
-        // open={fullscreen}
-        open={false}
+        open={fullscreen}
         onCancel={() => {
           // dispatch(triggerScrollbottomSign());
-          // setFullscreen(false);
+          setFullscreen(false);
         }}
         footer={null}
       >
-        {/* <ChatZone isFullscreen={true} /> */}
+        <ChatZone isFullscreen={true} />
       </Modal>
     </>
   );

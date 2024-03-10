@@ -1,19 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
-// import msglistSlice from "./stores-redux/assistant/dialogListSlice";
 // import botmodeSlice from "./stores-redux/assistant/botmodeSlice";
 // import botmodelSlice from "./stores-redux/assistant/botmodelSlice";
-// import scrollbottomSlice from "./stores-redux/assistant/scrollbottomSlice";
-import pingEamSlice from "./rslices/pingEam";
-// import latestmsgSlice from "./stores-redux/assistant/latestmsgSlice";
+import pingEam from "./rslices/pingEam";
+import lmsg from "./rslices/ai/lmsg";
+import hmsgs from "./rslices/ai/hmsgs";
+import toBttm from "./rslices/ai/toBttm";
 
 export default configureStore({
   reducer: {
-    pingEam: pingEamSlice,
-    // // assistant
-    // aimsglist: msglistSlice,
-    // latestmsg: latestmsgSlice,
+    pingEam: pingEam,
+    // AI
+    ailmsg: lmsg,
+    aihmsgs: hmsgs,
+    ai2bttm: toBttm,
     // aibotmodel: botmodelSlice,
     // aibotmode: botmodeSlice,
-    // aiscrollbottom: scrollbottomSlice,
   },
 });

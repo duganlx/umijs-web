@@ -123,16 +123,22 @@ const MarkdownView: React.FC<{ content: string }> = (props) => {
 interface BasicProps {
   avater: "b" | "u";
   content: string;
-  isThinking: boolean;
-  isTyping: boolean;
-  isShowCopyBtn: boolean;
+  isThinking?: boolean;
+  isTyping?: boolean;
+  isShowCopyBtn?: boolean;
 
   onTypingDone?: () => void;
   onScrollBottom?: () => void;
 }
 
 const Basic: React.FC<BasicProps> = (props) => {
-  const { avater, content, isThinking, isTyping, isShowCopyBtn } = props;
+  const {
+    avater,
+    content,
+    isThinking = false,
+    isTyping = false,
+    isShowCopyBtn = false,
+  } = props;
   const { onTypingDone, onScrollBottom } = props;
 
   const [dots, setDots] = useState<string>(".");

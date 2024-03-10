@@ -197,6 +197,7 @@ const Opbar: React.FC<OpbarProps> = (props) => {
           }
         >
           {/* {botmodel} */}
+          xxx
         </Tooltip>
         <Tooltip
           color="white"

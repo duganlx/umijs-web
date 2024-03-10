@@ -1,7 +1,7 @@
 import { PINGEAM_EXCEPTION } from "@/services/eam/uc";
 import { createSlice } from "@reduxjs/toolkit";
 
-const pingEamSlice = createSlice({
+const pingEam = createSlice({
   name: "pingEam",
   initialState: {
     // 取值说明
@@ -18,6 +18,6 @@ const pingEamSlice = createSlice({
   },
 });
 
-export default pingEamSlice.reducer;
+export default pingEam.reducer;
 
-export const { updatePingEam } = pingEamSlice.actions;
+export const { updatePingEam } = pingEam.actions;
