@@ -5,6 +5,7 @@ import { AskMessageProps } from "../../ai/msgs/ask";
 import { AnswerMessageProps } from "../../ai/msgs/answer";
 import { ModelMessageProps } from "../../ai/msgs/model";
 import { PatternMessageProps } from "../../ai/msgs/pattern";
+import { AuthEamMessageProps } from "../../ai/msgs/authEam";
 
 const LOCAL_STORAGE_KEY = "ai_history_messages";
 
@@ -83,6 +84,19 @@ const addPatternHMsg = (c: "" | "normal" | "translator" | "webdeveloper") => {
   return push(props);
 };
 
+const addAuthEamHMsg = (isValid: boolean) => {
+  const confobj: AuthEamMessageProps = {
+    isValid,
+    isDone: true,
+    appid: "*",
+    appsecret: "*",
+  };
+
+  const conf = JSON.stringify(confobj);
+  const props: ChatMessageProps = { messageType: "authEam", conf };
+  return push(props);
+};
+
 export {
   ceHistoryMsgs,
   addHistoryMsg,
@@ -90,4 +104,5 @@ export {
   addAnswerHMsg,
   addModelHMsg,
   addPatternHMsg,
+  addAuthEamHMsg,
 };

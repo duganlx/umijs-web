@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import { Login } from "@/services/eam/uc";
 import { RobotOutlined } from "@ant-design/icons";
 import { Input } from "antd";
+import { useDispatch } from "react-redux";
+import { ceLatestMsg } from "../../rslices/ai/lmsg";
+import { addAuthEamHMsg } from "../../rslices/ai/hmsgs";
 
 const { TextArea } = Input;
 
@@ -28,37 +31,15 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
     isDone: oIsDone = false,
   } = confobj;
 
+  const dispatch = useDispatch();
+
   const [renderAppid, setRenderAppid] = useState<string>(appid);
   const [renderAppsecret, setRenderAppsecret] = useState<string>(appsecret);
 
-  /**
-   * todo
-   * 状态说明
-   * 1. 历史状态 -> isDone: true : 无动画效果
-   * 1.1 输入正确的 appid 和 appsecret: 显示正确
-   *  {isValid: true, isDone: true}
-   * 1.2 取消输入: 显示取消
-   *  {isValid: false, isDone: true}
-   *
-   * 2. 输入状态 -> isDone: false : 有动画效果
-   * 2.1 初始状态: 不显示 reply
-   *  {isFirst*: true}
-   * 2.2 输入中状态: 不显示 reply
-   *  {isInputing*: true}
-   * 2.2 输入无效的 appid 和 appsecret: 显示无效
-   *  {isValid*: false}
-   * 2.3 输入正确的 appid 和 appsecret: 显示正确
-   *  {isValid*: true}
-   * 2.4 取消输入: 显示取消
-   *  {isCancel*: true}
-   *
-   * 带 * 表示组件内部管理
-   */
-  const [isFirst, setIsFirst] = useState<boolean>(!oIsDone);
-  const [isInputing, setIsInputing] = useState<boolean>(!oIsDone);
-  const [isCancel, setIsCancel] = useState<boolean>(oIsDone && !oIsValid);
+  const [isFirst, setIsFirst] = useState<boolean>(true);
+  const [isInputing, setIsInputing] = useState<boolean>(true);
+  const [isCancel, setIsCancel] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean>(oIsValid);
-  const [isDone, setIsDone] = useState<boolean>(oIsDone);
 
   const clsname = useEmotionCss(() => {
     return {
@@ -96,7 +77,7 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
         },
       },
       ".opbar": {
-        display: isDone ? "none" : "flex",
+        display: oIsDone ? "none" : "flex",
         flexDirection: "row",
 
         ".opbar-item": {
@@ -112,42 +93,104 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
   });
 
   useEffect(() => {
-    if (!isDone) {
+    if (!oIsDone) {
       return;
     }
 
     setRenderAppid("******");
     setRenderAppsecret("******");
-  }, [isDone]);
+  }, [oIsDone]);
 
   const renderReplyMsg = () => {
-    if (isFirst || isInputing) {
-      return <></>;
-    }
-
-    if (isDone && isValid) {
-      return (
-        <Basic
-          avater="b"
-          content="Ok, login credentials verified successfully."
-          isTyping={true}
-        />
-      );
-    } else if (isDone && !isValid) {
-      return (
-        <Basic
-          avater="b"
-          content="Okay, the login credentials entry operation has been canceled."
-          isTyping={true}
-        />
-      );
+    /**
+     * 状态说明
+     * 1. 历史状态 -> isDone: true : 无动画效果
+     * 1.1 输入正确的 appid 和 appsecret: 显示正确
+     *  {isValid: true, isDone: true}
+     * 1.2 取消输入: 显示取消
+     *  {isValid: false, isDone: true}
+     *
+     * 2. 输入状态 -> isDone: false : 有动画效果
+     * 2.1 初始状态: 不显示 reply
+     *  {isFirst*: true}
+     * 2.2 输入中状态: 不显示 reply
+     *  {isInputing*: true}
+     * 2.3 取消输入: 显示取消
+     *  {isCancel*: true}
+     * 2.4 输入正确的 appid 和 appsecret: 显示正确
+     *  {isValid*: true}
+     * 2.5 输入无效的 appid 和 appsecret: 显示无效
+     *  {isValid*: false}
+     *
+     * 带 * 表示组件内部管理
+     */
+    if (oIsDone) {
+      // 1
+      if (oIsValid) {
+        // 1.1
+        return (
+          <Basic
+            avater="b"
+            content="Ok, login credentials verified successfully."
+          />
+        );
+      } else {
+        // 1.2
+        return (
+          <Basic
+            avater="b"
+            content="Okay, the login credentials entry operation has been canceled."
+          />
+        );
+      }
     } else {
-      // isDone=f isValid=f
-      <Basic
-        avater="b"
-        content="Sorry, the login credentials you entered are invalid."
-        isTyping={true}
-      />;
+      // 2
+      if (isFirst || isInputing) {
+        // 2.1, 2.2
+        return <></>;
+      }
+
+      if (isCancel) {
+        // 2.3
+        return (
+          <Basic
+            key="2.3"
+            avater="b"
+            content="Okay, the login credentials entry operation has been canceled."
+            isTyping={true}
+            onTypingDone={() => {
+              dispatch(addAuthEamHMsg(false));
+              dispatch(ceLatestMsg());
+            }}
+          />
+        );
+      }
+
+      if (isValid) {
+        // 2.4
+        return (
+          <Basic
+            key="2.4"
+            avater="b"
+            content="Ok, login credentials verified successfully."
+            isTyping={true}
+            onTypingDone={() => {
+              dispatch(addAuthEamHMsg(true));
+              dispatch(ceLatestMsg());
+            }}
+          />
+        );
+      } else {
+        // 2.5
+        return (
+          <Basic
+            key="2.5"
+            avater="b"
+            content="Sorry, the login credentials you entered are invalid."
+            isTyping={true}
+          />
+        );
+      }
     }
   };
 
@@ -172,7 +215,7 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
                     setRenderAppid(e.target.value);
                     setIsInputing(true);
                   }}
-                  disabled={isDone}
+                  disabled={oIsDone}
                 />
               </div>
             </div>
@@ -188,7 +231,7 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
                     setRenderAppsecret(e.target.value);
                     setIsInputing(true);
                   }}
-                  disabled={isDone}
+                  disabled={oIsDone}
                 />
               </div>
             </div>
@@ -197,26 +240,26 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
             <div
               className="opbar-item"
               onClick={() => {
-                setIsInputing(false);
-                setIsFirst(false);
-                // Login(renderAppid, renderAppsecret)
-                //   .then((reply) => {
-                //     if (reply.code !== 0) {
-                //       // fail
-                //       return;
-                //     }
+                Login(renderAppid, renderAppsecret)
+                  .then((reply) => {
+                    // console.log(reply, "Login Eam");
+                    if (reply.code !== 0) {
+                      setIsValid(false);
+                      return;
+                    }
 
-                //     // success
-                //   })
-                //   .catch(() => {
-                //     // dispatch(
-                //     //   submitEamLoginInvalidAuth(
-                //     //     id,
-                //     //     renderAppid,
-                //     //     renderAppsecret
-                //     //   )
-                //     // );
-                //   });
+                    // todo 记录appid和appsecret到全局变量
+                    setIsValid(true);
+                  })
+                  .catch(() => {
+                    setIsValid(false);
+                  })
+                  .finally(() => {
+                    if (isFirst) {
+                      setIsFirst(false);
+                    }
+                    setIsInputing(false);
+                  });
               }}
             >
               Check
@@ -226,7 +269,7 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
               onClick={() => {
                 setIsInputing(false);
                 setIsFirst(false);
-                // dispatch(cancelEamLogin(id, isFirst));
+                setIsCancel(true);
               }}
             >
               Cancel
