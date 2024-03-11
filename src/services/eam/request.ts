@@ -5,7 +5,7 @@
 import type { Context } from "umi-request";
 import request from "umi-request";
 import { jwtDecode } from "jwt-decode";
-import { getAccessToken } from "./utils";
+import { getEamToken } from "./utils";
 
 request.use(
   async (_ctx: Context, next) => {
@@ -16,7 +16,7 @@ request.use(
       ...headers,
     };
 
-    const access_token = getAccessToken();
+    const access_token = getEamToken();
     if (access_token && access_token.length > 0) {
       headers = {
         Authorization: `Bearer ${access_token}`,

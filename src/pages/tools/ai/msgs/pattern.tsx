@@ -8,6 +8,7 @@ import { Radio, RadioChangeEvent, Space } from "antd";
 import { ceLatestMsg } from "../../rslices/ai/lmsg";
 import { addPatternHMsg } from "../../rslices/ai/hmsgs";
 import { triggerScrollbottomSign } from "../../rslices/ai/toBttm";
+import { updateBotPattern } from "../../rslices/ai/pattern";
 
 export const CMD_PATTERN_CTRL = "chgpattern";
 
@@ -117,6 +118,7 @@ const PatternMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
             let val = checkpattern;
             const c = val as "" | "normal" | "translator" | "webdeveloper";
             dispatch(addPatternHMsg(c));
+            dispatch(updateBotPattern(c));
             dispatch(ceLatestMsg());
           }}
           onScrollBottom={() => {

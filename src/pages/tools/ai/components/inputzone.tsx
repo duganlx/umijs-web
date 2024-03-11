@@ -15,11 +15,14 @@ import { CMD_MODEL_CTRL } from "../msgs/model";
 import { CMD_PATTERN_CTRL } from "../msgs/pattern";
 import { CMD_AUTH_EAM_CTRL } from "../msgs/authEam";
 import { triggerScrollbottomSign } from "../../rslices/ai/toBttm";
+import { AskGPT } from "@/services/eam/openai";
 
 const InputZone: React.FC = () => {
   const dispatch = useDispatch();
   const [text, setText] = useState<string>("");
   const progressing = useSelector((s: any) => s.ailmsg.value) !== null;
+
+  const bmodel = useSelector((s: any) => s.aimodel.value);
 
   const clsname = useEmotionCss(() => {
     return {
@@ -110,18 +113,29 @@ const InputZone: React.FC = () => {
         dispatch(
           setAnswerLMsg({ content: "", isThinking: true, isTyping: false })
         );
-
-        setTimeout(() => {
-          dispatch(
-            setAnswerLMsg({
-              content: generateAnswer(),
-              isThinking: false,
-              isTyping: true,
-            })
-          );
-        }, 2000);
-
         dispatch(triggerScrollbottomSign());
+
+        if (bmodel === "eamGpt") {
+          AskGPT(ask).then((answer) => {
+            dispatch(
+              setAnswerLMsg({
+                content: answer,
+                isThinking: false,
+                isTyping: true,
+              })
+            );
+          });
+        } else {
+          setTimeout(() => {
+            dispatch(
+              setAnswerLMsg({
+                content: generateAnswer(),
+                isThinking: false,
+                isTyping: true,
+              })
+            );
+          }, 2000);
+        }
         break;
     }
   };

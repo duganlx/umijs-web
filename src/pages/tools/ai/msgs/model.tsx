@@ -4,10 +4,12 @@ import Basic from "./basic";
 import { RobotOutlined } from "@ant-design/icons";
 import { Radio, RadioChangeEvent, Space } from "antd";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addModelHMsg } from "../../rslices/ai/hmsgs";
 import { ceLatestMsg } from "../../rslices/ai/lmsg";
 import { triggerScrollbottomSign } from "../../rslices/ai/toBttm";
+import { PINGEAM_EXCEPTION } from "@/services/eam/uc";
+import { updateBotModel } from "../../rslices/ai/model";
 
 export const CMD_MODEL_CTRL = "chgmodel";
 
@@ -23,6 +25,7 @@ const ModelMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
   const { choice, isDone } = confobj;
 
   const dispatch = useDispatch();
+  const pingEam = useSelector((s: any) => s.pingEam.value);
 
   const [checkmodel, setCheckmodel] = useState<string>(choice);
   const [isChoosing, setIsChoosing] = useState<boolean>(!isDone);
@@ -91,8 +94,9 @@ const ModelMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
             >
               <Space direction="vertical">
                 <Radio value="none">None</Radio>
-                {/* disabled={pingEam === PINGEAM_EXCEPTION} */}
-                <Radio value="eamGpt">EAM GPT</Radio>
+                <Radio value="eamGpt" disabled={pingEam === PINGEAM_EXCEPTION}>
+                  EAM GPT
+                </Radio>
               </Space>
             </Radio.Group>
           </div>
@@ -116,6 +120,7 @@ const ModelMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
           onTypingDone={() => {
             const cm = checkmodel as "" | "eamGpt";
             dispatch(addModelHMsg(cm));
+            dispatch(updateBotModel(cm));
             dispatch(ceLatestMsg());
           }}
           onScrollBottom={() => {

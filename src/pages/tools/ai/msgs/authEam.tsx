@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { ceLatestMsg } from "../../rslices/ai/lmsg";
 import { addAuthEamHMsg } from "../../rslices/ai/hmsgs";
 import { triggerScrollbottomSign } from "../../rslices/ai/toBttm";
+import { setEamAuth } from "@/services/eam/utils";
 
 const { TextArea } = Input;
 
@@ -262,7 +263,7 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
                       return;
                     }
 
-                    // todo 记录appid和appsecret到全局变量
+                    setEamAuth(renderAppid, renderAppsecret);
                     setIsValid(true);
                   })
                   .catch(() => {

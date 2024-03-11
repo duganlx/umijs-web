@@ -7,6 +7,8 @@ import AiView from "./ai";
 // import { PINGEAM_EXCEPTION, PingEam } from "@/services/eam/uc";
 import { Provider, useDispatch } from "react-redux";
 import store from "./store";
+import { PINGEAM_EXCEPTION, PingEam } from "@/services/eam/uc";
+import { updatePingEam } from "./rslices/pingEam";
 // import { updatePingEam } from "./stores-redux/pingEamSlice";
 
 interface CardViewProps {
@@ -64,21 +66,21 @@ const ContextLayer: React.FC<{ children: React.ReactNode }> = (props) => {
   const { children } = props;
 
   const dispatch = useDispatch();
-  // useEffect(() => {
-  //   // 测试用
-  //   // clearSecretPair();
-  //   // const appid = "";
-  //   // const appsecret = "";
-  //   // setSecretPair(appid, appsecret);
+  useEffect(() => {
+    // 测试用
+    // clearSecretPair();
+    // const appid = "";
+    // const appsecret = "";
+    // setSecretPair(appid, appsecret);
 
-  //   PingEam()
-  //     .then((pong) => {
-  //       dispatch(updatePingEam(pong));
-  //     })
-  //     .catch(() => {
-  //       dispatch(updatePingEam(PINGEAM_EXCEPTION));
-  //     });
-  // }, []);
+    PingEam()
+      .then((pong) => {
+        dispatch(updatePingEam(pong));
+      })
+      .catch(() => {
+        dispatch(updatePingEam(PINGEAM_EXCEPTION));
+      });
+  }, []);
 
   return <>{children}</>;
 };

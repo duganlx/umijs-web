@@ -4,30 +4,30 @@ export interface CMDReply<DataType> {
   data: DataType;
 }
 
-export const KEY_AccessToken = "access_token";
-export const KEY_SecretPair = "secret_pair";
+export const KEY_EAM_Token = "eam_token";
+export const KEY_EAM_AUTH = "eam_auth";
 
-export function setAccessToken(token: string) {
-  localStorage.setItem(KEY_AccessToken, token);
+export function setEamToken(token: string) {
+  localStorage.setItem(KEY_EAM_Token, token);
 }
 
-export function getAccessToken(): null | string {
-  return localStorage.getItem(KEY_AccessToken);
+export function getEamToken(): null | string {
+  return localStorage.getItem(KEY_EAM_Token);
 }
 
-export function clearAccessToken() {
-  localStorage.removeItem(KEY_AccessToken);
+export function clearEamToken() {
+  localStorage.removeItem(KEY_EAM_Token);
 }
 
-export function setSecretPair(appid: string, appsecret: string) {
+export function setEamAuth(appid: string, appsecret: string) {
   const obj = { appid, appsecret };
   const objstr = JSON.stringify(obj);
 
-  localStorage.setItem(KEY_SecretPair, objstr);
+  localStorage.setItem(KEY_EAM_AUTH, objstr);
 }
 
-export function getSecretPair(): null | { appid: string; appsecret: string } {
-  const data = localStorage.getItem(KEY_SecretPair);
+export function getEamAuth(): null | { appid: string; appsecret: string } {
+  const data = localStorage.getItem(KEY_EAM_AUTH);
   if (data === null) {
     return data;
   }
@@ -37,6 +37,6 @@ export function getSecretPair(): null | { appid: string; appsecret: string } {
   return obj;
 }
 
-export function clearSecretPair() {
-  localStorage.removeItem(KEY_SecretPair);
+export function clearEamAuth() {
+  localStorage.removeItem(KEY_EAM_AUTH);
 }

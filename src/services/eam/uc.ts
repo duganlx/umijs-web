@@ -1,11 +1,6 @@
 // import { jwtDecode } from "jwt-decode";
 import request from "./request";
-import {
-  CMDReply,
-  clearAccessToken,
-  getSecretPair,
-  setAccessToken,
-} from "./utils";
+import { CMDReply, clearEamToken, getEamAuth, setEamToken } from "./utils";
 import { message } from "antd";
 
 export const PINGEAM_NORMAL = 0;
@@ -14,9 +9,9 @@ export const PINGEAM_NOAUTH = -2;
 export const PINGEAM_NOJWT = -3;
 
 export async function PingEam() {
-  clearAccessToken();
-  const secretpair = getSecretPair();
-  if (secretpair == null) {
+  clearEamToken();
+  const auth = getEamAuth();
+  if (auth == null) {
     // ping eam server
     const reply = await Login("", "");
     if (reply.code !== 500) {
@@ -26,7 +21,7 @@ export async function PingEam() {
     return PINGEAM_NOAUTH;
   }
 
-  const { appid, appsecret } = secretpair;
+  const { appid, appsecret } = auth;
 
   // const localtoken = getAccessToken();
   // if (localtoken != null) {
@@ -45,7 +40,7 @@ export async function PingEam() {
   }
 
   const token = reply.data.accessToken;
-  setAccessToken(token);
+  setEamToken(token);
   return PINGEAM_NORMAL;
 }
 

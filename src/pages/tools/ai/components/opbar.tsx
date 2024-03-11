@@ -1,6 +1,42 @@
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { Popconfirm, Tooltip, message } from "antd";
+import { CMD_MODEL_CTRL } from "../msgs/model";
+import { CMD_PATTERN_CTRL } from "../msgs/pattern";
+import { CMD_AUTH_EAM_CTRL } from "../msgs/authEam";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  PINGEAM_EXCEPTION,
+  PINGEAM_NOAUTH,
+  PINGEAM_NOJWT,
+  PINGEAM_NORMAL,
+} from "@/services/eam/uc";
+
+const STATUS_COLOR_NORMAL = "green";
+const STATUS_COLOR_EXCEPTION = "red";
+const STATUS_COLOR_NOAUTH = "#d4b106";
+const STATUS_COLOR_NOJWT = "#d4380d";
+const STATUS_COLOR_UNKNOWN = "black";
+
+function generateStatusColor(botmodel: string, pingEam: number) {
+  if (botmodel === "none") {
+    return STATUS_COLOR_UNKNOWN;
+  } else if (botmodel === "eamGpt") {
+    switch (pingEam) {
+      case PINGEAM_NORMAL:
+        return STATUS_COLOR_NORMAL;
+      case PINGEAM_EXCEPTION:
+        return STATUS_COLOR_EXCEPTION;
+      case PINGEAM_NOAUTH:
+        return STATUS_COLOR_NOAUTH;
+      case PINGEAM_NOJWT:
+        return STATUS_COLOR_NOJWT;
+      default:
+    }
+  }
+
+  return STATUS_COLOR_UNKNOWN;
+}
 
 interface OpbarProps {
   openFullscreen?: () => void;
@@ -8,6 +44,13 @@ interface OpbarProps {
 
 const Opbar: React.FC<OpbarProps> = (props) => {
   const { openFullscreen } = props;
+
+  const dispatch = useDispatch();
+  const bmodel = useSelector((s: any) => s.aimodel.value) as string;
+  const bpattern = useSelector((s: any) => s.aipattern.value) as string;
+  const pingEam = useSelector((s: any) => s.pingEam.value) as number;
+
+  const isInvalid = bmodel === "none";
 
   const clsname = useEmotionCss(() => {
     return {
@@ -45,13 +88,13 @@ const Opbar: React.FC<OpbarProps> = (props) => {
 
         ".model": {
           marginRight: "10px",
-          // color: generateStatusColor(botmodel, pingEam),
+          color: generateStatusColor(bmodel, pingEam),
           cursor: "pointer",
         },
 
         ".mode": {
           cursor: "pointer",
-          // textDecorationLine: isInvalid ? "line-through" : "none",
+          textDecorationLine: isInvalid ? "line-through" : "none",
         },
       },
     };
@@ -106,18 +149,18 @@ const Opbar: React.FC<OpbarProps> = (props) => {
                   input box.
                 </p>
                 <p>
-                  {/* <code style={{ fontWeight: "bold" }}>{CMD_BotModelCtl}</code>: */}
+                  <code style={{ fontWeight: "bold" }}>{CMD_MODEL_CTRL}</code>:
                   Switching models
                 </p>
                 <p>
-                  {/* <code style={{ fontWeight: "bold" }}>{CMD_BotModeCtl}</code>: */}
-                  Switching modes
+                  <code style={{ fontWeight: "bold" }}>{CMD_PATTERN_CTRL}</code>
+                  : Switching modes
                 </p>
                 <hr />
                 <p>In addition, there are the following commands for EAM:</p>
                 <p>
                   <code style={{ fontWeight: "bold" }}>
-                    {/* {v1_CMD_EamLoginCtl} */}
+                    {CMD_AUTH_EAM_CTRL}
                   </code>
                   : Input EAM login credentials
                 </p>
@@ -143,7 +186,7 @@ const Opbar: React.FC<OpbarProps> = (props) => {
                   style={{
                     width: "20px",
                     height: "18px",
-                    // backgroundColor: STATUS_COLOR_NORMAL,
+                    backgroundColor: STATUS_COLOR_NORMAL,
                     marginRight: "5px",
                   }}
                 />
@@ -154,7 +197,7 @@ const Opbar: React.FC<OpbarProps> = (props) => {
                   style={{
                     width: "20px",
                     height: "18px",
-                    // backgroundColor: STATUS_COLOR_EXCEPTION,
+                    backgroundColor: STATUS_COLOR_EXCEPTION,
                     marginRight: "5px",
                   }}
                 />
@@ -165,7 +208,7 @@ const Opbar: React.FC<OpbarProps> = (props) => {
                   style={{
                     width: "20px",
                     height: "18px",
-                    // backgroundColor: STATUS_COLOR_NOAUTH,
+                    backgroundColor: STATUS_COLOR_NOAUTH,
                     marginRight: "5px",
                   }}
                 />
@@ -176,7 +219,7 @@ const Opbar: React.FC<OpbarProps> = (props) => {
                   style={{
                     width: "20px",
                     height: "18px",
-                    // backgroundColor: STATUS_COLOR_NOJWT,
+                    backgroundColor: STATUS_COLOR_NOJWT,
                     marginRight: "5px",
                   }}
                 />
@@ -187,7 +230,7 @@ const Opbar: React.FC<OpbarProps> = (props) => {
                   style={{
                     width: "20px",
                     height: "18px",
-                    // backgroundColor: STATUS_COLOR_UNKNOWN,
+                    backgroundColor: STATUS_COLOR_UNKNOWN,
                     marginRight: "5px",
                   }}
                 />
@@ -196,8 +239,7 @@ const Opbar: React.FC<OpbarProps> = (props) => {
             </div>
           }
         >
-          {/* {botmodel} */}
-          xxx
+          {bmodel}
         </Tooltip>
         <Tooltip
           color="white"
@@ -208,7 +250,7 @@ const Opbar: React.FC<OpbarProps> = (props) => {
             </div>
           }
         >
-          {/* {botmode} */}
+          {bpattern}
         </Tooltip>
       </div>
     </div>
