@@ -3,6 +3,7 @@ import { COMMON_MESSAGE_PROPS } from "../components/cmsg";
 import Basic from "./basic";
 import { ceLatestMsg } from "../../rslices/ai/lmsg";
 import { addAnswerHMsg } from "../../rslices/ai/hmsgs";
+import { triggerScrollbottomSign } from "../../rslices/ai/toBttm";
 
 export interface AnswerMessageProps {
   content: string;
@@ -28,6 +29,9 @@ const AnswerMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
       onTypingDone={() => {
         dispatch(ceLatestMsg());
         dispatch(addAnswerHMsg(content));
+      }}
+      onScrollBottom={() => {
+        dispatch(triggerScrollbottomSign());
       }}
     />
   );

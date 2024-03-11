@@ -8,6 +8,7 @@ import { Input } from "antd";
 import { useDispatch } from "react-redux";
 import { ceLatestMsg } from "../../rslices/ai/lmsg";
 import { addAuthEamHMsg } from "../../rslices/ai/hmsgs";
+import { triggerScrollbottomSign } from "../../rslices/ai/toBttm";
 
 const { TextArea } = Input;
 
@@ -93,6 +94,10 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
   });
 
   useEffect(() => {
+    dispatch(triggerScrollbottomSign());
+  }, []);
+
+  useEffect(() => {
     if (!oIsDone) {
       return;
     }
@@ -162,6 +167,9 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
               dispatch(addAuthEamHMsg(false));
               dispatch(ceLatestMsg());
             }}
+            onScrollBottom={() => {
+              dispatch(triggerScrollbottomSign());
+            }}
           />
         );
       }
@@ -178,6 +186,9 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
               dispatch(addAuthEamHMsg(true));
               dispatch(ceLatestMsg());
             }}
+            onScrollBottom={() => {
+              dispatch(triggerScrollbottomSign());
+            }}
           />
         );
       } else {
@@ -188,6 +199,9 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
             avater="b"
             content="Sorry, the login credentials you entered are invalid."
             isTyping={true}
+            onScrollBottom={() => {
+              dispatch(triggerScrollbottomSign());
+            }}
           />
         );
       }

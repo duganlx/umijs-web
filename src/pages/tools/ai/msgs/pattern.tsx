@@ -3,10 +3,11 @@ import { COMMON_MESSAGE_PROPS } from "../components/cmsg";
 import Basic from "./basic";
 import { RobotOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Radio, RadioChangeEvent, Space } from "antd";
 import { ceLatestMsg } from "../../rslices/ai/lmsg";
 import { addPatternHMsg } from "../../rslices/ai/hmsgs";
+import { triggerScrollbottomSign } from "../../rslices/ai/toBttm";
 
 export const CMD_PATTERN_CTRL = "chgpattern";
 
@@ -25,6 +26,10 @@ const PatternMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
 
   const [checkpattern, setCheckpattern] = useState<string>(choice);
   const [isChoosing, setIsChoosing] = useState<boolean>(!isDone);
+
+  useEffect(() => {
+    dispatch(triggerScrollbottomSign());
+  }, []);
 
   const clsname = useEmotionCss(() => {
     return {
@@ -113,6 +118,9 @@ const PatternMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
             const c = val as "" | "normal" | "translator" | "webdeveloper";
             dispatch(addPatternHMsg(c));
             dispatch(ceLatestMsg());
+          }}
+          onScrollBottom={() => {
+            dispatch(triggerScrollbottomSign());
           }}
         />
       )}

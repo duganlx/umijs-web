@@ -3,10 +3,11 @@ import { COMMON_MESSAGE_PROPS } from "../components/cmsg";
 import Basic from "./basic";
 import { RobotOutlined } from "@ant-design/icons";
 import { Radio, RadioChangeEvent, Space } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addModelHMsg } from "../../rslices/ai/hmsgs";
 import { ceLatestMsg } from "../../rslices/ai/lmsg";
+import { triggerScrollbottomSign } from "../../rslices/ai/toBttm";
 
 export const CMD_MODEL_CTRL = "chgmodel";
 
@@ -25,6 +26,10 @@ const ModelMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
 
   const [checkmodel, setCheckmodel] = useState<string>(choice);
   const [isChoosing, setIsChoosing] = useState<boolean>(!isDone);
+
+  useEffect(() => {
+    dispatch(triggerScrollbottomSign());
+  }, []);
 
   const clsname = useEmotionCss(() => {
     return {
@@ -112,6 +117,9 @@ const ModelMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
             const cm = checkmodel as "" | "eamGpt";
             dispatch(addModelHMsg(cm));
             dispatch(ceLatestMsg());
+          }}
+          onScrollBottom={() => {
+            dispatch(triggerScrollbottomSign());
           }}
         />
       )}

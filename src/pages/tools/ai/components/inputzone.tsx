@@ -14,6 +14,7 @@ import { generateAnswer } from "../msgs/ask";
 import { CMD_MODEL_CTRL } from "../msgs/model";
 import { CMD_PATTERN_CTRL } from "../msgs/pattern";
 import { CMD_AUTH_EAM_CTRL } from "../msgs/authEam";
+import { triggerScrollbottomSign } from "../../rslices/ai/toBttm";
 
 const InputZone: React.FC = () => {
   const dispatch = useDispatch();
@@ -119,6 +120,8 @@ const InputZone: React.FC = () => {
             })
           );
         }, 2000);
+
+        dispatch(triggerScrollbottomSign());
         break;
     }
   };

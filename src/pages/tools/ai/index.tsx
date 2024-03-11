@@ -1,18 +1,18 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { useState } from "react";
 import { Modal } from "antd";
-import { useDispatch } from "react-redux";
 import Opbar from "./components/opbar";
 import ChatZone from "./components/czone";
-// import { triggerScrollbottomSign } from "../stores-redux/assistant/scrollbottomSlice";
+import { useDispatch } from "react-redux";
+import { triggerScrollbottomSign } from "../rslices/ai/toBttm";
 
 interface AiViewProps {
   layoutsize: [number, number];
 }
 
-const AiView: React.FC<AiViewProps> = (props) => {
+const AiView: React.FC<AiViewProps> = () => {
   const [fullscreen, setFullscreen] = useState<boolean>(false);
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const clsname = useEmotionCss(() => {
     return {
@@ -75,7 +75,7 @@ const AiView: React.FC<AiViewProps> = (props) => {
         title={<Opbar />}
         open={fullscreen}
         onCancel={() => {
-          // dispatch(triggerScrollbottomSign());
+          dispatch(triggerScrollbottomSign());
           setFullscreen(false);
         }}
         footer={null}
