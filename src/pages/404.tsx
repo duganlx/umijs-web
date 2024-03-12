@@ -1,6 +1,5 @@
-
 const NoFoundPage: React.FC = () => {
-  return <>xxtx</>
-}
+  return <></>;
+};
 
 export default NoFoundPage;

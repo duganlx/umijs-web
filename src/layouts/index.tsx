@@ -68,9 +68,6 @@ export default function Layout() {
         </div>
         <div className="spline" />
         <div className="item">
-          <Link to="/tools">Tools</Link>
-        </div>
-        <div className="item">
           <Link to="/me">About Me</Link>
         </div>
       </div>
