@@ -17,8 +17,12 @@ function downloadTxt(content: string, filename: string) {
 function winsColor(
   selfid: string,
   activeid: string,
-  wcmap: Record<string, string>
+  wcmap: Record<string, string> | undefined
 ) {
+  if (wcmap === undefined) {
+    return "black";
+  }
+
   if (selfid === activeid) {
     return "#f759ab";
   }
@@ -31,14 +35,23 @@ function winsColor(
   return "black";
 }
 
-const DEFAULT_CONTENT = {
-  win1: "",
-  win2: "",
-  win3: "",
-};
+const LOCAL_STORAGE_KEY = "draft_";
+
+function getCache(wname: string) {
+  const cache = localStorage.getItem(LOCAL_STORAGE_KEY + wname);
+  if (cache === null) {
+    return "";
+  }
+
+  return cache;
+}
+
+function setCache(wname: string, content: string) {
+  localStorage.setItem(LOCAL_STORAGE_KEY + wname, content);
+}
 
 const DraftView: React.FC = () => {
-  const [wcmap, setWcmap] = useState<Record<string, string>>(DEFAULT_CONTENT);
+  const [wcmap, setWcmap] = useState<Record<string, string>>();
   const [actvieContent, setActiveContent] = useState<string>("");
   const [preActivewin, setPreActivewin] = useState<string>();
   const [actviewin, setActivewin] = useState<string>("win1");
@@ -48,16 +61,35 @@ const DraftView: React.FC = () => {
   const divref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (preActivewin === undefined) {
+    const cache = {
+      win1: getCache("win1"),
+      win2: getCache("win2"),
+      win3: getCache("win3"),
+    };
+
+    setWcmap(cache);
+    setActiveContent(cache["win1"]);
+  }, []);
+
+  useEffect(() => {
+    if (preActivewin === undefined || wcmap === undefined) {
       return;
     }
 
     const lwcmap = { ...wcmap };
     lwcmap[preActivewin] = actvieContent;
 
-    setActiveContent(lwcmap[actviewin]);
     setWcmap(lwcmap);
+    setActiveContent(lwcmap[actviewin]);
   }, [actviewin]);
+
+  useEffect(() => {
+    if (wcmap === undefined) {
+      return;
+    }
+
+    setCache(actviewin, actvieContent);
+  }, [actvieContent]);
 
   const clsname = useEmotionCss(() => {
     return {
