@@ -37,9 +37,7 @@ const DEFAULT_CONTENT = {
   win3: "",
 };
 
-interface MemorandumViewProps {}
-
-const DraftView: React.FC<MemorandumViewProps> = (props) => {
+const DraftView: React.FC = () => {
   const [wcmap, setWcmap] = useState<Record<string, string>>(DEFAULT_CONTENT);
   const [actvieContent, setActiveContent] = useState<string>("");
   const [preActivewin, setPreActivewin] = useState<string>();

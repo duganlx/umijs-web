@@ -12,7 +12,18 @@ const LOCAL_STORAGE_KEY = "ai_history_messages";
 const historyMsgsSlice = createSlice({
   name: "historyMsgs",
   initialState: () => {
-    let value: ChatMessageProps[] = [];
+    const welcome = "Welcome to use the Ai Assistant. ^_^";
+    const wconf: AnswerMessageProps = {
+      content: welcome,
+      isThinking: false,
+      isTyping: false,
+    };
+    const wprops: ChatMessageProps = {
+      messageType: "answer",
+      conf: JSON.stringify(wconf),
+    };
+
+    let value: ChatMessageProps[] = [wprops];
     const lsval = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (lsval !== null) {
       const history = JSON.parse(lsval) as ChatMessageProps[];
