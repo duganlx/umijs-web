@@ -65,6 +65,7 @@ const AiView: React.FC<AiViewProps> = () => {
       <div className={clsname}>
         <Opbar
           openFullscreen={() => {
+            dispatch(triggerScrollbottomSign());
             setFullscreen(true);
           }}
         />

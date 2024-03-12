@@ -30,6 +30,8 @@ const historyMsgsSlice = createSlice({
     },
     push: (state, action) => {
       const newHistoryMsg = [...state.value, action.payload];
+      const lcjsonstr = JSON.stringify(newHistoryMsg);
+      localStorage.setItem(LOCAL_STORAGE_KEY, lcjsonstr);
       state.value = newHistoryMsg;
     },
   },

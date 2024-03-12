@@ -11,6 +11,7 @@ import {
   PINGEAM_NOJWT,
   PINGEAM_NORMAL,
 } from "@/services/eam/uc";
+import { ceHistoryMsgs } from "../../rslices/ai/hmsgs";
 
 const STATUS_COLOR_NORMAL = "green";
 const STATUS_COLOR_EXCEPTION = "red";
@@ -108,7 +109,7 @@ const Opbar: React.FC<OpbarProps> = (props) => {
         title={`Is clear chat history?`}
         className="opitem"
         onConfirm={() => {
-          // dispatch(clearMsglist());
+          dispatch(ceHistoryMsgs());
           message.success("clear chat history successfully");
         }}
         okText="yes"
@@ -120,7 +121,6 @@ const Opbar: React.FC<OpbarProps> = (props) => {
         <div
           className="opitem"
           onClick={() => {
-            // dispatch(triggerScrollbottomSign());
             openFullscreen();
           }}
         >

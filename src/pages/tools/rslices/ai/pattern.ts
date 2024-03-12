@@ -1,13 +1,24 @@
 // pattern slice
 import { createSlice } from "@reduxjs/toolkit";
 
+const LOCAL_STORAGE_KEY = "ai_pattern";
+
 const patternSlice = createSlice({
   name: "pattern",
-  initialState: {
-    value: "normal",
+  initialState: () => {
+    let value = "normal";
+    const lsval = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (lsval !== null) {
+      value = lsval;
+    }
+
+    return {
+      value: value,
+    };
   },
   reducers: {
     update: (state, action) => {
+      localStorage.setItem(LOCAL_STORAGE_KEY, action.payload);
       state.value = action.payload;
     },
   },

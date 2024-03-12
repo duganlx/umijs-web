@@ -13,7 +13,8 @@ import { updateBotPattern } from "../../rslices/ai/pattern";
 export const CMD_PATTERN_CTRL = "chgpattern";
 
 export interface PatternMessageProps {
-  choice: "" | "normal" | "translator" | "webdeveloper";
+  // "" | "normal" | "translator" | "webdeveloper"
+  choice: string;
 
   isDone: boolean;
 }

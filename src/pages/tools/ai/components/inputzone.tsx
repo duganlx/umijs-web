@@ -16,6 +16,7 @@ import { CMD_PATTERN_CTRL } from "../msgs/pattern";
 import { CMD_AUTH_EAM_CTRL } from "../msgs/authEam";
 import { triggerScrollbottomSign } from "../../rslices/ai/toBttm";
 import { AskGPT } from "@/services/eam/openai";
+import { getEamAuth } from "@/services/eam/utils";
 
 const InputZone: React.FC = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const InputZone: React.FC = () => {
   const progressing = useSelector((s: any) => s.ailmsg.value) !== null;
 
   const bmodel = useSelector((s: any) => s.aimodel.value);
+  const bpattern = useSelector((s: any) => s.aipattern.value) as string;
 
   const clsname = useEmotionCss(() => {
     return {
@@ -96,16 +98,24 @@ const InputZone: React.FC = () => {
     const ask = text.trim();
     setText("");
 
+    if (ask.length === 0) return;
+
     switch (ask) {
       case CMD_MODEL_CTRL:
-        dispatch(setModelLMsg({ choice: "", isDone: false }));
+        dispatch(setModelLMsg({ choice: bmodel, isDone: false }));
         break;
       case CMD_PATTERN_CTRL:
-        dispatch(setPatternLMsg({ choice: "", isDone: false }));
+        dispatch(setPatternLMsg({ choice: bpattern, isDone: false }));
         break;
       case CMD_AUTH_EAM_CTRL:
-        // todo 取localstorage
-        dispatch(setAuthEamLMsg({ appid: "", appsecret: "" }));
+        const auth = getEamAuth();
+        let lcappid = "";
+        let lcappsec = "";
+        if (auth !== null) {
+          lcappid = auth.appid;
+          lcappsec = auth.appsecret;
+        }
+        dispatch(setAuthEamLMsg({ appid: lcappid, appsecret: lcappsec }));
         break;
       default:
         // normal Q&A

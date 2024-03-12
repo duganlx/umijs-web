@@ -14,7 +14,8 @@ import { updateBotModel } from "../../rslices/ai/model";
 export const CMD_MODEL_CTRL = "chgmodel";
 
 export interface ModelMessageProps {
-  choice: "" | "eamGpt";
+  // "" | "eamGpt"
+  choice: string;
 
   isDone: boolean;
 }
@@ -94,7 +95,10 @@ const ModelMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
             >
               <Space direction="vertical">
                 <Radio value="none">None</Radio>
-                <Radio value="eamGpt" disabled={pingEam === PINGEAM_EXCEPTION}>
+                <Radio
+                  value="eamGpt"
+                  disabled={!isChoosing || pingEam === PINGEAM_EXCEPTION}
+                >
                   EAM GPT
                 </Radio>
               </Space>

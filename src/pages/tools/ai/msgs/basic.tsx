@@ -219,17 +219,17 @@ const Basic: React.FC<BasicProps> = (props) => {
 
           ".dialog-opbar": {
             display: "none",
+            position: "absolute",
+            left: "-5px",
+            top: "-15px",
+            fontSize: "14px",
           },
         },
       },
 
       ".dialog-content:hover": {
         ".dialog-opbar": {
-          display: "block",
-          position: "absolute",
-          left: "-5px",
-          top: "-15px",
-          fontSize: "14px",
+          display: isShowCopyBtn ? "block" : "none",
 
           ".dialog-copy:hover": {
             cursor: "pointer",

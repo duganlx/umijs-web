@@ -2,14 +2,15 @@ import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { COMMON_MESSAGE_PROPS } from "../components/cmsg";
 import Basic from "./basic";
 import { useEffect, useState } from "react";
-import { Login } from "@/services/eam/uc";
+import { Login, PINGEAM_NORMAL } from "@/services/eam/uc";
 import { RobotOutlined } from "@ant-design/icons";
 import { Input } from "antd";
 import { useDispatch } from "react-redux";
 import { ceLatestMsg } from "../../rslices/ai/lmsg";
 import { addAuthEamHMsg } from "../../rslices/ai/hmsgs";
 import { triggerScrollbottomSign } from "../../rslices/ai/toBttm";
-import { setEamAuth } from "@/services/eam/utils";
+import { setEamAuth, setEamToken } from "@/services/eam/utils";
+import { updatePingEam } from "../../rslices/pingEam";
 
 const { TextArea } = Input;
 
@@ -184,6 +185,7 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
             content="Ok, login credentials verified successfully."
             isTyping={true}
             onTypingDone={() => {
+              dispatch(updatePingEam(PINGEAM_NORMAL));
               dispatch(addAuthEamHMsg(true));
               dispatch(ceLatestMsg());
             }}
@@ -263,6 +265,8 @@ const AuthEamMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
                       return;
                     }
 
+                    const token = reply.data.accessToken;
+                    setEamToken(token);
                     setEamAuth(renderAppid, renderAppsecret);
                     setIsValid(true);
                   })
