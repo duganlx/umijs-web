@@ -9,6 +9,7 @@ import { Provider, useDispatch } from "react-redux";
 import store from "./store";
 import { PINGEAM_EXCEPTION, PingEam } from "@/services/eam/uc";
 import { updatePingEam } from "./rslices/pingEam";
+import JottingsView from "./jottings";
 // import { updatePingEam } from "./stores-redux/pingEamSlice";
 
 interface CardViewProps {
@@ -121,10 +122,12 @@ const ToolsView: React.FC = () => {
           <CardView title="Draft">
             <DraftView />
           </CardView>
+          <CardView title="Jottings">
+            <JottingsView />
+          </CardView>
           <CardView title="Timestamp Conversion">
             <TimestampVertView />
           </CardView>
-          <CardView title="Jottings">todo</CardView>
         </div>
       </ContextLayer>
     </Provider>

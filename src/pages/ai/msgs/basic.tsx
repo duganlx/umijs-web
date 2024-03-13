@@ -120,6 +120,24 @@ const MarkdownView: React.FC<{ content: string }> = (props) => {
   );
 };
 
+const typingTotalMs = 1 * 1000;
+const typingFrequencyMs = 10;
+
+function calcTypingStrLen(content: string) {
+  const typingTotalCnt = typingTotalMs / typingFrequencyMs;
+  const typingMinStrLen = 1;
+
+  // 计算步进的长度
+  const typingTotalStrLen = typingTotalCnt * typingMinStrLen;
+  if (content.length < typingTotalStrLen) {
+    return typingMinStrLen;
+  }
+
+  const actualStrLen = content.length / typingTotalCnt;
+
+  return Math.ceil(actualStrLen);
+}
+
 interface BasicProps {
   avater: "b" | "u";
   content: string;
@@ -165,6 +183,9 @@ const Basic: React.FC<BasicProps> = (props) => {
       return;
     }
 
+    // todo 动态调整步进速度
+    const stepStrlen = calcTypingStrLen(content);
+
     const interval = setInterval(() => {
       setRendermsg((prevContent) => {
         const nextchar = content[prevContent.length];
@@ -175,7 +196,7 @@ const Basic: React.FC<BasicProps> = (props) => {
 
         return prevContent;
       });
-    }, 10);
+    }, typingFrequencyMs);
 
     return () => {
       clearInterval(interval);

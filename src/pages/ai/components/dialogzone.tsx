@@ -7,8 +7,7 @@ const History: React.FC = () => {
   const val = useSelector((s: any) => s.aihmsgs.value);
   const msgs = val as ChatMessageProps[];
 
-  console.log("History", msgs);
-
+  // console.log("History", msgs);
   return (
     <>
       {msgs.map((props, i) => (
@@ -22,7 +21,7 @@ const Latest: React.FC = () => {
   const val = useSelector((s: any) => s.ailmsg.value);
   const props = val as ChatMessageProps | null;
 
-  console.log("Latest", props);
+  // console.log("Latest", props);
   if (props === null) return <></>;
 
   return <ChatMessage {...props} />;
