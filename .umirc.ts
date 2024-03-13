@@ -22,4 +22,5 @@ export default defineConfig({
       pathRewrite: { "^/eam": "" },
     },
   },
+  links: [{ rel: "icon", href: "/favicon.ico" }],
 });
