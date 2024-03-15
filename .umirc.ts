@@ -3,8 +3,8 @@ import MonacoWebpackPlugin from "monaco-editor-webpack-plugin";
 
 export default defineConfig({
   routes: [
-    { path: "/", component: "index" },
-    { path: "/me", component: "me/index" },
+    { path: "/", title: "Homepage", component: "index" },
+    { path: "/me", title: "Me", component: "me/index" },
     { path: "/*", component: "@/pages/404" },
   ],
   npmClient: "yarn",
@@ -23,4 +23,5 @@ export default defineConfig({
     },
   },
   links: [{ rel: "icon", href: "/favicon.ico" }],
+  title: "Dugan (lvx)",
 });
