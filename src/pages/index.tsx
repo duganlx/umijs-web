@@ -10,15 +10,22 @@ import store from "./store";
 import { PINGEAM_EXCEPTION, PingEam } from "@/services/eam/uc";
 import { updatePingEam } from "./rslices/pingEam";
 import JottingsView from "./jottings";
+import {
+  BulbOutlined,
+  FieldTimeOutlined,
+  RobotOutlined,
+  StarOutlined,
+} from "@ant-design/icons";
 // import { updatePingEam } from "./stores-redux/pingEamSlice";
 
 interface CardViewProps {
   title: string;
+  icon?: React.ReactNode;
   children?: React.ReactNode;
 }
 
 const CardView: React.FC<CardViewProps> = (props) => {
-  const { title, children } = props;
+  const { title, children, icon } = props;
   const clsname = useEmotionCss(() => {
     return {
       ".view": {
@@ -41,6 +48,14 @@ const CardView: React.FC<CardViewProps> = (props) => {
             backgroundColor: "#389e0d",
             marginRight: "5px",
           },
+
+          ".title-icon": {
+            marginTop: "2px",
+            fontSize: "16px",
+          },
+          ".title-desc": {
+            marginLeft: "5px",
+          },
         },
 
         ".content": {
@@ -55,7 +70,8 @@ const CardView: React.FC<CardViewProps> = (props) => {
       <div className="view">
         <div className="title">
           <div className="titlebar" />
-          <div>{title}</div>
+          <div className="title-icon">{icon}</div>
+          <div className="title-desc">{title}</div>
         </div>
         <div className="content">{children}</div>
       </div>
@@ -116,16 +132,16 @@ const ToolsView: React.FC = () => {
             minWidth: "600px",
           }}
         >
-          <CardView title="AI Assistant">
+          <CardView icon={<RobotOutlined />} title="AI Assistant">
             <AiView layoutsize={layoutsize} />
           </CardView>
-          <CardView title="Draft">
+          <CardView icon={<BulbOutlined />} title="Draft">
             <DraftView />
           </CardView>
-          <CardView title="Jottings">
+          <CardView icon={<StarOutlined />} title="Jottings">
             <JottingsView />
           </CardView>
-          <CardView title="Timestamp Conversion">
+          <CardView icon={<FieldTimeOutlined />} title="Timestamp Conversion">
             <TimestampVertView />
           </CardView>
         </div>

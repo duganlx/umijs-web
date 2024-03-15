@@ -1,3 +1,4 @@
+import { TagOutlined, TagsOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { Tag } from "antd";
 import React, { useState } from "react";
@@ -44,6 +45,17 @@ const OZoneView: React.FC = () => {
       ".ozone-title": {
         fontSize: "16px",
         fontWeight: "normal",
+        alignItems: "center",
+
+        ".title-icon": {
+          fontSize: "15px",
+          marginRight: "3px",
+        },
+
+        ".title-icon:before": {
+          content: '">"',
+          marginRight: "4px",
+        },
       },
 
       ".ozone-tag-zone": {
@@ -54,7 +66,12 @@ const OZoneView: React.FC = () => {
 
   return (
     <div className={clsname}>
-      <div className="ozone-title">&gt;&nbsp;Tags</div>
+      <div className="ozone-title">
+        <span className="title-icon">
+          <TagsOutlined />
+        </span>
+        <span className="title-des">Tags</span>
+      </div>
       <div className="ozone-tag-zone">
         {tags.map((tag) => (
           <CheckTag

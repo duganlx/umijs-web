@@ -1,6 +1,7 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import OZoneView from "./components/ozone";
 import LZonView from "./components/lzone";
+import CZoneView from "./components/czone";
 
 const JottingsView: React.FC = () => {
   const clsname = useEmotionCss(() => {
@@ -34,7 +35,9 @@ const JottingsView: React.FC = () => {
   return (
     <>
       <div className={clsname}>
-        <div className="content-zone">0</div>
+        <div className="content-zone">
+          <CZoneView />
+        </div>
         <div className="list-zone">
           <LZonView />
         </div>
