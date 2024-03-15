@@ -183,15 +183,18 @@ const Basic: React.FC<BasicProps> = (props) => {
       return;
     }
 
-    // todo 动态调整步进速度
     const stepStrlen = calcTypingStrLen(content);
 
     const interval = setInterval(() => {
       setRendermsg((prevContent) => {
-        const nextchar = content[prevContent.length];
+        // const nextstr = content[prevContent.length];
+        const nextstr = content.substring(
+          prevContent.length,
+          prevContent.length + stepStrlen
+        );
 
-        if (nextchar !== undefined) {
-          return prevContent + nextchar;
+        if (nextstr !== undefined) {
+          return prevContent + nextstr;
         }
 
         return prevContent;
@@ -207,10 +210,18 @@ const Basic: React.FC<BasicProps> = (props) => {
     if (isThinking) return;
     if (onScrollBottom) onScrollBottom();
 
-    if (rendermsg.length !== content.length) {
+    if (rendermsg.length < content.length) {
       return;
     }
-    if (isTyping && onTypingDone) onTypingDone();
+
+    if (isTyping && onTypingDone) {
+      // console.log(
+      //   rendermsg.length,
+      //   content.length,
+      //   "Basic useEffect[rendermsg]"
+      // );
+      onTypingDone();
+    }
   }, [rendermsg]);
 
   const clsname = useEmotionCss(() => {

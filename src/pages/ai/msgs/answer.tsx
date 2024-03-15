@@ -27,6 +27,7 @@ const AnswerMessage: React.FC<COMMON_MESSAGE_PROPS> = (props) => {
       isTyping={isTyping}
       isShowCopyBtn={true}
       onTypingDone={() => {
+        // console.log("answer message onTypingDone");
         dispatch(ceLatestMsg());
         dispatch(addAnswerHMsg(content));
       }}
