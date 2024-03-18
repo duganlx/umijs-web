@@ -1,15 +1,25 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
-import LZonView from "./components/lzone";
+import LZoneView from "./components/lzone";
 import CZoneView from "./components/czone";
 import { useEffect, useState } from "react";
 import { pullFromGithub } from "@/services/github/api";
 import { message } from "antd";
+import dayjs from "dayjs";
 
-interface CatalogItem {
+export interface CatalogItem {
   title: string;
   tags: string[];
   folderPath: string;
   lastModified: string;
+}
+
+function sortCatalogItem(cls: CatalogItem[]) {
+  return cls.sort((a, b) => {
+    const adateunix = dayjs(a.lastModified, "YYYY-MM-DD").unix();
+    const bdateunix = dayjs(b.lastModified, "YYYY-MM-DD").unix();
+
+    return adateunix - bdateunix;
+  });
 }
 
 const JottingsView: React.FC = () => {
@@ -25,8 +35,9 @@ const JottingsView: React.FC = () => {
         return;
       }
 
-      const cls = JSON.parse(r) as CatalogItem[];
-      console.log(cls);
+      let cls = JSON.parse(r) as CatalogItem[];
+      cls = sortCatalogItem(cls);
+
       setCatalogs(cls);
     });
   }, []);
@@ -56,7 +67,7 @@ const JottingsView: React.FC = () => {
     <>
       <div className={clsname}>
         <div className="list-zone">
-          <LZonView />
+          <LZoneView catalogs={catalogs} />
         </div>
         <div className="content-zone">
           <CZoneView />

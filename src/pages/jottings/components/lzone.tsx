@@ -1,7 +1,8 @@
 import { FileTextOutlined, FilterOutlined } from "@ant-design/icons";
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import { Input, Tag } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { CatalogItem } from "..";
 
 interface ArticleProps {
   title: string;
@@ -17,9 +18,9 @@ const Article: React.FC<ArticleProps> = (props) => {
       flexDirection: "column",
       cursor: "pointer",
       alignItems: "baseline",
-      border: "1px solid #f0f0f0",
+      borderTop: "1px solid #f0f0f0",
       borderRadius: "3px",
-      padding: "1px 2px",
+      padding: "3px 2px",
 
       ".article-title": {
         width: "100%",
@@ -36,6 +37,10 @@ const Article: React.FC<ArticleProps> = (props) => {
         ".article-tags-item": {
           fontSize: "13px",
           color: "#d46b08",
+
+          ".article-tags-item-split": {
+            color: "black",
+          },
         },
 
         ".article-tags-item:before": {
@@ -45,7 +50,11 @@ const Article: React.FC<ArticleProps> = (props) => {
       },
 
       "&:hover": {
-        backgroundColor: "#b7eb8f",
+        backgroundColor: "#f6ffed",
+      },
+
+      "&:last-child": {
+        borderBottom: "1px solid #f0f0f0",
       },
     };
   });
@@ -54,22 +63,31 @@ const Article: React.FC<ArticleProps> = (props) => {
     <div className={clsname}>
       <div className="article-title">{title}</div>
       <div className="article-tags">
-        {tags.map((tag) => (
-          <span className="article-tags-item">{tag}</span>
+        {tags.map((tag, index) => (
+          <>
+            <span className="article-tags-item">
+              {tag}
+              <span className="article-tags-item-split">
+                {index < tags.length - 1 ? "," : ""}
+              </span>
+            </span>
+          </>
         ))}
       </div>
     </div>
   );
 };
 
-interface CheckTagProps {
+interface TagProps {
   label: string;
   check: boolean;
+}
 
+interface CheckTagProps {
   chgStatus: (val: boolean) => void;
 }
 
-const CheckTag: React.FC<CheckTagProps> = (props) => {
+const CheckTag: React.FC<TagProps & CheckTagProps> = (props) => {
   const { label, check, chgStatus } = props;
 
   const clsname = useEmotionCss(() => {
@@ -79,6 +97,7 @@ const CheckTag: React.FC<CheckTagProps> = (props) => {
       backgroundColor: check ? "#ffd666" : "#fafafa",
       border: check ? "1px solid #ffd666" : "1px solid #d9d9d9",
       userSelect: "none",
+      marginTop: "6px",
     };
   });
 
@@ -89,18 +108,45 @@ const CheckTag: React.FC<CheckTagProps> = (props) => {
   );
 };
 
-const defaultTags = [
-  { label: "aka", check: false },
-  { label: "bka", check: false },
-  { label: "cke", check: false },
-];
+function generateTagProps(catalogs: CatalogItem[]) {
+  const tagSet = new Set();
 
-const LZonView: React.FC = () => {
-  const [tags, setTags] = useState<any[]>(defaultTags);
+  catalogs.forEach((item) => {
+    const { tags } = item;
+
+    tags.forEach((tag) => {
+      tagSet.add(tag);
+    });
+  });
+
+  const uniqueTags = Array.from(tagSet) as string[];
+
+  return uniqueTags
+    .sort((a, b) => a.localeCompare(b))
+    .map((tag) => {
+      return { label: tag, check: false } as TagProps;
+    });
+}
+
+interface LZoneViewProps {
+  catalogs: CatalogItem[];
+}
+
+const LZoneView: React.FC<LZoneViewProps> = (props) => {
+  const { catalogs } = props;
+
+  const [tags, setTags] = useState<TagProps[]>([]);
   const [openFP, setOpenFP] = useState<boolean>(false);
+
+  useEffect(() => {
+    const tps = generateTagProps(catalogs);
+
+    setTags(tps);
+  }, [catalogs]);
 
   const clsname = useEmotionCss(() => {
     return {
+      height: "100%",
       padding: "2px 3px",
       position: "relative",
 
@@ -129,8 +175,19 @@ const LZonView: React.FC = () => {
         },
       },
 
-      ".lzone-tag-zone": {
+      ".lzone-article": {
         padding: "4px 3px",
+        height: "calc(100% - 21px)",
+        overflow: "auto",
+
+        "&::-webkit-scrollbar": {
+          width: "5px",
+          backgroundColor: "white",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "#d9d9d9",
+          borderRadius: "5px",
+        },
       },
 
       ".filter-panel": {
@@ -146,13 +203,28 @@ const LZonView: React.FC = () => {
         padding: "2px 4px",
         zIndex: 100,
 
-        ".item-title:before": {
+        ".filter-panel-item:before": {
           content: '">"',
           marginRight: "4px",
         },
 
-        ".item-tag-zone, .item-input": {
+        ".item-input": {
           padding: "4px 3px",
+        },
+
+        ".item-tag-zone": {
+          padding: "0 3px 4px 3px",
+          height: "calc(100% - 75px)",
+          overflow: "auto",
+
+          "&::-webkit-scrollbar": {
+            width: "5px",
+            backgroundColor: "white",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#d9d9d9",
+            borderRadius: "5px",
+          },
         },
       },
     };
@@ -171,45 +243,41 @@ const LZonView: React.FC = () => {
           <FilterOutlined />
         </span>
       </div>
-      <div className="lzone-tag-zone">
-        <Article
-          title="我是一个兵来自喜马拉雅山脉的一个巨大的且冰冷的山东"
-          tags={["搞笑", "故事"]}
-        />
+      <div className="lzone-article">
+        {catalogs.map((item) => {
+          const { title, tags } = item;
+          return <Article title={title} tags={tags} />;
+        })}
       </div>
 
       <div className="filter-panel">
-        <div className="item">
-          <div className="item-title">Keywords</div>
-          <div className="item-input">
-            <Input size="small" placeholder="Keyword queries" allowClear />
-          </div>
+        <div className="filter-panel-item">Keywords</div>
+        <div className="item-input">
+          <Input size="small" placeholder="Keyword queries" allowClear />
         </div>
-        <div className="item">
-          <div className="item-title">Tags</div>
-          <div className="item-tag-zone">
-            {tags.map((tag) => (
-              <CheckTag
-                label={tag.label}
-                check={tag.check}
-                chgStatus={(val: boolean) => {
-                  const latestTags = tags.map((item) => {
-                    if (tag.label == item.label) {
-                      return { ...item, check: val };
-                    }
+        <div className="filter-panel-item">Tags</div>
+        <div className="item-tag-zone">
+          {tags.map((tag) => (
+            <CheckTag
+              label={tag.label}
+              check={tag.check}
+              chgStatus={(val: boolean) => {
+                const latestTags = tags.map((item) => {
+                  if (tag.label == item.label) {
+                    return { ...item, check: val };
+                  }
 
-                    return item;
-                  });
+                  return item;
+                });
 
-                  setTags(latestTags);
-                }}
-              />
-            ))}
-          </div>
+                setTags(latestTags);
+              }}
+            />
+          ))}
         </div>
       </div>
     </div>
   );
 };
 
-export default LZonView;
+export default LZoneView;

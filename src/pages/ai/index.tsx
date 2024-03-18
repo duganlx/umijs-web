@@ -59,7 +59,7 @@ const AiView: React.FC<AiViewProps> = () => {
     };
   });
 
-  console.log("0 AiView");
+  // console.log("0 AiView");
   return (
     <>
       <div className={clsname}>
