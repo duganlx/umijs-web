@@ -1,33 +1,53 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
-import OZoneView from "./components/ozone";
 import LZonView from "./components/lzone";
 import CZoneView from "./components/czone";
+import { useEffect, useState } from "react";
+import { pullFromGithub } from "@/services/github/api";
+import { message } from "antd";
+
+interface CatalogItem {
+  title: string;
+  tags: string[];
+  folderPath: string;
+  lastModified: string;
+}
 
 const JottingsView: React.FC = () => {
+  const owner = "duganlx";
+  const repo = "jottings";
+  const path = "catalog.json";
+  const [catalogs, setCatalogs] = useState<CatalogItem[]>([]);
+
+  useEffect(() => {
+    pullFromGithub({ owner, repo, path }).then((r) => {
+      if (r.length === 0) {
+        message.info("pull catalog from github failed.");
+        return;
+      }
+
+      const cls = JSON.parse(r) as CatalogItem[];
+      console.log(cls);
+      setCatalogs(cls);
+    });
+  }, []);
+
   const clsname = useEmotionCss(() => {
     return {
       display: "flex",
       flexDirection: "row",
       height: "300px",
 
-      ".content-zone": {
-        height: "100%",
-        backgroundColor: "#f4ffb8",
-        width: "calc(100% - 560px)",
-      },
-
       ".list-zone": {
         height: "100%",
-        // backgroundColor: "#fff1b8",
         border: "1px solid #fff1b8",
         width: "400px",
+        marginRight: "5px",
       },
 
-      ".oper-zone": {
+      ".content-zone": {
         height: "100%",
-        // backgroundColor: "#ffccc7",
-        border: "1px solid #ffccc7",
-        width: "160px",
+        width: "calc(100% - 405px)",
+        border: "1px solid #f4ffb8",
       },
     };
   });
@@ -35,14 +55,11 @@ const JottingsView: React.FC = () => {
   return (
     <>
       <div className={clsname}>
-        <div className="content-zone">
-          <CZoneView />
-        </div>
         <div className="list-zone">
           <LZonView />
         </div>
-        <div className="oper-zone">
-          <OZoneView />
+        <div className="content-zone">
+          <CZoneView />
         </div>
       </div>
     </>
