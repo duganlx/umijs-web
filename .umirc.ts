@@ -4,6 +4,7 @@ import MonacoWebpackPlugin from "monaco-editor-webpack-plugin";
 export default defineConfig({
   routes: [
     { path: "/", title: "Homepage", component: "index" },
+    { path: "/trial", title: "Trial", component: "trial/index" },
     { path: "/me", title: "Me", component: "me/index" },
     { path: "/*", component: "@/pages/404" },
   ],
