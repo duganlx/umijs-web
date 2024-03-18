@@ -18,7 +18,7 @@ function sortCatalogItem(cls: CatalogItem[]) {
     const adateunix = dayjs(a.lastModified, "YYYY-MM-DD").unix();
     const bdateunix = dayjs(b.lastModified, "YYYY-MM-DD").unix();
 
-    return adateunix - bdateunix;
+    return bdateunix - adateunix;
   });
 }
 
