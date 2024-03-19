@@ -1,8 +1,7 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
+import styles from "./index.less";
 
 const TrialView: React.FC = () => {
-  console.log("--1");
-
   const clsname = useEmotionCss(() => {
     return {
       height: "300px",
@@ -10,16 +9,23 @@ const TrialView: React.FC = () => {
       backgroundColor: "#ff9c6e",
 
       ".view": {
-        overflow: "hidden",
-        whiteSpace: "nowrap",
+        backgroundColor: "yellow",
+        width: "100%",
+        display: "-webkit-box",
+        wordBreak: "break-all",
         textOverflow: "ellipsis",
+        overflow: "hidden",
+        "-webkit-line-clamp": "2",
+        "-webkit-box-orient": "vertical",
       },
     };
   });
 
   return (
     <div className={clsname}>
-      <div className="view">xxxxxxxxxxxxx</div>
+      <span className="view">
+        xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      </span>
     </div>
   );
 };
