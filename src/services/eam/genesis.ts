@@ -113,20 +113,10 @@ function transferResponse(table: Table, format: "arrow" | "json" | "mapArray") {
   }
 }
 
-export async function GetData() {
+export async function GetData(req: Record<string, any>) {
   const format = "mapArray";
   const header = {
     "Content-Type": "application/grpc-web",
-  };
-  const req = {
-    last_good: false,
-    data_name: "*",
-    service_name: "KLineDs",
-    start: 0,
-    length: 260,
-    format: "json",
-    universe: ["688981.SH", "688111.SH"],
-    auction: true,
   };
   const ticket = createTicket(req);
 
@@ -179,7 +169,7 @@ export async function GetData() {
           resolve(respData);
         })
         .on("metadata", (s) => {
-          console.log(s, "arrow doGet metadata");
+          // console.log(s, "arrow doGet metadata");
         })
         .on("status", (s) => {
           console.log(s, "arrow doGet status");
