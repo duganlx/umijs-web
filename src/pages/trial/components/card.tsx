@@ -1,3 +1,4 @@
+import { GetData } from "@/services/eam/genesis";
 import dayjs from "dayjs";
 import React, { useEffect } from "react";
 
@@ -13,25 +14,35 @@ const TestCard: React.FC<{ conf: string; cid: string }> = (props) => {
   const { conf, cid } = props;
 
   useEffect(() => {
-    if (conf === undefined) return;
+    GetData().then((res) => {
+      console.log(res);
+    });
+  }, []);
 
-    let tid: number = 0;
+  // useEffect(() => {
+  //   if (conf === undefined) return;
 
-    if (!tid) {
-      tid = setInterval(() => {
-        const curTick = +dayjs().format("ss");
-        console.log(curTick, "tick");
-      }, 1000) as unknown as number;
-    }
+  //   let tid: number = 0;
 
-    return () => {
-      console.log(tid, cid);
-      if (tid) {
-        clearInterval(tid);
-        tid = 0;
-      }
-    };
-  }, [conf]);
+  //   if (!tid) {
+  //     tid = setInterval(() => {
+  //       const curTick = +dayjs().format("ss");
+  //       console.log(curTick, cid, "tick");
+  //       console.log("--1");
+  //       sleep(2000).then((res) => {
+  //         console.log("--2");
+  //       });
+  //       console.log("--3");
+  //     }, 1000) as unknown as number;
+  //   }
+
+  //   return () => {
+  //     if (tid) {
+  //       clearInterval(tid);
+  //       tid = 0;
+  //     }
+  //   };
+  // }, [conf]);
 
   return <>card</>;
 };

@@ -22,6 +22,11 @@ export default defineConfig({
       changeOrigin: true,
       pathRewrite: { "^/eam": "" },
     },
+    "/eam/grpc_arrow": {
+      target: "http://eqw-fat.eam.com",
+      changeOrigin: true,
+      pathRewrite: { "^/eam": "" },
+    },
   },
   links: [{ rel: "icon", href: "/favicon.ico" }],
   title: "Dugan (lvx)",

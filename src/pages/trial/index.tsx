@@ -1,5 +1,4 @@
 import CardFactory from "./components/card";
-import CardView from "./components/card";
 
 const TrialView: React.FC = () => {
   const cards = [
