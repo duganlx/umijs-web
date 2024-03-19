@@ -49,6 +49,7 @@ const ChatZone: React.FC<ChatZoneProps> = (props) => {
     };
   });
 
+  console.log("1 ChatZone");
   return (
     <div className={clsname}>
       <div ref={dialogzoneRef} className="dialog-zone-wrap">
