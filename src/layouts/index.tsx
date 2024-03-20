@@ -7,7 +7,8 @@ export default function Layout() {
   const clsname = useEmotionCss(() => {
     return {
       ".page-nav-zone": {
-        display: "flex",
+        display: "none",
+        // display: "flex",
         flexDirection: "row",
         padding: "8px 4px 8px 20px",
         fontSize: "14px",
