@@ -113,10 +113,14 @@ function transferResponse(table: Table, format: "arrow" | "json" | "mapArray") {
   }
 }
 
-export async function GetData(req: Record<string, any>) {
-  const format = "mapArray";
-  const header = {
+export async function GetData(
+  req: Record<string, any>,
+  header?: Record<string, any>
+) {
+  const format = "json";
+  const metadata = {
     "Content-Type": "application/grpc-web",
+    ...header,
   };
   const ticket = createTicket(req);
 
@@ -130,7 +134,7 @@ export async function GetData(req: Record<string, any>) {
     let respData: any[] = [];
     try {
       cli
-        .doGet(ticket, header)
+        .doGet(ticket, metadata)
         .on("data", (resp) => {
           const dataHeader = resp.getDataHeader();
           if (dataHeader && dataHeader.length > 0) {
