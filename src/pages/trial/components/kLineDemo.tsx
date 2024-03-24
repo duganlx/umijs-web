@@ -24,7 +24,7 @@ const KLineChart: React.FC = () => {
 
   const showSplitLine = true;
   const showXLabel1h = false;
-  const isSmallChart = true;
+  const isSmallChart = false;
   const isBigChart = false;
 
   // 图二（柱状图）数据格式化
@@ -94,6 +94,7 @@ const KLineChart: React.FC = () => {
     },
     xAxis: [
       {
+        id: "xAxis1",
         type: "category",
         gridIndex: 0,
         triggerEvent: true,
@@ -116,6 +117,9 @@ const KLineChart: React.FC = () => {
         },
         axisPointer: {
           show: true,
+          label: {
+            show: false,
+          },
         },
         axisTick: {
           show: false,
@@ -134,6 +138,7 @@ const KLineChart: React.FC = () => {
         },
       },
       {
+        id: "xAxis2",
         type: "category",
         triggerEvent: true,
         gridIndex: 1,
@@ -402,7 +407,7 @@ const KLineChart: React.FC = () => {
   const clsname = useEmotionCss(() => {
     return {
       width: "60vw",
-      height: "300px",
+      height: "450px",
       padding: "2px 1px 0 1px",
       backgroundColor: "black",
 
