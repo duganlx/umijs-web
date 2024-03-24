@@ -1,12 +1,8 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import ReactECharts, { EChartsOption } from "echarts-for-react";
 
-const echartMaxValue = (
-  nums: number[],
-  tmpMaxValue: number,
-  fixNum: number
-) => {
-  let max = -1000000;
+const echartMaxValue = (nums: number[], fixNum: number) => {
+  let max = -100000000;
   nums.forEach((num) => {
     if (num === undefined) return;
 
@@ -15,8 +11,37 @@ const echartMaxValue = (
 
   max = +(max * 1.004).toFixed(fixNum);
 
-  return max > tmpMaxValue ? max : tmpMaxValue;
+  return max;
 };
+
+const echartMinValue = (nums: number[], fixNum: number) => {
+  let min = 100000000;
+  nums.forEach((num) => {
+    if (num === undefined) return;
+
+    if (num < min) min = num;
+  });
+
+  min = +(min * 0.996).toFixed(fixNum);
+
+  return min;
+};
+
+function calcYAxisInterval(datas: number[], mid: number) {
+  let min = echartMinValue(datas, 0);
+  let max = echartMaxValue(datas, 0);
+  const intervalNumHalf = 3;
+
+  const p1 = (max - mid) / intervalNumHalf;
+  const p2 = (mid - min) / intervalNumHalf;
+
+  const maxInterval = p1 > p2 ? p1 : p2;
+
+  min = mid - maxInterval * 3;
+  max = mid + maxInterval * 3;
+
+  return { min, max, interval: maxInterval };
+}
 
 const KLineChart: React.FC = () => {
   const xData = ORI_DATA.map((item) => item["epoch_time"]);
@@ -32,9 +57,8 @@ const KLineChart: React.FC = () => {
 
   // 图二（柱状图）数据格式化
   // == begin ==
-  let barChartMaxVal = -1 * UNIT_Yuan_Yi.val;
   let barData = ORI_DATA.map((item) => item["amount"]);
-  barChartMaxVal = echartMaxValue(barData, barChartMaxVal, 0);
+  let barChartMaxVal = echartMaxValue(barData, 0);
   let barChartUnit = "-";
   if (barChartMaxVal > UNIT_Yuan_Yi.val / 10) {
     barData = ORI_DATA.map((item) => item["amount"] / UNIT_Yuan_Yi.val);
@@ -45,6 +69,13 @@ const KLineChart: React.FC = () => {
   } else {
     barChartUnit = "元";
   }
+  // == end ==
+
+  // 图一（折线图）y 轴间隔
+  // == begin ==
+  let lineData = ORI_DATA.map((item) => item["close"]);
+  let lineRangeConf = calcYAxisInterval(lineData, preClose);
+  console.log(lineRangeConf);
   // == end ==
 
   const option: EChartsOption = {
@@ -227,7 +258,10 @@ const KLineChart: React.FC = () => {
             color: axisLineColor,
           },
         },
-        scale: true,
+        // scale: true,
+        min: lineRangeConf.min,
+        max: lineRangeConf.max,
+        interval: lineRangeConf.interval,
       },
       {
         type: "value",
@@ -272,7 +306,10 @@ const KLineChart: React.FC = () => {
             color: axisLineColor,
           },
         },
-        scale: true,
+        // scale: true,
+        min: lineRangeConf.min,
+        max: lineRangeConf.max,
+        interval: lineRangeConf.interval,
       },
       {
         type: "value",
