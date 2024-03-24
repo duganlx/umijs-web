@@ -203,7 +203,7 @@ const KLineChart: React.FC = () => {
         axisLabel: {
           hideOverlap: true,
           formatter: function (value: number) {
-            return `${value}`;
+            return `${value.toFixed(1)}`;
           },
           align: "right",
           color: (value: number, index: number) => {
