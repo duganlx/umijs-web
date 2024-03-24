@@ -27,6 +27,9 @@ const KLineChart: React.FC = () => {
   const isSmallChart = false;
   const isBigChart = false;
 
+  const axisLineColor = "rgba(255,0,0,0.2)";
+  const markLineColor = "rgba(255,0,0,0.6)";
+
   // 图二（柱状图）数据格式化
   // == begin ==
   let barChartMaxVal = -1 * UNIT_Yuan_Yi.val;
@@ -112,7 +115,7 @@ const KLineChart: React.FC = () => {
           show: true,
 
           lineStyle: {
-            color: "red",
+            color: axisLineColor,
           },
         },
         axisPointer: {
@@ -147,7 +150,7 @@ const KLineChart: React.FC = () => {
         axisLine: {
           show: true,
           lineStyle: {
-            color: "red",
+            color: axisLineColor,
           },
         },
         splitLine: {
@@ -221,7 +224,7 @@ const KLineChart: React.FC = () => {
         axisLine: {
           show: true,
           lineStyle: {
-            color: "red",
+            color: axisLineColor,
           },
         },
         scale: true,
@@ -266,7 +269,7 @@ const KLineChart: React.FC = () => {
         axisLine: {
           show: true,
           lineStyle: {
-            color: "red",
+            color: axisLineColor,
           },
         },
         scale: true,
@@ -290,7 +293,7 @@ const KLineChart: React.FC = () => {
         axisLine: {
           show: true,
           lineStyle: {
-            color: "red",
+            color: axisLineColor,
           },
         },
         axisTick: { show: false },
@@ -317,14 +320,14 @@ const KLineChart: React.FC = () => {
         axisLine: {
           show: true,
           lineStyle: {
-            color: "red",
+            color: axisLineColor,
           },
         },
         axisTick: { show: false },
         splitLine: {
           show: false,
           lineStyle: {
-            color: "red",
+            color: axisLineColor,
           },
         },
         scale: true,
@@ -344,7 +347,7 @@ const KLineChart: React.FC = () => {
           silent: "true",
           symbol: "none",
           lineStyle: {
-            color: "red", // 标记线颜色
+            color: markLineColor, // 标记线颜色
             type: "dashed", // 标记线类型
             width: 1,
           },
@@ -367,7 +370,7 @@ const KLineChart: React.FC = () => {
           silent: "true",
           symbol: "none",
           lineStyle: {
-            color: "red", // 标记线颜色
+            color: markLineColor, // 标记线颜色
             type: "dashed", // 标记线类型
             width: 1,
           },
@@ -391,7 +394,7 @@ const KLineChart: React.FC = () => {
           symbol: "none",
           lineStyle: {
             // 标记线样式
-            color: "red",
+            color: markLineColor,
             type: "dashed",
             width: 1,
           },
