@@ -59,7 +59,7 @@ function calcYAxisInterval(datas: number[], mid: number) {
 }
 
 const KLineChart: React.FC = () => {
-  const isSim = true;
+  const isSim = false;
   const xData = ORI_DATA.map((item) => item["epoch_time"]);
   const preClose = ORI_DATA[0]["pre_close"];
 
@@ -102,7 +102,7 @@ const KLineChart: React.FC = () => {
   const isSmallChart = false;
   const isBigChart = false;
 
-  const axisLineColor = "rgba(255,0,0,0.2)";
+  const gridLineColor = "rgba(255,0,0,0.4)";
   const markLineColor = "rgba(255,0,0,0.6)";
 
   // 图二（柱状图）数据格式化
@@ -182,14 +182,24 @@ const KLineChart: React.FC = () => {
           show: showSplitLine,
           alignWithLabel: true,
           lineStyle: {
-            color: "rgba(255,0,0,0.4)",
+            color: gridLineColor,
+          },
+          interval: (index: number, value: string) => {
+            if (value === "09:16" || value === "15:00") return false;
+            // value 格式 hh:ss
+            const [_, ss] = value.split(":");
+
+            if (showXLabel1h) {
+              return +ss === 0;
+            } else {
+              return +ss % 30 === 0;
+            }
           },
         },
         axisLine: {
           show: true,
           onZero: true,
           lineStyle: {
-            // color: axisLineColor,
             color: markLineColor,
           },
         },
@@ -225,14 +235,25 @@ const KLineChart: React.FC = () => {
         axisLine: {
           show: true,
           lineStyle: {
-            color: axisLineColor,
+            color: gridLineColor,
           },
         },
         splitLine: {
           show: showSplitLine,
           alignWithLabel: true,
+          interval: (index: number, value: string) => {
+            if (value === "09:16" || value === "15:00") return false;
+            // value 格式 hh:ss
+            const [_, ss] = value.split(":");
+
+            if (showXLabel1h) {
+              return +ss === 0;
+            } else {
+              return +ss % 30 === 0;
+            }
+          },
           lineStyle: {
-            color: "rgba(255,0,0,0.4)",
+            color: gridLineColor,
           },
         },
         axisPointer: {
@@ -272,7 +293,7 @@ const KLineChart: React.FC = () => {
         splitLine: {
           show: showSplitLine,
           lineStyle: {
-            color: "rgba(255,0,0,0.4)",
+            color: gridLineColor,
           },
         },
         axisLabel: {
@@ -301,7 +322,7 @@ const KLineChart: React.FC = () => {
         axisLine: {
           show: true,
           lineStyle: {
-            color: axisLineColor,
+            color: gridLineColor,
           },
         },
         axisPointer: {
@@ -359,7 +380,7 @@ const KLineChart: React.FC = () => {
         axisLine: {
           show: true,
           lineStyle: {
-            color: axisLineColor,
+            color: gridLineColor,
           },
         },
         axisPointer: {
@@ -396,7 +417,7 @@ const KLineChart: React.FC = () => {
         axisLine: {
           show: true,
           lineStyle: {
-            color: axisLineColor,
+            color: gridLineColor,
           },
         },
         axisTick: { show: false },
@@ -423,14 +444,14 @@ const KLineChart: React.FC = () => {
         axisLine: {
           show: true,
           lineStyle: {
-            color: axisLineColor,
+            color: gridLineColor,
           },
         },
         axisTick: { show: false },
         splitLine: {
           show: false,
           lineStyle: {
-            color: axisLineColor,
+            color: gridLineColor,
           },
         },
         scale: true,
