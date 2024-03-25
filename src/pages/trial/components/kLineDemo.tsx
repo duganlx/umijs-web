@@ -356,8 +356,13 @@ const KLineChart: React.FC = () => {
         axisLabel: {
           hideOverlap: true,
           formatter: function (value: number) {
-            const pnl = (value / preClose) * 100;
-            return `${pnl.toFixed(1)}%`;
+            const pnl = +((value / preClose) * 100).toFixed(1);
+
+            if (Math.abs(pnl) < 0.0001) {
+              return `0.0%`;
+            }
+
+            return `${pnl}%`;
           },
           align: "left",
           color: (value: number, index: number) => {

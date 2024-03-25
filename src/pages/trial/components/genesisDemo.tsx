@@ -22,7 +22,7 @@ const KLineDsDemo: React.FC = () => {
 const GenesisDemo: React.FC = () => {
   useEffect(() => {
     const header = {
-      "X-Gsf-Host": "192.168.35.14:58005",
+      "X-Gsf-Host": "192.168.1.192:58005",
     };
     const req = { service_name: "IndexDs", data_name: "sz50_weight" };
 

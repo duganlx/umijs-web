@@ -7,7 +7,7 @@ const TrialView: React.FC = () => {
   return (
     <>
       {/* <ReactGridLayoutDemo /> */}
-      {/* <GenesisDemo /> */}
+      <GenesisDemo />
       <KLineChart />
     </>
   );
