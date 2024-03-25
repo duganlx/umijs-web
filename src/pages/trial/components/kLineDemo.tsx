@@ -1,7 +1,20 @@
 import { useEmotionCss } from "@ant-design/use-emotion-css";
 import ReactECharts, { EChartsOption } from "echarts-for-react";
+import { useEffect, useState } from "react";
 
-const echartMaxValue = (nums: number[], fixNum: number) => {
+function calcExtraOffset(val: number) {
+  if (val >= 1) {
+    return 1e-1 * 3;
+  } else if (val >= 1e-1) {
+    return 1e-2 * 3;
+  } else if (val >= 1e-2) {
+    return 1e-3 * 3;
+  } else {
+    return 1e-3 * 6;
+  }
+}
+
+const calcArrayMaxValue = (nums: number[], fixNum: number) => {
   let max = -100000000;
   nums.forEach((num) => {
     if (num === undefined) return;
@@ -9,12 +22,12 @@ const echartMaxValue = (nums: number[], fixNum: number) => {
     if (num > max) max = num;
   });
 
-  max = +(max * 1.004).toFixed(fixNum);
+  max = +max.toFixed(fixNum);
 
   return max;
 };
 
-const echartMinValue = (nums: number[], fixNum: number) => {
+const calcArrayMinValue = (nums: number[], fixNum: number) => {
   let min = 100000000;
   nums.forEach((num) => {
     if (num === undefined) return;
@@ -22,30 +35,67 @@ const echartMinValue = (nums: number[], fixNum: number) => {
     if (num < min) min = num;
   });
 
-  min = +(min * 0.996).toFixed(fixNum);
+  min = +min.toFixed(fixNum);
 
   return min;
 };
 
 function calcYAxisInterval(datas: number[], mid: number) {
-  let min = echartMinValue(datas, 0);
-  let max = echartMaxValue(datas, 0);
+  let min = calcArrayMinValue(datas, 0);
+  let max = calcArrayMaxValue(datas, 0);
   const intervalNumHalf = 3;
 
   const p1 = (max - mid) / intervalNumHalf;
   const p2 = (mid - min) / intervalNumHalf;
 
-  const maxInterval = p1 > p2 ? p1 : p2;
+  let maxInterval = p1 > p2 ? p1 : p2;
+  maxInterval = +maxInterval.toFixed(2);
+  maxInterval = maxInterval + calcExtraOffset(maxInterval);
 
-  min = mid - maxInterval * 3;
-  max = mid + maxInterval * 3;
+  min = mid - maxInterval * intervalNumHalf;
+  max = mid + maxInterval * intervalNumHalf;
 
   return { min, max, interval: maxInterval };
 }
 
 const KLineChart: React.FC = () => {
+  const isSim = true;
   const xData = ORI_DATA.map((item) => item["epoch_time"]);
   const preClose = ORI_DATA[0]["pre_close"];
+
+  const [datas, setDatas] = useState<KLineItem[]>([]);
+
+  useEffect(() => {
+    // 仿真测试
+    if (!isSim) {
+      setDatas(ORI_DATA);
+      return;
+    }
+
+    let tid: number = 0;
+
+    if (!tid) {
+      tid = setInterval(() => {
+        setDatas((prevDatas) => {
+          if (prevDatas.length >= ORI_DATA.length) {
+            clearInterval(tid);
+            return prevDatas;
+          }
+
+          const nextItem = ORI_DATA[prevDatas.length];
+
+          return [...prevDatas, nextItem];
+        });
+      }, 50) as unknown as number;
+    }
+
+    return () => {
+      if (tid) {
+        clearInterval(tid);
+        tid = 0;
+      }
+    };
+  }, []);
 
   const showSplitLine = true;
   const showXLabel1h = false;
@@ -57,14 +107,14 @@ const KLineChart: React.FC = () => {
 
   // 图二（柱状图）数据格式化
   // == begin ==
-  let barData = ORI_DATA.map((item) => item["amount"]);
-  let barChartMaxVal = echartMaxValue(barData, 0);
+  let barData = datas.map((item) => item["amount"]);
+  let barChartMaxVal = calcArrayMaxValue(barData, 0);
   let barChartUnit = "-";
   if (barChartMaxVal > UNIT_Yuan_Yi.val / 10) {
-    barData = ORI_DATA.map((item) => item["amount"] / UNIT_Yuan_Yi.val);
+    barData = datas.map((item) => item["amount"] / UNIT_Yuan_Yi.val);
     barChartUnit = UNIT_Yuan_Yi.desc;
   } else if (barChartMaxVal > UNIT_Yuan_Wang.val / 10) {
-    barData = ORI_DATA.map((item) => item["amount"] / UNIT_Yuan_Wang.val);
+    barData = datas.map((item) => item["amount"] / UNIT_Yuan_Wang.val);
     barChartUnit = UNIT_Yuan_Wang.desc;
   } else {
     barChartUnit = "元";
@@ -73,9 +123,9 @@ const KLineChart: React.FC = () => {
 
   // 图一（折线图）y 轴间隔
   // == begin ==
-  let lineData = ORI_DATA.map((item) => +item["close"]);
+  let lineData = datas.map((item) => +item["close"] - preClose);
   // console.log(lineData, "line chart data");
-  let lineRangeConf = calcYAxisInterval(lineData, preClose);
+  let lineRangeConf = calcYAxisInterval(lineData, 0);
   // console.log(lineRangeConf, "line chart y axis value range");
   // == end ==
 
@@ -144,9 +194,10 @@ const KLineChart: React.FC = () => {
         },
         axisLine: {
           show: true,
-
+          onZero: true,
           lineStyle: {
-            color: axisLineColor,
+            // color: axisLineColor,
+            color: markLineColor,
           },
         },
         axisPointer: {
@@ -234,17 +285,19 @@ const KLineChart: React.FC = () => {
         axisLabel: {
           hideOverlap: true,
           formatter: function (value: number) {
-            return `${value.toFixed(1)}`;
+            return `${(value + preClose).toFixed(1)}`;
           },
           align: "right",
           color: (value: number, index: number) => {
-            if (value > preClose) {
-              return "red";
-            } else if (value < preClose) {
-              return "green";
+            if (Math.abs(value) < 1e-4) {
+              return "#bfbfbf";
             }
 
-            return "#bfbfbf";
+            if (value > 0) {
+              return "red";
+            } else {
+              return "green";
+            }
           },
         },
         nameTextStyle: {
@@ -263,7 +316,7 @@ const KLineChart: React.FC = () => {
           label: {
             formatter: (target: any) => {
               const val = target.value as number;
-              return val.toFixed(1);
+              return (val + preClose).toFixed(1);
             },
           },
         },
@@ -289,19 +342,20 @@ const KLineChart: React.FC = () => {
         axisLabel: {
           hideOverlap: true,
           formatter: function (value: number) {
-            const pnl = (value / preClose - 1) * 100;
+            const pnl = (value / preClose) * 100;
             return `${pnl.toFixed(1)}%`;
           },
           align: "left",
           color: (value: number, index: number) => {
-            const pnl = (value / preClose - 1) * 100;
-            if (pnl > 0) {
-              return "red";
-            } else if (pnl < 0) {
-              return "green";
+            if (Math.abs(value) < 1e-4) {
+              return "#bfbfbf";
             }
 
-            return "#bfbfbf";
+            if (value > 0) {
+              return "red";
+            } else {
+              return "green";
+            }
           },
         },
         nameTextStyle: {
@@ -320,7 +374,7 @@ const KLineChart: React.FC = () => {
           label: {
             formatter: (target: any) => {
               const val = target.value as number;
-              const pnl = (val / preClose - 1) * 100;
+              const pnl = (val / preClose) * 100;
               return `${pnl.toFixed(1)}%`;
             },
           },
@@ -461,6 +515,7 @@ const KLineChart: React.FC = () => {
         },
       },
     ],
+    animation: false,
   };
 
   const clsname = useEmotionCss(() => {
@@ -528,12 +583,14 @@ const KLineChart: React.FC = () => {
     };
   });
 
+  const ctprops = renderCardTitleBar();
+
   return (
     <div className={clsname}>
       <div className="title-zone">
         <div className="title-zone-left">
-          <span className="card-name">x</span>
-          <span className="epoch-time">xx</span>
+          <span className="card-name">{ctprops.title}</span>
+          <span className="epoch-time">{ctprops.epochTime}</span>
           <span className="ct-item">
             <span className="label">价</span>
             <span className="value">10</span>
@@ -565,6 +622,40 @@ const KLineChart: React.FC = () => {
 };
 
 export default KLineChart;
+
+interface CardTitleProps {
+  title: string; // 标题
+  epochTime: string;
+  close: number; // 价
+  pnl: number; // 涨跌
+  pnlPercentage: number; // 涨跌%
+  avgPrice: number; // 均价
+  totalVolume: number; // 成交量
+  totalVolumeUnit: string; // 成交量(单位)
+  totalAmount: number; // 成交金额
+  totalAmountUnit: string; // 成交金额(单位)
+  color: string; // 涨跌颜色
+  date: string; // 日期
+}
+
+function renderCardTitleBar(): CardTitleProps {
+  const props: CardTitleProps = {
+    title: "",
+    epochTime: "",
+    close: 0,
+    pnl: 0,
+    pnlPercentage: 0,
+    avgPrice: 0,
+    totalVolume: 0,
+    totalVolumeUnit: "",
+    totalAmount: 0,
+    totalAmountUnit: "",
+    color: "#bfbfbf",
+    date: "2024/03/25",
+  };
+
+  return props;
+}
 
 interface KLineItem {
   epoch_time: string;
