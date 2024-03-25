@@ -73,9 +73,10 @@ const KLineChart: React.FC = () => {
 
   // 图一（折线图）y 轴间隔
   // == begin ==
-  let lineData = ORI_DATA.map((item) => item["close"]);
+  let lineData = ORI_DATA.map((item) => +item["close"]);
+  // console.log(lineData, "line chart data");
   let lineRangeConf = calcYAxisInterval(lineData, preClose);
-  console.log(lineRangeConf);
+  // console.log(lineRangeConf, "line chart y axis value range");
   // == end ==
 
   const option: EChartsOption = {
@@ -122,7 +123,6 @@ const KLineChart: React.FC = () => {
         color: "white",
       },
       formatter: (params: Object, ticket: string) => {
-        // return renderEchartTooltip(params);
         return "";
       },
     },
@@ -258,6 +258,15 @@ const KLineChart: React.FC = () => {
             color: axisLineColor,
           },
         },
+        axisPointer: {
+          show: true,
+          label: {
+            formatter: (target: any) => {
+              const val = target.value as number;
+              return val.toFixed(1);
+            },
+          },
+        },
         // scale: true,
         min: lineRangeConf.min,
         max: lineRangeConf.max,
@@ -304,6 +313,16 @@ const KLineChart: React.FC = () => {
           show: true,
           lineStyle: {
             color: axisLineColor,
+          },
+        },
+        axisPointer: {
+          show: true,
+          label: {
+            formatter: (target: any) => {
+              const val = target.value as number;
+              const pnl = (val / preClose - 1) * 100;
+              return `${pnl.toFixed(1)}%`;
+            },
           },
         },
         // scale: true,
@@ -377,7 +396,7 @@ const KLineChart: React.FC = () => {
         gridIndex: 0,
         xAxisIndex: 0,
         yAxisIndex: 0,
-        data: ORI_DATA.map((item) => item["close"]),
+        data: lineData,
         showSymbol: false,
         markLine: {
           animation: false,
@@ -400,7 +419,7 @@ const KLineChart: React.FC = () => {
         gridIndex: 0,
         xAxisIndex: 0,
         yAxisIndex: 1,
-        data: ORI_DATA.map((item) => item["close"]),
+        data: lineData,
         showSymbol: false,
         markLine: {
           animation: false,
