@@ -109,16 +109,9 @@ const KLineChart: React.FC = () => {
   // == begin ==
   let barData = datas.map((item) => item["amount"]);
   let barChartMaxVal = calcArrayMaxValue(barData, 0);
-  let barChartUnit = "-";
-  if (barChartMaxVal > UNIT_Yuan_Yi.val / 10) {
-    barData = datas.map((item) => item["amount"] / UNIT_Yuan_Yi.val);
-    barChartUnit = UNIT_Yuan_Yi.desc;
-  } else if (barChartMaxVal > UNIT_Yuan_Wang.val / 10) {
-    barData = datas.map((item) => item["amount"] / UNIT_Yuan_Wang.val);
-    barChartUnit = UNIT_Yuan_Wang.desc;
-  } else {
-    barChartUnit = "元";
-  }
+  const barChartNumUnit = calcNumUnit(barChartMaxVal);
+  let barChartUnit = barChartNumUnit.desc;
+  barData = datas.map((item) => item["amount"] / barChartNumUnit.val);
   // == end ==
 
   // 图一（折线图）y 轴间隔
@@ -414,7 +407,7 @@ const KLineChart: React.FC = () => {
         type: "value",
         name: `${barChartUnit}`,
         nameLocation: "middle",
-        nameRotate: -90,
+        nameRotate: 0,
         gridIndex: 1,
         nameGap: 2,
         position: "right",
@@ -583,7 +576,7 @@ const KLineChart: React.FC = () => {
     };
   });
 
-  const ctprops = renderCardTitleBar();
+  const ctprops = renderCardTitleBar(datas);
 
   return (
     <div className={clsname}>
@@ -593,22 +586,32 @@ const KLineChart: React.FC = () => {
           <span className="epoch-time">{ctprops.epochTime}</span>
           <span className="ct-item">
             <span className="label">价</span>
-            <span className="value">10</span>
+            <span className="value" style={{ color: ctprops.color }}>
+              {ctprops.close}
+            </span>
           </span>
           <span className="ct-item">
             <span className="label">涨跌</span>
-            <span className="value">10</span>
+            <span
+              className="value"
+              style={{ color: ctprops.color }}
+            >{`${ctprops.pnl}(${ctprops.pnlPercentage}%)`}</span>
           </span>
           <span className="ct-item">
             <span className="label">均价</span>
-            <span className="value">10</span>
+            <span className="value" style={{ color: ctprops.color }}>
+              {ctprops.avgPrice}
+            </span>
           </span>
           <span className="ct-item">
             <span className="label">额</span>
-            <span className="value">10</span>
+            <span className="value">
+              <span>{ctprops.totalAmount}</span>
+              <span>{ctprops.totalAmountUnit}</span>
+            </span>
           </span>
         </div>
-        <span className="title-zone-right">2024/03/24</span>
+        <span className="title-zone-right">{ctprops.date}</span>
       </div>
       <div className="content-zone">
         <ReactECharts
@@ -638,9 +641,9 @@ interface CardTitleProps {
   date: string; // 日期
 }
 
-function renderCardTitleBar(): CardTitleProps {
+function renderCardTitleBar(datas: KLineItem[]): CardTitleProps {
   const props: CardTitleProps = {
-    title: "",
+    title: "上证50指数",
     epochTime: "",
     close: 0,
     pnl: 0,
@@ -654,7 +657,42 @@ function renderCardTitleBar(): CardTitleProps {
     date: "2024/03/25",
   };
 
+  if (datas.length === 0) return props;
+
+  const lastbar = datas[datas.length - 1];
+  props.epochTime = lastbar["epoch_time"];
+  props.close = +lastbar["close"].toFixed(2);
+  props.pnl = +lastbar["pnl"].toFixed(2);
+  props.pnlPercentage = +lastbar["pnlPercentage"].toFixed(2);
+  props.avgPrice = +lastbar["avgPrice"].toFixed(2);
+  const totalVolumeNumUnit = calcNumUnit(lastbar["volume"]);
+  props.totalVolume = +(lastbar["volume"] / totalVolumeNumUnit.val).toFixed(2);
+  props.totalVolumeUnit = totalVolumeNumUnit.desc;
+  const totalAmountNumUnit = calcNumUnit(lastbar["amount"]);
+  props.totalAmount = +(lastbar["volume"] / totalAmountNumUnit.val).toFixed(2);
+  props.totalAmountUnit = totalAmountNumUnit.desc;
+
+  if (lastbar["pnl"] > 0) {
+    props.color = "red";
+  } else if (lastbar["pnl"] < 0) {
+    props.color = "green";
+  }
+
   return props;
+}
+
+const UNIT_Yuan_Wang = { val: 10000, desc: "万" };
+const UNIT_Yuan_Yi = { val: 100000000, desc: "亿" };
+const UNIT_Yuan_Yuan = { val: 1, desc: "元" };
+
+function calcNumUnit(val: number) {
+  if (val > UNIT_Yuan_Yi.val / 10) {
+    return UNIT_Yuan_Yi;
+  } else if (val > UNIT_Yuan_Wang.val / 10) {
+    return UNIT_Yuan_Wang;
+  }
+
+  return UNIT_Yuan_Yuan;
 }
 
 interface KLineItem {
@@ -667,9 +705,6 @@ interface KLineItem {
   pnlPercentage: number;
   avgPrice: number;
 }
-
-const UNIT_Yuan_Wang = { val: 10000, desc: "万" };
-const UNIT_Yuan_Yi = { val: 100000000, desc: "亿" };
 
 // SZ50 20240324
 const ORI_DATA: KLineItem[] = [
