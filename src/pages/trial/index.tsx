@@ -6,9 +6,9 @@ import KLineChart from "./components/kLineDemo";
 const TrialView: React.FC = () => {
   return (
     <>
-      {/* <ReactGridLayoutDemo /> */}
-      <GenesisDemo />
-      <KLineChart />
+      <ReactGridLayoutDemo />
+      {/* <GenesisDemo /> */}
+      {/* <KLineChart /> */}
     </>
   );
 };

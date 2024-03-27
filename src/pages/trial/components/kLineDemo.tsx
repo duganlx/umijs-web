@@ -350,7 +350,7 @@ const KLineChart: React.FC = () => {
         splitLine: {
           show: false,
           lineStyle: {
-            color: "red",
+            color: gridLineColor,
           },
         },
         axisLabel: {

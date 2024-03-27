@@ -102,9 +102,9 @@ const ORI_LAYOUT: ReactGridLayout.Layout[] = [
   { i: "1", x: 0, y: 0, w: 60, h: 20 },
   { i: "2", x: 60, y: 0, w: 60, h: 30 },
   { i: "3", x: 0, y: 20, w: 60, h: 10 },
-  // { i: "4", x: 60, y: 20, w: 60, h: 20 },
-  // { i: "5", x: 0, y: 20, w: 60, h: 20 },
-  // { i: "6", x: 60, y: 20, w: 60, h: 20 },
+  { i: "4", x: 60, y: 20, w: 60, h: 20 },
+  { i: "5", x: 0, y: 20, w: 60, h: 20 },
+  { i: "6", x: 60, y: 20, w: 60, h: 20 },
 ];
 
 const ReactGridLayoutDemo: React.FC = () => {
