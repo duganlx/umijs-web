@@ -27,6 +27,7 @@ const JottingsView: React.FC = () => {
   const repo = "jottings";
   const path = "catalog.json";
   const [catalogs, setCatalogs] = useState<CatalogItem[]>([]);
+  const [read, setRead] = useState<CatalogItem>();
 
   useEffect(() => {
     pullFromGithub({ owner, repo, path }).then((r) => {
@@ -70,7 +71,7 @@ const JottingsView: React.FC = () => {
           <LZoneView catalogs={catalogs} />
         </div>
         <div className="content-zone">
-          <CZoneView />
+          <CZoneView read={read} />
         </div>
       </div>
     </>
